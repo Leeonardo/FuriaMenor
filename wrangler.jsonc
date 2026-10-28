@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "main": ".open-next/worker.js",
   "name": "furiamenor",
+  "main": ".open-next/worker.js",
   "compatibility_date": "2025-10-28",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "assets": {
@@ -10,5 +10,6 @@
   },
   "observability": {
     "enabled": true
-  }
+  },
+  "send_metrics": false
 }
