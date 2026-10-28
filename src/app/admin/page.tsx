@@ -101,9 +101,9 @@ export default function AdminPage() {
               <p className="text-xs text-neutral-400">Panel Admin - Torneo Daeris</p>
             </div>
           </Link>
-          <button onClick={() => setAuthenticated(false)} className="text-sm text-neutral-400 hover:text-white">
+          <Link href="/admin/login" className="text-sm text-neutral-400 hover:text-white">
             Cerrar sesión
-          </button>
+          </Link>
         </nav>
       </header>
 
