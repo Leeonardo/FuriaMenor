@@ -22,26 +22,20 @@ export default function Home() {
             <Image src="/logo.jpeg" alt="Furia Menor" width={44} height={44} className="rounded-lg" />
             <span className="text-lg font-bold tracking-tight">Furia Menor</span>
           </Link>
-          <div className="hidden items-center gap-8 md:flex">
-            <Link href="/tournaments" className="text-sm text-neutral-300 transition hover:text-white">
-              Torneos
-            </Link>
-            <Link href="#equipos" className="text-sm text-neutral-300 transition hover:text-white">
-              Equipos
-            </Link>
+          <div className="hidden items-center gap-6 lg:flex">
             <Link href="/tournaments" className="text-sm text-neutral-300 transition hover:text-white">
               Calendario
             </Link>
-            <Link href="#resultados" className="text-sm text-neutral-300 transition hover:text-white">
+            <Link href="/tournaments" className="text-sm text-neutral-300 transition hover:text-white">
               Resultados
             </Link>
-            <Link href="#tabla" className="text-sm text-neutral-300 transition hover:text-white">
+            <Link href="/tournaments" className="text-sm text-neutral-300 transition hover:text-white">
               Tabla de Posiciones
             </Link>
-            <Link href="#goleadores" className="text-sm text-neutral-300 transition hover:text-white">
+            <Link href="/tournaments" className="text-sm text-neutral-300 transition hover:text-white">
               Goleadores
             </Link>
-            <Link href="#arqueria" className="text-sm text-neutral-300 transition hover:text-white">
+            <Link href="/tournaments" className="text-sm text-neutral-300 transition hover:text-white">
               Arquería Menos Vencida
             </Link>
             <Link href="#tienda" className="text-sm text-neutral-300 transition hover:text-white">
@@ -53,7 +47,7 @@ export default function Home() {
             className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-red-600 to-orange-600 px-4 py-2 text-sm font-medium text-white shadow-lg shadow-red-600/20 transition hover:from-red-500 hover:to-orange-500"
           >
             <LayoutDashboard className="h-4 w-4" />
-            Acceso Delegados / Admin
+            Acceso Administrador
           </Link>
         </nav>
       </header>
@@ -90,8 +84,8 @@ export default function Home() {
                   href="/tournaments"
                   className="flex w-full items-center justify-center gap-2 rounded-lg border border-neutral-700 bg-neutral-900/50 px-8 py-3 font-medium text-white backdrop-blur-sm transition hover:border-red-500/50 hover:bg-neutral-800/50 sm:w-auto"
                 >
-                  <Users className="h-5 w-5" />
-                  Inscribir mi Equipo
+                  <Trophy className="h-5 w-5" />
+                  Ver Torneo
                 </Link>
               </div>
             </div>
@@ -131,22 +125,23 @@ export default function Home() {
             <p className="mt-4 text-lg text-neutral-400">
               Sub-6, Sub-8, Sub-10, Sub-12, Sub-14, Sub-16 y Sub-18 • Fútbol Campo y Futsal
             </p>
+            <p className="mt-2 text-sm text-red-400">Cada categoría dividida en: Formación • Moderado • Competencia</p>
           </div>
           <div className="grid gap-6 md:grid-cols-3">
             <div className="rounded-2xl border border-neutral-800 bg-gradient-to-br from-neutral-900 to-neutral-950 p-6">
               <Shield className="mb-4 h-8 w-8 text-red-500" />
-              <h3 className="text-xl font-semibold">Formativo</h3>
-              <p className="mt-2 text-sm text-neutral-400">Sub-6 • Sub-8 • Sub-10</p>
+              <h3 className="text-xl font-semibold">Sub-6 a Sub-10</h3>
+              <p className="mt-2 text-sm text-neutral-400">Formación • Moderado • Competencia</p>
             </div>
             <div className="rounded-2xl border border-neutral-800 bg-gradient-to-br from-neutral-900 to-neutral-950 p-6">
               <Users className="mb-4 h-8 w-8 text-orange-500" />
-              <h3 className="text-xl font-semibold">Desarrollo</h3>
-              <p className="mt-2 text-sm text-neutral-400">Sub-12 • Sub-14</p>
+              <h3 className="text-xl font-semibold">Sub-12 a Sub-14</h3>
+              <p className="mt-2 text-sm text-neutral-400">Formación • Moderado • Competencia</p>
             </div>
             <div className="rounded-2xl border border-neutral-800 bg-gradient-to-br from-neutral-900 to-neutral-950 p-6">
               <BarChart3 className="mb-4 h-8 w-8 text-amber-500" />
-              <h3 className="text-xl font-semibold">Juvenil</h3>
-              <p className="mt-2 text-sm text-neutral-400">Sub-16 • Sub-18</p>
+              <h3 className="text-xl font-semibold">Sub-16 a Sub-18</h3>
+              <p className="mt-2 text-sm text-neutral-400">Formación • Moderado • Competencia</p>
             </div>
           </div>
         </section>

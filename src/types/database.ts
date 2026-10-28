@@ -113,6 +113,7 @@ export interface CreatePlayerInput {
 // Furia Menor - Tournament Module
 export type TournamentStatus = 'draft' | 'inscripciones' | 'en_curso' | 'finalizado' | 'cancelado';
 export type TournamentCategoryAge = 'Sub-6' | 'Sub-8' | 'Sub-10' | 'Sub-12' | 'Sub-14' | 'Sub-16' | 'Sub-18';
+export type TournamentModality = 'formacion' | 'moderado' | 'competencia';
 export type PhaseType = 'grupos' | 'eliminacion_directa' | 'liguilla' | 'playoffs';
 export type MatchStatus = 'programado' | 'en_juego' | 'finalizado' | 'aplazado' | 'cancelado';
 export type CardType = 'amarilla' | 'roja';
@@ -140,6 +141,7 @@ export interface TournamentCategory {
   name: string;
   max_teams: number | null;
   registration_open: boolean;
+  modality?: TournamentModality | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -187,6 +189,7 @@ export interface Match {
   id: string;
   tournament_id: string;
   tournament_category_id: string;
+  modality?: TournamentModality | null;
   phase_id: string | null;
   group_id: string | null;
   home_team_id: string;
@@ -264,11 +267,13 @@ export interface CreateTournamentCategoryInput {
   name: string;
   max_teams?: number;
   registration_open?: boolean;
+  modality?: TournamentModality;
 }
 
 export interface CreateMatchInput {
   tournament_id: string;
   tournament_category_id: string;
+  modality?: TournamentModality;
   phase_id?: string;
   group_id?: string;
   home_team_id: string;
