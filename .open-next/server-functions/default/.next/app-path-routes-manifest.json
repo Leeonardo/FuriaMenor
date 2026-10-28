@@ -1,0 +1,18 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/calendario/page": "/calendario",
+  "/dashboard/tournaments/[id]/categories/new/page": "/dashboard/tournaments/[id]/categories/new",
+  "/dashboard/tournaments/[id]/fixture/page": "/dashboard/tournaments/[id]/fixture",
+  "/dashboard/tournaments/[id]/page": "/dashboard/tournaments/[id]",
+  "/dashboard/tournaments/[id]/teams/register/page": "/dashboard/tournaments/[id]/teams/register",
+  "/dashboard/tournaments/new/page": "/dashboard/tournaments/new",
+  "/dashboard/tournaments/page": "/dashboard/tournaments",
+  "/estadisticas/page": "/estadisticas",
+  "/favicon.ico/route": "/favicon.ico",
+  "/page": "/",
+  "/posiciones/page": "/posiciones",
+  "/tournaments/[id]/categories/[categoryId]/page": "/tournaments/[id]/categories/[categoryId]",
+  "/tournaments/[id]/page": "/tournaments/[id]",
+  "/tournaments/page": "/tournaments"
+}

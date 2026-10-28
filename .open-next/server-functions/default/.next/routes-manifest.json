@@ -1,0 +1,155 @@
+{
+  "version": 3,
+  "pages404": true,
+  "appType": "app",
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "priority": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "onMatchHeaders": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
+  "dynamicRoutes": [
+    {
+      "page": "/dashboard/tournaments/[id]",
+      "regex": "^/dashboard/tournaments/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/dashboard/tournaments/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/dashboard/tournaments/[id]/categories/new",
+      "regex": "^/dashboard/tournaments/([^/]+?)/categories/new(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/dashboard/tournaments/(?<nxtPid>[^/]+?)/categories/new(?:/)?$"
+    },
+    {
+      "page": "/dashboard/tournaments/[id]/fixture",
+      "regex": "^/dashboard/tournaments/([^/]+?)/fixture(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/dashboard/tournaments/(?<nxtPid>[^/]+?)/fixture(?:/)?$"
+    },
+    {
+      "page": "/dashboard/tournaments/[id]/teams/register",
+      "regex": "^/dashboard/tournaments/([^/]+?)/teams/register(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/dashboard/tournaments/(?<nxtPid>[^/]+?)/teams/register(?:/)?$"
+    },
+    {
+      "page": "/tournaments/[id]",
+      "regex": "^/tournaments/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/tournaments/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/tournaments/[id]/categories/[categoryId]",
+      "regex": "^/tournaments/([^/]+?)/categories/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid",
+        "nxtPcategoryId": "nxtPcategoryId"
+      },
+      "namedRegex": "^/tournaments/(?<nxtPid>[^/]+?)/categories/(?<nxtPcategoryId>[^/]+?)(?:/)?$"
+    }
+  ],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_global-error",
+      "regex": "^/_global\\-error(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_global\\-error(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/calendario",
+      "regex": "^/calendario(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/calendario(?:/)?$"
+    },
+    {
+      "page": "/dashboard/tournaments",
+      "regex": "^/dashboard/tournaments(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/tournaments(?:/)?$"
+    },
+    {
+      "page": "/dashboard/tournaments/new",
+      "regex": "^/dashboard/tournaments/new(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/tournaments/new(?:/)?$"
+    },
+    {
+      "page": "/estadisticas",
+      "regex": "^/estadisticas(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/estadisticas(?:/)?$"
+    },
+    {
+      "page": "/favicon.ico",
+      "regex": "^/favicon\\.ico(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/favicon\\.ico(?:/)?$"
+    },
+    {
+      "page": "/posiciones",
+      "regex": "^/posiciones(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/posiciones(?:/)?$"
+    },
+    {
+      "page": "/tournaments",
+      "regex": "^/tournaments(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/tournaments(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments",
+    "clientParamParsing": false,
+    "dynamicRSCPrerender": false
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}

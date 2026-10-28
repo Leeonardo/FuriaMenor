@@ -1,0 +1,18 @@
+{
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/calendario/page": "app/calendario/page.js",
+  "/dashboard/tournaments/[id]/categories/new/page": "app/dashboard/tournaments/[id]/categories/new/page.js",
+  "/dashboard/tournaments/[id]/fixture/page": "app/dashboard/tournaments/[id]/fixture/page.js",
+  "/dashboard/tournaments/[id]/page": "app/dashboard/tournaments/[id]/page.js",
+  "/dashboard/tournaments/[id]/teams/register/page": "app/dashboard/tournaments/[id]/teams/register/page.js",
+  "/dashboard/tournaments/new/page": "app/dashboard/tournaments/new/page.js",
+  "/dashboard/tournaments/page": "app/dashboard/tournaments/page.js",
+  "/estadisticas/page": "app/estadisticas/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/page": "app/page.js",
+  "/posiciones/page": "app/posiciones/page.js",
+  "/tournaments/[id]/categories/[categoryId]/page": "app/tournaments/[id]/categories/[categoryId]/page.js",
+  "/tournaments/[id]/page": "app/tournaments/[id]/page.js",
+  "/tournaments/page": "app/tournaments/page.js"
+}

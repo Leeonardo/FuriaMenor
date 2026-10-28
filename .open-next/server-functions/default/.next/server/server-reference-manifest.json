@@ -1,0 +1,408 @@
+{
+  "node": {
+    "000b192a8447d1ebe34ba24da8b196386dd81d1bc4": {
+      "workers": {
+        "app/dashboard/tournaments/[id]/fixture/page": {
+          "moduleId": 87877,
+          "async": false
+        },
+        "app/dashboard/tournaments/[id]/page": {
+          "moduleId": 78448,
+          "async": false
+        },
+        "app/dashboard/tournaments/page": {
+          "moduleId": 20181,
+          "async": false
+        },
+        "app/tournaments/[id]/categories/[categoryId]/page": {
+          "moduleId": 21176,
+          "async": false
+        },
+        "app/tournaments/[id]/page": {
+          "moduleId": 75037,
+          "async": false
+        },
+        "app/tournaments/page": {
+          "moduleId": 92614,
+          "async": false
+        }
+      },
+      "filename": "src/actions/tournaments.ts",
+      "exportedName": "getTournaments"
+    },
+    "4006b8d1c422f1e322fa868f35b92ad9ab62a34abb": {
+      "workers": {
+        "app/dashboard/tournaments/[id]/categories/new/page": {
+          "moduleId": 86978,
+          "async": false
+        },
+        "app/dashboard/tournaments/[id]/fixture/page": {
+          "moduleId": 87877,
+          "async": false
+        },
+        "app/dashboard/tournaments/[id]/page": {
+          "moduleId": 78448,
+          "async": false
+        },
+        "app/dashboard/tournaments/page": {
+          "moduleId": 20181,
+          "async": false
+        },
+        "app/tournaments/[id]/categories/[categoryId]/page": {
+          "moduleId": 21176,
+          "async": false
+        },
+        "app/tournaments/[id]/page": {
+          "moduleId": 75037,
+          "async": false
+        },
+        "app/tournaments/page": {
+          "moduleId": 92614,
+          "async": false
+        }
+      },
+      "filename": "src/actions/tournaments.ts",
+      "exportedName": "createTournamentCategory"
+    },
+    "40129f9dfdfb00dc2349dd50f42ae0625a997a7cbd": {
+      "workers": {
+        "app/dashboard/tournaments/[id]/fixture/page": {
+          "moduleId": 87877,
+          "async": false
+        },
+        "app/dashboard/tournaments/[id]/page": {
+          "moduleId": 78448,
+          "async": false
+        },
+        "app/dashboard/tournaments/[id]/teams/register/page": {
+          "moduleId": 17881,
+          "async": false
+        },
+        "app/dashboard/tournaments/page": {
+          "moduleId": 20181,
+          "async": false
+        },
+        "app/tournaments/[id]/categories/[categoryId]/page": {
+          "moduleId": 21176,
+          "async": false
+        },
+        "app/tournaments/[id]/page": {
+          "moduleId": 75037,
+          "async": false
+        },
+        "app/tournaments/page": {
+          "moduleId": 92614,
+          "async": false
+        }
+      },
+      "filename": "src/actions/tournaments.ts",
+      "exportedName": "registerTeam"
+    },
+    "40290a43d335c233ae1b824c6b15c28e0cbf26b77a": {
+      "workers": {
+        "app/dashboard/tournaments/[id]/fixture/page": {
+          "moduleId": 87877,
+          "async": false
+        },
+        "app/dashboard/tournaments/[id]/page": {
+          "moduleId": 78448,
+          "async": false
+        },
+        "app/dashboard/tournaments/new/page": {
+          "moduleId": 68279,
+          "async": false
+        },
+        "app/dashboard/tournaments/page": {
+          "moduleId": 20181,
+          "async": false
+        },
+        "app/tournaments/[id]/categories/[categoryId]/page": {
+          "moduleId": 21176,
+          "async": false
+        },
+        "app/tournaments/[id]/page": {
+          "moduleId": 75037,
+          "async": false
+        },
+        "app/tournaments/page": {
+          "moduleId": 92614,
+          "async": false
+        }
+      },
+      "filename": "src/actions/tournaments.ts",
+      "exportedName": "createTournament"
+    },
+    "405419e2f447495ff3bc1f17214ad72cac31608f68": {
+      "workers": {
+        "app/dashboard/tournaments/[id]/fixture/page": {
+          "moduleId": 87877,
+          "async": false
+        },
+        "app/dashboard/tournaments/[id]/page": {
+          "moduleId": 78448,
+          "async": false
+        },
+        "app/dashboard/tournaments/page": {
+          "moduleId": 20181,
+          "async": false
+        },
+        "app/tournaments/[id]/categories/[categoryId]/page": {
+          "moduleId": 21176,
+          "async": false
+        },
+        "app/tournaments/[id]/page": {
+          "moduleId": 75037,
+          "async": false
+        },
+        "app/tournaments/page": {
+          "moduleId": 92614,
+          "async": false
+        }
+      },
+      "filename": "src/actions/tournaments.ts",
+      "exportedName": "getTournamentCategories"
+    },
+    "40b3b5462f34d91b7349bec10fb822ef03eb03197a": {
+      "workers": {
+        "app/dashboard/tournaments/[id]/fixture/page": {
+          "moduleId": 87877,
+          "async": false
+        },
+        "app/dashboard/tournaments/[id]/page": {
+          "moduleId": 78448,
+          "async": false
+        },
+        "app/dashboard/tournaments/page": {
+          "moduleId": 20181,
+          "async": false
+        },
+        "app/tournaments/[id]/categories/[categoryId]/page": {
+          "moduleId": 21176,
+          "async": false
+        },
+        "app/tournaments/[id]/page": {
+          "moduleId": 75037,
+          "async": false
+        },
+        "app/tournaments/page": {
+          "moduleId": 92614,
+          "async": false
+        }
+      },
+      "filename": "src/actions/tournaments.ts",
+      "exportedName": "createMatch"
+    },
+    "40be45c2f54362d62192ff440d03130f0035a0a3a4": {
+      "workers": {
+        "app/dashboard/tournaments/[id]/fixture/page": {
+          "moduleId": 87877,
+          "async": false
+        },
+        "app/dashboard/tournaments/[id]/page": {
+          "moduleId": 78448,
+          "async": false
+        },
+        "app/dashboard/tournaments/page": {
+          "moduleId": 20181,
+          "async": false
+        },
+        "app/tournaments/[id]/categories/[categoryId]/page": {
+          "moduleId": 21176,
+          "async": false
+        },
+        "app/tournaments/[id]/page": {
+          "moduleId": 75037,
+          "async": false
+        },
+        "app/tournaments/page": {
+          "moduleId": 92614,
+          "async": false
+        }
+      },
+      "filename": "src/actions/tournaments.ts",
+      "exportedName": "getTournament"
+    },
+    "606ad288626ef3917268c67e808a3429a85c594982": {
+      "workers": {
+        "app/dashboard/tournaments/[id]/fixture/page": {
+          "moduleId": 87877,
+          "async": false
+        },
+        "app/dashboard/tournaments/[id]/page": {
+          "moduleId": 78448,
+          "async": false
+        },
+        "app/dashboard/tournaments/page": {
+          "moduleId": 20181,
+          "async": false
+        },
+        "app/tournaments/[id]/categories/[categoryId]/page": {
+          "moduleId": 21176,
+          "async": false
+        },
+        "app/tournaments/[id]/page": {
+          "moduleId": 75037,
+          "async": false
+        },
+        "app/tournaments/page": {
+          "moduleId": 92614,
+          "async": false
+        }
+      },
+      "filename": "src/actions/tournaments.ts",
+      "exportedName": "getMatches"
+    },
+    "606ce80b03ecbc364912e17b89f0ace04784255306": {
+      "workers": {
+        "app/dashboard/tournaments/[id]/fixture/page": {
+          "moduleId": 87877,
+          "async": false
+        },
+        "app/dashboard/tournaments/[id]/page": {
+          "moduleId": 78448,
+          "async": false
+        },
+        "app/dashboard/tournaments/page": {
+          "moduleId": 20181,
+          "async": false
+        },
+        "app/tournaments/[id]/categories/[categoryId]/page": {
+          "moduleId": 21176,
+          "async": false
+        },
+        "app/tournaments/[id]/page": {
+          "moduleId": 75037,
+          "async": false
+        },
+        "app/tournaments/page": {
+          "moduleId": 92614,
+          "async": false
+        }
+      },
+      "filename": "src/actions/tournaments.ts",
+      "exportedName": "getStandings"
+    },
+    "60a52172cdab6314ef355aedaa2cccb0c5eeb60a7f": {
+      "workers": {
+        "app/dashboard/tournaments/[id]/fixture/page": {
+          "moduleId": 87877,
+          "async": false
+        },
+        "app/dashboard/tournaments/[id]/page": {
+          "moduleId": 78448,
+          "async": false
+        },
+        "app/dashboard/tournaments/page": {
+          "moduleId": 20181,
+          "async": false
+        },
+        "app/tournaments/[id]/categories/[categoryId]/page": {
+          "moduleId": 21176,
+          "async": false
+        },
+        "app/tournaments/[id]/page": {
+          "moduleId": 75037,
+          "async": false
+        },
+        "app/tournaments/page": {
+          "moduleId": 92614,
+          "async": false
+        }
+      },
+      "filename": "src/actions/tournaments.ts",
+      "exportedName": "getTournamentTeams"
+    },
+    "60ae9747d3cd7393b0eecdeeee0f6b9177356f92a0": {
+      "workers": {
+        "app/dashboard/tournaments/[id]/fixture/page": {
+          "moduleId": 87877,
+          "async": false
+        },
+        "app/dashboard/tournaments/[id]/page": {
+          "moduleId": 78448,
+          "async": false
+        },
+        "app/dashboard/tournaments/page": {
+          "moduleId": 20181,
+          "async": false
+        },
+        "app/tournaments/[id]/categories/[categoryId]/page": {
+          "moduleId": 21176,
+          "async": false
+        },
+        "app/tournaments/[id]/page": {
+          "moduleId": 75037,
+          "async": false
+        },
+        "app/tournaments/page": {
+          "moduleId": 92614,
+          "async": false
+        }
+      },
+      "filename": "src/actions/tournaments.ts",
+      "exportedName": "approveTeam"
+    },
+    "7013f855dbfa6b495c6b16afecc5ed8c8fb9eef6e6": {
+      "workers": {
+        "app/dashboard/tournaments/[id]/fixture/page": {
+          "moduleId": 87877,
+          "async": false
+        },
+        "app/dashboard/tournaments/[id]/page": {
+          "moduleId": 78448,
+          "async": false
+        },
+        "app/dashboard/tournaments/page": {
+          "moduleId": 20181,
+          "async": false
+        },
+        "app/tournaments/[id]/categories/[categoryId]/page": {
+          "moduleId": 21176,
+          "async": false
+        },
+        "app/tournaments/[id]/page": {
+          "moduleId": 75037,
+          "async": false
+        },
+        "app/tournaments/page": {
+          "moduleId": 92614,
+          "async": false
+        }
+      },
+      "filename": "src/actions/tournaments.ts",
+      "exportedName": "getTopScorers"
+    },
+    "7caabb34613d4f17d36623ed8e1415d34d810ba433": {
+      "workers": {
+        "app/dashboard/tournaments/[id]/fixture/page": {
+          "moduleId": 87877,
+          "async": false
+        },
+        "app/dashboard/tournaments/[id]/page": {
+          "moduleId": 78448,
+          "async": false
+        },
+        "app/dashboard/tournaments/page": {
+          "moduleId": 20181,
+          "async": false
+        },
+        "app/tournaments/[id]/categories/[categoryId]/page": {
+          "moduleId": 21176,
+          "async": false
+        },
+        "app/tournaments/[id]/page": {
+          "moduleId": 75037,
+          "async": false
+        },
+        "app/tournaments/page": {
+          "moduleId": 92614,
+          "async": false
+        }
+      },
+      "filename": "src/actions/tournaments.ts",
+      "exportedName": "updateMatchResult"
+    }
+  },
+  "edge": {},
+  "encryptionKey": "KNn407Ku7ZfFhA9JXf7TYQV0yHgSjtU2VvT9ftDCbIs="
+}

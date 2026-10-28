@@ -1,0 +1,206 @@
+{
+  "pages": {
+    "/_app": []
+  },
+  "devFiles": [],
+  "polyfillFiles": [
+    "static/chunks/0cz1d0mv5g_q7.js"
+  ],
+  "lowPriorityFiles": [
+    "static/mcyr7OOrduhMepEjC-3bx/_buildManifest.js",
+    "static/mcyr7OOrduhMepEjC-3bx/_ssgManifest.js",
+    "static/mcyr7OOrduhMepEjC-3bx/_clientMiddlewareManifest.js"
+  ],
+  "rootMainFiles": [
+    "static/chunks/1ckvzn7sfprko.js",
+    "static/chunks/2r4s4h5xul1n-.js",
+    "static/chunks/216iyidhmrh3u.js",
+    "static/chunks/1sgwvm69hc9zb.js",
+    "static/chunks/3a43himsg77qz.js",
+    "static/chunks/turbopack-3-ry682tkyiqk.js"
+  ],
+  "rootMainFilesTree": {},
+  "pagesChunkGroupBootstrapParams": {
+    "/page": {
+      "otherChunks": [
+        "static/chunks/1ckvzn7sfprko.js",
+        "static/chunks/2r4s4h5xul1n-.js",
+        "static/chunks/216iyidhmrh3u.js",
+        "static/chunks/1sgwvm69hc9zb.js",
+        "static/chunks/3a43himsg77qz.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/_not-found/page": {
+      "otherChunks": [
+        "static/chunks/1ckvzn7sfprko.js",
+        "static/chunks/2r4s4h5xul1n-.js",
+        "static/chunks/216iyidhmrh3u.js",
+        "static/chunks/1sgwvm69hc9zb.js",
+        "static/chunks/3a43himsg77qz.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/_global-error/page": {
+      "otherChunks": [
+        "static/chunks/1ckvzn7sfprko.js",
+        "static/chunks/2r4s4h5xul1n-.js",
+        "static/chunks/216iyidhmrh3u.js",
+        "static/chunks/1sgwvm69hc9zb.js",
+        "static/chunks/3a43himsg77qz.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/calendario/page": {
+      "otherChunks": [
+        "static/chunks/1ckvzn7sfprko.js",
+        "static/chunks/2r4s4h5xul1n-.js",
+        "static/chunks/216iyidhmrh3u.js",
+        "static/chunks/1sgwvm69hc9zb.js",
+        "static/chunks/3a43himsg77qz.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/dashboard/tournaments/page": {
+      "otherChunks": [
+        "static/chunks/1ckvzn7sfprko.js",
+        "static/chunks/2r4s4h5xul1n-.js",
+        "static/chunks/216iyidhmrh3u.js",
+        "static/chunks/1sgwvm69hc9zb.js",
+        "static/chunks/3a43himsg77qz.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/dashboard/tournaments/[id]/page": {
+      "otherChunks": [
+        "static/chunks/1ckvzn7sfprko.js",
+        "static/chunks/2r4s4h5xul1n-.js",
+        "static/chunks/216iyidhmrh3u.js",
+        "static/chunks/1sgwvm69hc9zb.js",
+        "static/chunks/3a43himsg77qz.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/dashboard/tournaments/[id]/categories/new/page": {
+      "otherChunks": [
+        "static/chunks/1ckvzn7sfprko.js",
+        "static/chunks/2r4s4h5xul1n-.js",
+        "static/chunks/216iyidhmrh3u.js",
+        "static/chunks/1sgwvm69hc9zb.js",
+        "static/chunks/3a43himsg77qz.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/dashboard/tournaments/[id]/fixture/page": {
+      "otherChunks": [
+        "static/chunks/1ckvzn7sfprko.js",
+        "static/chunks/2r4s4h5xul1n-.js",
+        "static/chunks/216iyidhmrh3u.js",
+        "static/chunks/1sgwvm69hc9zb.js",
+        "static/chunks/3a43himsg77qz.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/dashboard/tournaments/[id]/teams/register/page": {
+      "otherChunks": [
+        "static/chunks/1ckvzn7sfprko.js",
+        "static/chunks/2r4s4h5xul1n-.js",
+        "static/chunks/216iyidhmrh3u.js",
+        "static/chunks/1sgwvm69hc9zb.js",
+        "static/chunks/3a43himsg77qz.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/dashboard/tournaments/new/page": {
+      "otherChunks": [
+        "static/chunks/1ckvzn7sfprko.js",
+        "static/chunks/2r4s4h5xul1n-.js",
+        "static/chunks/216iyidhmrh3u.js",
+        "static/chunks/1sgwvm69hc9zb.js",
+        "static/chunks/3a43himsg77qz.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/estadisticas/page": {
+      "otherChunks": [
+        "static/chunks/1ckvzn7sfprko.js",
+        "static/chunks/2r4s4h5xul1n-.js",
+        "static/chunks/216iyidhmrh3u.js",
+        "static/chunks/1sgwvm69hc9zb.js",
+        "static/chunks/3a43himsg77qz.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/posiciones/page": {
+      "otherChunks": [
+        "static/chunks/1ckvzn7sfprko.js",
+        "static/chunks/2r4s4h5xul1n-.js",
+        "static/chunks/216iyidhmrh3u.js",
+        "static/chunks/1sgwvm69hc9zb.js",
+        "static/chunks/3a43himsg77qz.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/tournaments/page": {
+      "otherChunks": [
+        "static/chunks/1ckvzn7sfprko.js",
+        "static/chunks/2r4s4h5xul1n-.js",
+        "static/chunks/216iyidhmrh3u.js",
+        "static/chunks/1sgwvm69hc9zb.js",
+        "static/chunks/3a43himsg77qz.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/tournaments/[id]/page": {
+      "otherChunks": [
+        "static/chunks/1ckvzn7sfprko.js",
+        "static/chunks/2r4s4h5xul1n-.js",
+        "static/chunks/216iyidhmrh3u.js",
+        "static/chunks/1sgwvm69hc9zb.js",
+        "static/chunks/3a43himsg77qz.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/tournaments/[id]/categories/[categoryId]/page": {
+      "otherChunks": [
+        "static/chunks/1ckvzn7sfprko.js",
+        "static/chunks/2r4s4h5xul1n-.js",
+        "static/chunks/216iyidhmrh3u.js",
+        "static/chunks/1sgwvm69hc9zb.js",
+        "static/chunks/3a43himsg77qz.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    }
+  },
+  "chunkLoadingGlobal": "TURBOPACK"
+}
