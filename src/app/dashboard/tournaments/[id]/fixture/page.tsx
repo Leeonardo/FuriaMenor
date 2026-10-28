@@ -1,13 +1,9 @@
-import { getMatches, getTournamentCategories } from '@/actions/tournaments';
+import { getMatches } from '@/actions/tournaments';
 import Link from 'next/link';
+import { Suspense } from 'react';
 
-export default async function FixturePage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  const [matches, categories] = await Promise.all([getMatches(id), getTournamentCategories(id)]);
+async function FixtureContent({ id }: { id: string }) {
+  const matches = await getMatches(id);
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -63,5 +59,18 @@ export default async function FixturePage({
         </div>
       </div>
     </div>
+  );
+}
+
+export default async function FixturePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 p-6">Cargando...</div>}>
+      <FixtureContent id={id} />
+    </Suspense>
   );
 }

@@ -1,12 +1,8 @@
 import { getTournament, getTournamentCategories } from '@/actions/tournaments';
 import Link from 'next/link';
+import { Suspense } from 'react';
 
-export default async function PublicTournamentPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
+async function PublicTournamentContent({ id }: { id: string }) {
   const [tournament, categories] = await Promise.all([getTournament(id), getTournamentCategories(id)]);
 
   return (
@@ -34,5 +30,18 @@ export default async function PublicTournamentPage({
         </div>
       </div>
     </div>
+  );
+}
+
+export default async function PublicTournamentPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 p-6">Cargando...</div>}>
+      <PublicTournamentContent id={id} />
+    </Suspense>
   );
 }

@@ -1,12 +1,7 @@
 import { getTournament, getTournamentCategories, getTournamentTeams } from '@/actions/tournaments';
 import Link from 'next/link';
 
-export default async function TournamentDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
+async function TournamentDetailContent({ id }: { id: string }) {
   const [tournament, categories, teams] = await Promise.all([
     getTournament(id),
     getTournamentCategories(id),
@@ -86,4 +81,13 @@ export default async function TournamentDetailPage({
       </div>
     </div>
   );
+}
+
+export default async function TournamentDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  return <TournamentDetailContent id={id} />;
 }

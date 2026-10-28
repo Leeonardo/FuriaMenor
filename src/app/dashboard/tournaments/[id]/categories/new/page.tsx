@@ -2,11 +2,11 @@
 
 import { createTournamentCategory } from '@/actions/tournaments';
 import { useParams, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 
 const AGE_GROUPS = ['Sub-6', 'Sub-8', 'Sub-10', 'Sub-12', 'Sub-14', 'Sub-16', 'Sub-18'];
 
-export default function NewCategoryPage() {
+function NewCategoryForm() {
   const params = useParams();
   const router = useRouter();
   const tournamentId = params.id as string;
@@ -18,11 +18,12 @@ export default function NewCategoryPage() {
     const formData = new FormData(e.currentTarget);
 
     try {
+      const maxTeams = formData.get('max_teams');
       await createTournamentCategory({
         tournament_id: tournamentId,
         age_group: formData.get('age_group') as any,
         name: formData.get('name') as string,
-        max_teams: Number(formData.get('max_teams')) || null,
+        max_teams: maxTeams && maxTeams !== '' ? Number(maxTeams) : undefined,
         registration_open: true,
       });
       router.push(`/dashboard/tournaments/${tournamentId}`);
@@ -66,5 +67,13 @@ export default function NewCategoryPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function NewCategoryPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 p-6">Cargando...</div>}>
+      <NewCategoryForm />
+    </Suspense>
   );
 }

@@ -7,6 +7,7 @@ import type {
   CreateTournamentCategoryInput,
   CreateTournamentInput,
   RegisterTeamInput,
+  StandingsRow,
 } from '@/types/database';
 
 export async function createTournament(input: CreateTournamentInput) {
@@ -283,7 +284,7 @@ export async function getTopScorers(tournamentId: string, categoryId: string, li
   const { data, error } = await supabase
     .from('match_events')
     .select(
-      'player_id, event_type, match:matches!inner(tournament_id, tournament_category_id), player:players(first_name, last_name, tournament_team:tournament_teams(team_name))'
+      'player_id, event_type, match:matches!inner(tournament_id, tournament_category_id), player:players(first_name, last_name, academy_id)'
     )
     .eq('match.tournament_id', tournamentId)
     .eq('match.tournament_category_id', categoryId)
@@ -292,17 +293,28 @@ export async function getTopScorers(tournamentId: string, categoryId: string, li
 
   if (error) throw new Error(error.message);
 
+  const { data: teams } = await supabase
+    .from('tournament_teams')
+    .select('academy_id, team_name')
+    .eq('tournament_id', tournamentId)
+    .eq('tournament_category_id', categoryId);
+
+  const teamByAcademy = new Map<string, string | null>();
+  for (const team of teams ?? []) {
+    teamByAcademy.set(team.academy_id, team.team_name);
+  }
+
   const counts = new Map<string, { player_id: string; first_name: string; last_name: string; team_name: string | null; goals: number }>();
   for (const row of data ?? []) {
     const pid = row.player_id;
     if (!counts.has(pid)) {
-      // @ts-expect-error - joined shape
-      const player = row.player;
+      const player = Array.isArray((row as any).player) ? (row as any).player[0] : (row as any).player;
+      const teamName = player?.academy_id ? teamByAcademy.get(player.academy_id) ?? null : null;
       counts.set(pid, {
         player_id: pid,
         first_name: player?.first_name ?? '',
         last_name: player?.last_name ?? '',
-        team_name: player?.tournament_team?.team_name ?? null,
+        team_name: teamName,
         goals: 0,
       });
     }

@@ -1,22 +1,14 @@
 'use client';
 
-import { getCategories } from '@/actions/players';
 import { registerTeam } from '@/actions/tournaments';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { Suspense, useState } from 'react';
 
-export default function RegisterTeamPage() {
+function RegisterTeamForm() {
   const params = useParams();
   const router = useRouter();
   const tournamentId = params.id as string;
-  const [categories, setCategories] = useState<any[]>([]);
-  const [academies, setAcademies] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    // For now, we'll need to fetch from database
-    // This is a simplified version
-  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -70,5 +62,13 @@ export default function RegisterTeamPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function RegisterTeamPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 p-6">Cargando...</div>}>
+      <RegisterTeamForm />
+    </Suspense>
   );
 }
