@@ -108,7 +108,7 @@ export default function Home() {
               Tienda
             </Link>
             <Link href="/admin" className="text-sm text-red-400 transition hover:text-red-300">
-              Panel Admin
+              Acceso Administrador
             </Link>
           </div>
           <Link
