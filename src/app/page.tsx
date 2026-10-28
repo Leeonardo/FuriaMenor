@@ -107,6 +107,9 @@ export default function Home() {
             <Link href="#tienda" className="text-sm text-neutral-300 transition hover:text-white">
               Tienda
             </Link>
+            <Link href="/admin" className="text-sm text-red-400 transition hover:text-red-300">
+              Panel Admin
+            </Link>
           </div>
           <Link
             href="/dashboard/tournaments"
@@ -127,7 +130,7 @@ export default function Home() {
             <div className="mx-auto max-w-4xl text-center">
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-red-500/40 bg-red-500/10 px-4 py-1.5 text-sm text-red-400">
                 <Trophy className="h-4 w-4" />
-                Múltiples Torneos • Sub-6 a Sub-18 • Fútbol Campo y Futsal
+                Múltiples Torneos • Sub-6 a Sub-18 • Futsal
               </div>
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
                 Torneos

@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Furia Menor | Gestión de Torneos de Fútbol Menor",
-  description: "Plataforma integral de gestión digital para torneos de fútbol menor. Desde Sub-6 hasta Sub-18, fútbol campo y futsal.",
+  description: "Plataforma integral de gestión digital para torneos de fútbol menor. Desde Sub-6 hasta Sub-18, futsal.",
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
