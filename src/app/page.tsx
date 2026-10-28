@@ -107,13 +107,10 @@ export default function Home() {
             <Link href="#tienda" className="text-sm text-neutral-300 transition hover:text-white">
               Tienda
             </Link>
-            <Link href="/admin" className="text-sm text-red-400 transition hover:text-red-300">
-              Acceso Administrador
-            </Link>
           </div>
           <Link
-            href="/dashboard/tournaments"
-            className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-red-600 to-orange-600 px-4 py-2 text-sm font-medium text-white shadow-lg shadow-red-600/20 transition hover:from-red-500 hover:to-orange-500"
+            href="/admin"
+            className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-red-600 to-red-700 px-4 py-2 text-sm font-medium text-white shadow-lg shadow-red-600/20 transition hover:from-red-500 hover:to-red-600"
           >
             <LayoutDashboard className="h-4 w-4" />
             Acceso Administrador
