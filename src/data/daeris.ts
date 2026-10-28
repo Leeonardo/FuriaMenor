@@ -1,19 +1,17 @@
 export const CATEGORIES = ["Sub-6", "Sub-8", "Sub-10", "Sub-12", "Sub-14", "Sub-16", "Sub-18"] as const;
-export const MODALITIES = ["formacion", "moderado", "competencia"] as const;
+export const MODALITIES = ["primera", "segunda"] as const;
 
 export type Category = (typeof CATEGORIES)[number];
 export type Modality = (typeof MODALITIES)[number];
 
 export const modalityLabels: Record<Modality, string> = {
-  formacion: "Formación",
-  moderado: "Moderado",
-  competencia: "Competencia",
+  primera: "1ra División",
+  segunda: "2da División",
 };
 
 export const teamsBySegment: Record<Modality, string[]> = {
-  formacion: ["Academia Furia Kids", "Leones FC A", "Titanes del Oeste", "Relámpagos de Caracas"],
-  moderado: ["Real Caracas", "Atlético Vista Alegre", "Deportivo El Paraíso", "Furia Promesas"],
-  competencia: ["Furia Menor Oficial", "Academia Elite FC", "Fénix Futsal/Campo", "Dinamo Capital"],
+  primera: ["FUSION ACADEMICA A", "FUTCONEXION", "ESPARTANOS FUTSAL", "LA LADERA"],
+  segunda: ["TETSU FUTSAL", "DEPORTIVO ODIN", "FUSION ACADEMICA B", "LA PAZ FUTSAL"],
 };
 
 export interface Team {
@@ -49,9 +47,9 @@ export const sampleMatches: Match[] = [
   {
     id: "m1",
     category: "Sub-12",
-    modality: "formacion",
-    homeTeam: "Academia Furia Kids",
-    awayTeam: "Leones FC A",
+    modality: "primera",
+    homeTeam: "FUSION ACADEMICA A",
+    awayTeam: "FUTCONEXION",
     homeScore: null,
     awayScore: null,
     matchDate: "2026-10-30",
@@ -63,9 +61,9 @@ export const sampleMatches: Match[] = [
   {
     id: "m2",
     category: "Sub-12",
-    modality: "formacion",
-    homeTeam: "Titanes del Oeste",
-    awayTeam: "Relámpagos de Caracas",
+    modality: "primera",
+    homeTeam: "ESPARTANOS FUTSAL",
+    awayTeam: "LA LADERA",
     homeScore: 2,
     awayScore: 1,
     matchDate: "2026-10-30",
@@ -77,9 +75,9 @@ export const sampleMatches: Match[] = [
   {
     id: "m3",
     category: "Sub-12",
-    modality: "moderado",
-    homeTeam: "Real Caracas",
-    awayTeam: "Atlético Vista Alegre",
+    modality: "segunda",
+    homeTeam: "TETSU FUTSAL",
+    awayTeam: "DEPORTIVO ODIN",
     homeScore: 1,
     awayScore: 1,
     matchDate: "2026-10-30",
@@ -91,9 +89,9 @@ export const sampleMatches: Match[] = [
   {
     id: "m4",
     category: "Sub-12",
-    modality: "competencia",
-    homeTeam: "Furia Menor Oficial",
-    awayTeam: "Academia Elite FC",
+    modality: "primera",
+    homeTeam: "FUSION ACADEMICA A",
+    awayTeam: "ESPARTANOS FUTSAL",
     homeScore: null,
     awayScore: null,
     matchDate: "2026-10-30",
@@ -113,10 +111,10 @@ export interface Scorer {
 }
 
 export const topScorers: Scorer[] = [
-  { player: "J. Martínez", team: "Furia Menor Oficial", category: "Sub-12", modality: "competencia", goals: 8 },
-  { player: "A. Torres", team: "Academia Elite FC", category: "Sub-12", modality: "competencia", goals: 6 },
-  { player: "M. Rojas", team: "Real Caracas", category: "Sub-12", modality: "moderado", goals: 5 },
-  { player: "L. Vargas", team: "Titanes del Oeste", category: "Sub-12", modality: "formacion", goals: 4 },
+  { player: "J. Martínez", team: "FUSION ACADEMICA A", category: "Sub-12", modality: "primera", goals: 8 },
+  { player: "A. Torres", team: "FUTCONEXION", category: "Sub-12", modality: "primera", goals: 6 },
+  { player: "M. Rojas", team: "TETSU FUTSAL", category: "Sub-12", modality: "segunda", goals: 5 },
+  { player: "L. Vargas", team: "LA PAZ FUTSAL", category: "Sub-12", modality: "segunda", goals: 4 },
 ];
 
 export interface Goalkeeper {
@@ -130,10 +128,10 @@ export interface Goalkeeper {
 }
 
 export const leastConceded: Goalkeeper[] = [
-  { player: "C. Herrera", team: "Furia Menor Oficial", category: "Sub-12", modality: "competencia", goalsConceded: 3, matchesPlayed: 6, cleanSheets: 4 },
-  { player: "D. Mendoza", team: "Academia Elite FC", category: "Sub-12", modality: "competencia", goalsConceded: 5, matchesPlayed: 6, cleanSheets: 3 },
-  { player: "R. Silva", team: "Real Caracas", category: "Sub-12", modality: "moderado", goalsConceded: 4, matchesPlayed: 5, cleanSheets: 3 },
-  { player: "E. Contreras", team: "Titanes del Oeste", category: "Sub-12", modality: "formacion", goalsConceded: 3, matchesPlayed: 4, cleanSheets: 2 },
+  { player: "C. Herrera", team: "FUSION ACADEMICA A", category: "Sub-12", modality: "primera", goalsConceded: 3, matchesPlayed: 6, cleanSheets: 4 },
+  { player: "D. Mendoza", team: "FUTCONEXION", category: "Sub-12", modality: "primera", goalsConceded: 5, matchesPlayed: 6, cleanSheets: 3 },
+  { player: "R. Silva", team: "TETSU FUTSAL", category: "Sub-12", modality: "segunda", goalsConceded: 4, matchesPlayed: 5, cleanSheets: 3 },
+  { player: "E. Contreras", team: "LA PAZ FUTSAL", category: "Sub-12", modality: "segunda", goalsConceded: 3, matchesPlayed: 4, cleanSheets: 2 },
 ];
 
 export const calculateStandings = (matches: Match[], teams: Team[]) => {

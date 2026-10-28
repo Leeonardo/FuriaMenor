@@ -156,8 +156,7 @@ export default function Home() {
           <div className="rounded-2xl border border-red-500/30 bg-gradient-to-br from-red-950/30 via-neutral-900 to-neutral-950 p-6 sm:p-8">
             <div className="mb-6 flex flex-wrap items-center gap-3">
               <span className="rounded-full bg-neutral-800 px-3 py-1 text-sm">Sub-6 a Sub-18</span>
-              <span className="rounded-full bg-neutral-800 px-3 py-1 text-sm">Formación • Moderado • Competencia</span>
-              <span className="rounded-full bg-neutral-800 px-3 py-1 text-sm">1ra y 2da División</span>
+              <span className="rounded-full bg-neutral-800 px-3 py-1 text-sm">1ra División • 2da División</span>
             </div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <Link
@@ -452,23 +451,23 @@ export default function Home() {
             <p className="mt-4 text-lg text-neutral-400">
               Sub-6, Sub-8, Sub-10, Sub-12, Sub-14, Sub-16 y Sub-18
             </p>
-            <p className="mt-2 text-sm text-red-400">Formación • Moderado • Competencia • 1ra y 2da División</p>
+            <p className="mt-2 text-sm text-red-400">1ra División • 2da División</p>
           </div>
           <div className="grid gap-6 md:grid-cols-3">
             <div className="rounded-2xl border border-neutral-800 bg-gradient-to-br from-neutral-900 to-neutral-950 p-6">
               <Shield className="mb-4 h-8 w-8 text-red-500" />
               <h3 className="text-xl font-semibold">Sub-6 a Sub-10</h3>
-              <p className="mt-2 text-sm text-neutral-400">Formación • Moderado • Competencia</p>
+              <p className="mt-2 text-sm text-neutral-400">1ra División • 2da División</p>
             </div>
             <div className="rounded-2xl border border-neutral-800 bg-gradient-to-br from-neutral-900 to-neutral-950 p-6">
               <Users className="mb-4 h-8 w-8 text-orange-500" />
               <h3 className="text-xl font-semibold">Sub-12 a Sub-14</h3>
-              <p className="mt-2 text-sm text-neutral-400">Formación • Moderado • Competencia</p>
+              <p className="mt-2 text-sm text-neutral-400">1ra División • 2da División</p>
             </div>
             <div className="rounded-2xl border border-neutral-800 bg-gradient-to-br from-neutral-900 to-neutral-950 p-6">
               <BarChart3 className="mb-4 h-8 w-8 text-amber-500" />
               <h3 className="text-xl font-semibold">Sub-16 a Sub-18</h3>
-              <p className="mt-2 text-sm text-neutral-400">Formación • Moderado • Competencia</p>
+              <p className="mt-2 text-sm text-neutral-400">1ra División • 2da División</p>
             </div>
           </div>
         </section>
