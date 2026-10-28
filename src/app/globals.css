@@ -1,8 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  --background: #020617;
-  --foreground: #f1f5f9;
+  --background: #0a0a0a;
+  --foreground: #f5f5f5;
+  --furia-red: #dc2626;
+  --furia-orange: #ea580c;
+  --furia-gold: #f59e0b;
 }
 
 @theme inline {
