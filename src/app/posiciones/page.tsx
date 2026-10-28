@@ -251,41 +251,55 @@ export default function PosicionesPage() {
           </div>
         )}
 
-        {!showElite && (
-          <div className="overflow-x-auto rounded-2xl border border-neutral-800 bg-neutral-900/60">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-neutral-800 text-neutral-400">
-                  <th className="p-4 text-left">#</th>
-                  <th className="p-4 text-left">Equipo</th>
-                  <th className="p-4 text-center">PJ</th>
-                  <th className="p-4 text-center">PG</th>
-                  <th className="p-4 text-center">PE</th>
-                  <th className="p-4 text-center">PP</th>
-                  <th className="p-4 text-center">GF</th>
-                  <th className="p-4 text-center">GC</th>
-                  <th className="p-4 text-center">DG</th>
-                  <th className="p-4 text-center">PTS</th>
-                </tr>
-              </thead>
-              <tbody>
-                {standings.map((row, idx) => (
-                  <tr key={row.team} className="border-b border-neutral-800/60 hover:bg-neutral-800/30">
-                    <td className="p-4">{idx + 1}</td>
-                    <td className="p-4 font-medium">{row.team}</td>
-                    <td className="p-4 text-center">{row.played}</td>
-                    <td className="p-4 text-center">{row.won}</td>
-                    <td className="p-4 text-center">{row.drawn}</td>
-                    <td className="p-4 text-center">{row.lost}</td>
-                    <td className="p-4 text-center">{row.gf}</td>
-                    <td className="p-4 text-center">{row.gc}</td>
-                    <td className="p-4 text-center">{row.gd}</td>
-                    <td className="p-4 text-center font-bold text-red-400">{row.points}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        {!showElite && !showSegunda && (
+          <>
+            {standings.length === 0 ? (
+              <div className="rounded-2xl border border-neutral-800 bg-gradient-to-br from-neutral-900/60 to-neutral-950 p-8 text-center sm:p-10">
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-neutral-800/60">
+                  <Trophy className="h-8 w-8 text-neutral-500" />
+                </div>
+                <h3 className="mb-2 text-lg font-semibold">Sin posiciones</h3>
+                <p className="text-sm text-neutral-400 sm:text-base">
+                  La tabla de posiciones se actualizará automáticamente al finalizar los primeros encuentros de esta modalidad.
+                </p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto rounded-2xl border border-neutral-800 bg-neutral-900/60">
+                <table className="w-full min-w-[640px] text-sm">
+                  <thead>
+                    <tr className="border-b border-neutral-800 text-neutral-400">
+                      <th className="sticky left-0 bg-neutral-900/95 p-4 text-left">#</th>
+                      <th className="sticky left-12 bg-neutral-900/95 p-4 text-left">Equipo</th>
+                      <th className="p-4 text-center">PJ</th>
+                      <th className="p-4 text-center">PG</th>
+                      <th className="p-4 text-center">PE</th>
+                      <th className="p-4 text-center">PP</th>
+                      <th className="p-4 text-center">GF</th>
+                      <th className="p-4 text-center">GC</th>
+                      <th className="p-4 text-center">DG</th>
+                      <th className="sticky right-0 bg-neutral-900/95 p-4 text-center">PTS</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {standings.map((row, idx) => (
+                      <tr key={row.team} className="border-b border-neutral-800/60 hover:bg-neutral-800/30">
+                        <td className="sticky left-0 bg-neutral-900/60 p-4">{idx + 1}</td>
+                        <td className="sticky left-12 bg-neutral-900/60 p-4 font-medium">{row.team}</td>
+                        <td className="p-4 text-center">{row.played}</td>
+                        <td className="p-4 text-center">{row.won}</td>
+                        <td className="p-4 text-center">{row.drawn}</td>
+                        <td className="p-4 text-center">{row.lost}</td>
+                        <td className="p-4 text-center">{row.gf}</td>
+                        <td className="p-4 text-center">{row.gc}</td>
+                        <td className="p-4 text-center">{row.gd}</td>
+                        <td className="sticky right-0 bg-neutral-900/60 p-4 text-center font-bold text-red-400">{row.points}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </>
         )}
       </main>
     </div>

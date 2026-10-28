@@ -8,7 +8,7 @@ import { CATEGORIES, MODALITIES, leastConceded, modalityLabels, topScorers, type
 
 export default function EstadisticasPage() {
   const [category, setCategory] = useState<Category>("Sub-12");
-  const [modality, setModality] = useState<Modality>("competencia");
+  const [modality, setModality] = useState<Modality>("primera");
 
   const scorers = topScorers.filter((s) => s.category === category && s.modality === modality).sort((a, b) => b.goals - a.goals);
   const keepers = leastConceded.filter((k) => k.category === category && k.modality === modality).sort((a, b) => {
@@ -22,7 +22,7 @@ export default function EstadisticasPage() {
       <header className="border-b border-neutral-800 bg-neutral-950/90 backdrop-blur-xl">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-3">
-            <Image src="/logo.jpeg" alt="Furia Menor" width={40} height={40} className="rounded-lg" />
+            <Image src="/logo.png" alt="Furia Menor" width={40} height={40} className="object-contain" />
             <div>
               <p className="text-sm font-semibold">Furia Menor</p>
               <p className="text-xs text-neutral-400">Torneo Daeris</p>
@@ -70,19 +70,27 @@ export default function EstadisticasPage() {
               <h2 className="font-semibold">Tabla de Goleadores</h2>
             </div>
             <div className="divide-y divide-neutral-800/60">
-              {scorers.length === 0 && <p className="p-4 text-neutral-400">Sin datos</p>}
-              {scorers.map((scorer, idx) => (
-                <div key={scorer.player} className="flex items-center justify-between p-4">
-                  <div className="flex items-center gap-3">
-                    <span className="text-neutral-500">{idx + 1}</span>
-                    <div>
-                      <p className="font-medium">{scorer.player}</p>
-                      <p className="text-sm text-neutral-400">{scorer.team}</p>
-                    </div>
+              {scorers.length === 0 ? (
+                <div className="p-6 text-center sm:p-8">
+                  <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-neutral-800/60">
+                    <Goal className="h-6 w-6 text-neutral-500" />
                   </div>
-                  <span className="text-lg font-bold text-red-400">{scorer.goals}</span>
+                  <p className="text-sm text-neutral-400">No hay registros de goles o vallas invictas hasta el momento.</p>
                 </div>
-              ))}
+              ) : (
+                scorers.map((scorer, idx) => (
+                  <div key={scorer.player} className="flex items-center justify-between p-4">
+                    <div className="flex items-center gap-3">
+                      <span className="text-neutral-500">{idx + 1}</span>
+                      <div>
+                        <p className="font-medium">{scorer.player}</p>
+                        <p className="text-sm text-neutral-400">{scorer.team}</p>
+                      </div>
+                    </div>
+                    <span className="text-lg font-bold text-red-400">{scorer.goals}</span>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
@@ -92,30 +100,39 @@ export default function EstadisticasPage() {
               <h2 className="font-semibold">Arquería Menos Vencida</h2>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-neutral-800 text-neutral-400">
-                    <th className="p-4 text-left">#</th>
-                    <th className="p-4 text-left">Portero / Arco</th>
-                    <th className="p-4 text-left">Equipo</th>
-                    <th className="p-4 text-center">PJ</th>
-                    <th className="p-4 text-center">GC</th>
-                    <th className="p-4 text-center">Vallas Invictas</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {keepers.map((keeper, idx) => (
-                    <tr key={keeper.player} className="border-b border-neutral-800/60">
-                      <td className="p-4">{idx + 1}</td>
-                      <td className="p-4 font-medium">{keeper.player}</td>
-                      <td className="p-4 text-neutral-400">{keeper.team}</td>
-                      <td className="p-4 text-center">{keeper.matchesPlayed}</td>
-                      <td className="p-4 text-center text-red-400">{keeper.goalsConceded}</td>
-                      <td className="p-4 text-center text-yellow-400">{keeper.cleanSheets}</td>
+              {keepers.length === 0 ? (
+                <div className="p-6 text-center sm:p-8">
+                  <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-neutral-800/60">
+                    <Shield className="h-6 w-6 text-neutral-500" />
+                  </div>
+                  <p className="text-sm text-neutral-400">No hay registros de goles o vallas invictas hasta el momento.</p>
+                </div>
+              ) : (
+                <table className="w-full min-w-[520px] text-sm">
+                  <thead>
+                    <tr className="border-b border-neutral-800 text-neutral-400">
+                      <th className="sticky left-0 bg-neutral-900/95 p-4 text-left">#</th>
+                      <th className="sticky left-12 bg-neutral-900/95 p-4 text-left">Portero / Arco</th>
+                      <th className="p-4 text-left">Equipo</th>
+                      <th className="p-4 text-center">PJ</th>
+                      <th className="p-4 text-center">GC</th>
+                      <th className="sticky right-0 bg-neutral-900/95 p-4 text-center">Vallas Invictas</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {keepers.map((keeper, idx) => (
+                      <tr key={keeper.player} className="border-b border-neutral-800/60">
+                        <td className="sticky left-0 bg-neutral-900/60 p-4">{idx + 1}</td>
+                        <td className="sticky left-12 bg-neutral-900/60 p-4 font-medium">{keeper.player}</td>
+                        <td className="p-4 text-neutral-400">{keeper.team}</td>
+                        <td className="p-4 text-center">{keeper.matchesPlayed}</td>
+                        <td className="p-4 text-center text-red-400">{keeper.goalsConceded}</td>
+                        <td className="sticky right-0 bg-neutral-900/60 p-4 text-center text-yellow-400">{keeper.cleanSheets}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
         </div>

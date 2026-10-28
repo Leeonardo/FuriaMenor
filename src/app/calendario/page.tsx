@@ -79,9 +79,13 @@ export default function CalendarioPage() {
 
         <div className="space-y-4">
           {matches.length === 0 && (
-            <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-6 text-center text-neutral-400 sm:p-8">
-              <p className="text-sm sm:text-base">
-                No hay partidos registrados/finalizados para esta modalidad en la jornada seleccionada.
+            <div className="rounded-2xl border border-neutral-800 bg-gradient-to-br from-neutral-900/60 to-neutral-950 p-8 text-center sm:p-10">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-neutral-800/60">
+                <Calendar className="h-8 w-8 text-neutral-500" />
+              </div>
+              <h3 className="mb-2 text-lg font-semibold">Sin partidos</h3>
+              <p className="text-sm text-neutral-400 sm:text-base">
+                Aún no hay partidos programados para esta categoría/modalidad en la jornada seleccionada.
               </p>
             </div>
           )}
