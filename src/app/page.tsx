@@ -23,19 +23,19 @@ export default function Home() {
             <span className="text-lg font-bold tracking-tight">Furia Menor</span>
           </Link>
           <div className="hidden items-center gap-6 lg:flex">
-            <Link href="/tournaments" className="text-sm text-neutral-300 transition hover:text-white">
+            <Link href="/calendario" className="text-sm text-neutral-300 transition hover:text-white">
               Calendario
             </Link>
-            <Link href="/tournaments" className="text-sm text-neutral-300 transition hover:text-white">
+            <Link href="/calendario" className="text-sm text-neutral-300 transition hover:text-white">
               Resultados
             </Link>
-            <Link href="/tournaments" className="text-sm text-neutral-300 transition hover:text-white">
+            <Link href="/posiciones" className="text-sm text-neutral-300 transition hover:text-white">
               Tabla de Posiciones
             </Link>
-            <Link href="/tournaments" className="text-sm text-neutral-300 transition hover:text-white">
+            <Link href="/estadisticas" className="text-sm text-neutral-300 transition hover:text-white">
               Goleadores
             </Link>
-            <Link href="/tournaments" className="text-sm text-neutral-300 transition hover:text-white">
+            <Link href="/estadisticas" className="text-sm text-neutral-300 transition hover:text-white">
               Arquería Menos Vencida
             </Link>
             <Link href="#tienda" className="text-sm text-neutral-300 transition hover:text-white">
@@ -74,18 +74,18 @@ export default function Home() {
               </p>
               <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <Link
-                  href="/tournaments"
+                  href="/calendario"
                   className="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-red-600 to-orange-600 px-8 py-3 font-medium text-white shadow-lg shadow-red-600/25 transition hover:from-red-500 hover:to-orange-500 sm:w-auto"
                 >
                   <Calendar className="h-5 w-5" />
-                  Ver Calendario y Resultados
+                  Calendario & Resultados
                 </Link>
                 <Link
-                  href="/tournaments"
+                  href="/posiciones"
                   className="flex w-full items-center justify-center gap-2 rounded-lg border border-neutral-700 bg-neutral-900/50 px-8 py-3 font-medium text-white backdrop-blur-sm transition hover:border-red-500/50 hover:bg-neutral-800/50 sm:w-auto"
                 >
                   <Trophy className="h-5 w-5" />
-                  Ver Torneo
+                  Tabla de Posiciones
                 </Link>
               </div>
             </div>
@@ -95,22 +95,22 @@ export default function Home() {
         {/* Quick Access */}
         <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="grid gap-6 md:grid-cols-4">
-            <Link href="/tournaments" className="group rounded-2xl border border-neutral-800 bg-neutral-900/80 p-6 transition-all hover:border-red-500/50">
+            <Link href="/calendario" className="group rounded-2xl border border-neutral-800 bg-neutral-900/80 p-6 transition-all hover:border-red-500/50">
               <Calendar className="mb-4 h-8 w-8 text-red-500" />
               <h3 className="font-semibold">Calendario</h3>
               <p className="mt-1 text-sm text-neutral-400">Fechas, horarios y canchas</p>
             </Link>
-            <Link href="/tournaments" className="group rounded-2xl border border-neutral-800 bg-neutral-900/80 p-6 transition-all hover:border-orange-500/50">
+            <Link href="/posiciones" className="group rounded-2xl border border-neutral-800 bg-neutral-900/80 p-6 transition-all hover:border-orange-500/50">
               <Trophy className="mb-4 h-8 w-8 text-orange-500" />
               <h3 className="font-semibold">Tabla de Posiciones</h3>
               <p className="mt-1 text-sm text-neutral-400">Puntos, PJ, PG, PE, PP, GF, GC, DG</p>
             </Link>
-            <Link href="/tournaments" className="group rounded-2xl border border-neutral-800 bg-neutral-900/80 p-6 transition-all hover:border-amber-500/50">
+            <Link href="/estadisticas" className="group rounded-2xl border border-neutral-800 bg-neutral-900/80 p-6 transition-all hover:border-amber-500/50">
               <Goal className="mb-4 h-8 w-8 text-amber-500" />
               <h3 className="font-semibold">Tabla de Goleadores</h3>
               <p className="mt-1 text-sm text-neutral-400">Máximos anotadores por categoría</p>
             </Link>
-            <Link href="/tournaments" className="group rounded-2xl border border-neutral-800 bg-neutral-900/80 p-6 transition-all hover:border-yellow-500/50">
+            <Link href="/estadisticas" className="group rounded-2xl border border-neutral-800 bg-neutral-900/80 p-6 transition-all hover:border-yellow-500/50">
               <Target className="mb-4 h-8 w-8 text-yellow-500" />
               <h3 className="font-semibold">Arquería Menos Vencida</h3>
               <p className="mt-1 text-sm text-neutral-400">Mejor valla por categoría</p>
