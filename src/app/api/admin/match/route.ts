@@ -9,9 +9,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { matchId, homeScore, awayScore, goals } = await request.json();
+    const { matchId, homeScore, awayScore, goals, cards } = await request.json();
 
-    // Update match in memory (for demo/static data)
     const matchIndex = torneoDaerisMatches.findIndex((m) => m.id === matchId);
     if (matchIndex !== -1) {
       torneoDaerisMatches[matchIndex].homeScore = homeScore;
@@ -19,10 +18,14 @@ export async function POST(request: NextRequest) {
       torneoDaerisMatches[matchIndex].status = "finished";
     }
 
-    // Here you would update Supabase/Postgres tables
-    // For now, data is updated in memory for the session
+    // Automatic recalculation would update Supabase/Postgres:
+    // - Standings: PJ, PG, PE, PP, GF, GC, DIF, PTS per team by (category, division, modality)
+    // - Scorers table from goals
+    // - Least conceded / clean sheets (valla invicta) when awayScore==0 or homeScore==0
+    // - Fair Play from cards (TA/TR)
+    // - Classification cut line based on groups/division rules
 
-    return NextResponse.json({ success: true, matchId, homeScore, awayScore });
+    return NextResponse.json({ success: true, matchId, homeScore, awayScore, goalsCount: goals?.length || 0, cardsCount: cards?.length || 0 });
   } catch (error) {
     return NextResponse.json({ error: "Error" }, { status: 500 });
   }

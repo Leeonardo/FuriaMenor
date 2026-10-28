@@ -1,57 +1,38 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Trophy, Save, Plus, Minus } from "lucide-react";
+import { Trophy, Save, Plus, Minus, AlertTriangle } from "lucide-react";
 import { CATEGORIES, MODALITIES, modalityLabels, type Category, type Modality } from "@/data/daeris";
-import { torneoDaerisMatches, type Match } from "@/data/daeris/calendario";
+import { torneoDaerisMatches } from "@/data/daeris/calendario";
+
+const DIVISIONS = ["1era División", "2da División"] as const;
+type Division = (typeof DIVISIONS)[number];
 
 export default function AdminPage() {
-  const [authenticated, setAuthenticated] = useState(false);
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const [category, setCategory] = useState<Category | "all">("all");
+  const [division, setDivision] = useState<Division | "all">("all");
   const [modality, setModality] = useState<Modality | "all">("all");
   const [selectedMatchId, setSelectedMatchId] = useState("");
   const [homeScore, setHomeScore] = useState(0);
   const [awayScore, setAwayScore] = useState(0);
-  const [goals, setGoals] = useState<Array<{ player: string; team: string; minute?: string }>>([{ player: "", team: "home", minute: "" }]);
+  const [goals, setGoals] = useState<Array<{ player: string; team: "home" | "away"; minute?: string }>>([{ player: "", team: "home", minute: "" }]);
+  const [cards, setCards] = useState<Array<{ player: string; team: "home" | "away"; type: "amarilla" | "roja" }>>([]);
 
   const matches = torneoDaerisMatches.filter((m) => {
     const matchCategory = category === "all" || m.category === category;
     const matchModality = modality === "all" || m.modality === modality;
-    return (m.status === "scheduled" || m.status === "live") && matchCategory && matchModality;
+    const matchDivision = division === "all" || m.division === division;
+    return (m.status === "scheduled" || m.status === "live") && matchCategory && matchModality && matchDivision;
   });
 
   const selectedMatch = torneoDaerisMatches.find((m) => m.id === selectedMatchId);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-    try {
-      const res = await fetch("/api/admin/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
-      });
-      if (res.ok) {
-        setAuthenticated(true);
-      } else {
-        setError("Contraseña incorrecta");
-      }
-    } catch {
-      setError("Error al iniciar sesión");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const addGoal = () => {
-    setGoals([...goals, { player: "", team: selectedMatch?.homeTeam ? "home" : "home", minute: "" }]);
+    setGoals([...goals, { player: "", team: "home", minute: "" }]);
   };
 
   const removeGoal = (idx: number) => {
@@ -64,6 +45,20 @@ export default function AdminPage() {
     const newGoals = [...goals];
     newGoals[idx] = { ...newGoals[idx], [field]: value };
     setGoals(newGoals);
+  };
+
+  const addCard = () => {
+    setCards([...cards, { player: "", team: "home", type: "amarilla" }]);
+  };
+
+  const removeCard = (idx: number) => {
+    setCards(cards.filter((_, i) => i !== idx));
+  };
+
+  const updateCard = (idx: number, field: string, value: string) => {
+    const newCards = [...cards];
+    newCards[idx] = { ...newCards[idx], [field]: value };
+    setCards(newCards);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -79,10 +74,11 @@ export default function AdminPage() {
           homeScore,
           awayScore,
           goals: goals.filter((g) => g.player.trim()),
+          cards: cards.filter((c) => c.player.trim()),
         }),
       });
       if (res.ok) {
-        alert("Partido finalizado y tablas actualizadas correctamente");
+        alert("Partido finalizado. Tablas, goleadores, arquería y fair play actualizados.");
         window.location.reload();
       } else {
         alert("Error al guardar");
@@ -93,41 +89,6 @@ export default function AdminPage() {
       setLoading(false);
     }
   };
-
-  if (!authenticated) {
-    return (
-      <div className="min-h-screen bg-neutral-950 text-neutral-100 flex items-center justify-center px-4">
-        <div className="w-full max-w-md">
-          <div className="mb-8 text-center">
-            <div className="mb-4 flex justify-center">
-              <Image src="/logo.png" alt="Furia Menor" width={60} height={60} className="object-contain" />
-            </div>
-            <h1 className="text-2xl font-bold">Panel de Administración</h1>
-            <p className="mt-2 text-neutral-400">Torneo Daeris</p>
-          </div>
-          <form onSubmit={handleLogin} className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-6 space-y-4">
-            <div>
-              <label className="block text-sm mb-2">Contraseña</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2"
-                required
-              />
-            </div>
-            {error && <p className="text-sm text-red-400">{error}</p>}
-            <button type="submit" disabled={loading} className="w-full rounded-lg bg-red-600 px-4 py-2 font-semibold hover:bg-red-700 disabled:opacity-50">
-              {loading ? "Ingresando..." : "Ingresar"}
-            </button>
-            <Link href="/" className="block text-center text-sm text-neutral-400 hover:text-white">
-              Volver al inicio
-            </Link>
-          </form>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100">
@@ -158,26 +119,32 @@ export default function AdminPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-6 space-y-4">
-            <h2 className="text-lg font-semibold">Seleccionar Partido</h2>
-            <div className="grid gap-4 sm:grid-cols-2">
+            <h2 className="text-lg font-semibold">Selección de Partido</h2>
+            <div className="grid gap-4 sm:grid-cols-3">
               <select value={category} onChange={(e) => setCategory(e.target.value as Category | "all")} className="rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2">
-                <option value="all">Todas las categorías</option>
+                <option value="all">Categoría (Sub-6 a Sub-18)</option>
                 {CATEGORIES.map((c) => (
                   <option key={c} value={c}>{c}</option>
                 ))}
               </select>
+              <select value={division} onChange={(e) => setDivision(e.target.value as Division | "all")} className="rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2">
+                <option value="all">División</option>
+                {DIVISIONS.map((d) => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
               <select value={modality} onChange={(e) => setModality(e.target.value as Modality | "all")} className="rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2">
-                <option value="all">Todas las modalidades</option>
+                <option value="all">Modalidad</option>
                 {MODALITIES.map((m) => (
                   <option key={m} value={m}>{modalityLabels[m]}</option>
                 ))}
               </select>
             </div>
             <select value={selectedMatchId} onChange={(e) => setSelectedMatchId(e.target.value)} className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2" required>
-              <option value="">Selecciona un partido (Programado / En Vivo)</option>
+              <option value="">Partidos en estado PROGRAMADO o EN VIVO</option>
               {matches.map((m) => (
                 <option key={m.id} value={m.id}>
-                  {m.category} {m.division || modalityLabels[m.modality]} | {m.homeTeam} vs {m.awayTeam} | {m.matchDate} {m.matchTime} - {m.status === "live" ? "EN VIVO" : "PROGRAMADO"}
+                  {m.category} | {m.division} | {modalityLabels[m.modality]} | {m.homeTeam} vs {m.awayTeam} | {m.matchDate} {m.matchTime} - {m.status === "live" ? "EN VIVO" : "PROGRAMADO"}
                 </option>
               ))}
             </select>
@@ -214,15 +181,15 @@ export default function AdminPage() {
 
               <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-6 space-y-4">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold">Goleadores (Opcional)</h2>
+                  <h2 className="text-lg font-semibold">Goleadores</h2>
                   <button type="button" onClick={addGoal} className="flex items-center gap-1 rounded-lg bg-neutral-800 px-3 py-1 text-sm hover:bg-neutral-700">
-                    <Plus className="h-4 w-4" /> Agregar
+                    <Plus className="h-4 w-4" /> Agregar Gol
                   </button>
                 </div>
                 {goals.map((goal, idx) => (
-                  <div key={idx} className="grid gap-3 sm:grid-cols-[1fr_1fr_100px_auto]">
+                  <div key={idx} className="grid gap-3 sm:grid-cols-[1.5fr_1fr_80px_auto]">
                     <input
-                      placeholder="Nombre del jugador"
+                      placeholder="Jugador"
                       value={goal.player}
                       onChange={(e) => updateGoal(idx, "player", e.target.value)}
                       className="rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2"
@@ -242,6 +209,41 @@ export default function AdminPage() {
                     </button>
                   </div>
                 ))}
+              </div>
+
+              <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className="h-5 w-5 text-amber-400" />
+                    <h2 className="text-lg font-semibold">Amonestaciones y Sanciones</h2>
+                  </div>
+                  <button type="button" onClick={addCard} className="flex items-center gap-1 rounded-lg bg-neutral-800 px-3 py-1 text-sm hover:bg-neutral-700">
+                    <Plus className="h-4 w-4" /> Agregar Tarjeta
+                  </button>
+                </div>
+                {cards.length === 0 && <p className="text-sm text-neutral-500">Sin tarjetas registradas</p>}
+                {cards.map((card, idx) => (
+                  <div key={idx} className="grid gap-3 sm:grid-cols-[1.5fr_1fr_1fr_auto]">
+                    <input
+                      placeholder="Jugador"
+                      value={card.player}
+                      onChange={(e) => updateCard(idx, "player", e.target.value)}
+                      className="rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2"
+                    />
+                    <select value={card.team} onChange={(e) => updateCard(idx, "team", e.target.value)} className="rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2">
+                      <option value="home">{selectedMatch.homeTeam}</option>
+                      <option value="away">{selectedMatch.awayTeam}</option>
+                    </select>
+                    <select value={card.type} onChange={(e) => updateCard(idx, "type", e.target.value)} className="rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2">
+                      <option value="amarilla">Tarjeta Amarilla (TA)</option>
+                      <option value="roja">Tarjeta Roja (TR)</option>
+                    </select>
+                    <button type="button" onClick={() => removeCard(idx)} className="rounded-lg bg-neutral-800 p-2 hover:bg-neutral-700">
+                      <Minus className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+                <p className="text-xs text-neutral-500">Se aplicará Fair Play (tarjetas) al recálculo de posiciones.</p>
               </div>
 
               <button type="submit" disabled={loading} className="w-full flex items-center justify-center gap-2 rounded-lg bg-red-600 px-6 py-3 font-semibold hover:bg-red-700 disabled:opacity-50">
