@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import type { Metadata } from "next";
 import {
   ArrowRight,
@@ -18,7 +21,7 @@ import {
 import { torneoDaerisMatches } from "@/data/daeris/calendario";
 import { topScorers, leastConceded } from "@/data/daeris";
 
-export const metadata: Metadata = {
+// export const metadata: Metadata = {
   title: "Torneo Daeris | Furia Menor - Calendario, Resultados y Posiciones",
   description:
     "Seguimiento oficial del Torneo Daeris de Furia Menor. Calendario, tabla de posiciones, goleadores, arquería menos vencida y resultados por categoría y modalidad.",
@@ -37,6 +40,7 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
+  const [open, setOpen] = useState(false);
   const upcomingMatches = torneoDaerisMatches
     .filter((m) => m.status === "scheduled")
     .sort((a, b) => a.matchTime.localeCompare(b.matchTime))
@@ -70,6 +74,17 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100">
+      {open && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4">
+          <div className="w-full max-w-sm rounded-2xl border border-red-500 bg-neutral-950 p-6 text-center shadow-2xl">
+            <p className="text-2xl font-bold text-red-500">MAMALO BECERRO INFELIZ</p>
+            <button onClick={() => setOpen(false)} className="mt-4 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold hover:bg-red-700">Cerrar</button>
+          </div>
+        </div>
+      )}
+      <div className="w-full bg-red-600 py-2 text-center">
+        <button onClick={() => setOpen(true)} className="text-sm font-bold uppercase tracking-wider text-white">click aca parra</button>
+      </div>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
