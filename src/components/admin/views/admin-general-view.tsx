@@ -411,6 +411,12 @@ export function AdminGeneralView({
                   <span>📍 {m.venue}</span>
                   {m.refereeName && <span className="text-amber-400">👨‍⚖️ {m.refereeName}</span>}
                 </div>
+                {m.refereeNotes && (
+                  <p className="text-xs text-amber-300/90 bg-neutral-950/80 rounded-xl px-3 py-1.5 border border-amber-500/20 italic">
+                    <strong className="text-amber-400 not-italic font-bold">Acta / Incidencias: </strong>
+                    {m.refereeNotes}
+                  </p>
+                )}
               </div>
 
               <div className="shrink-0 flex items-center gap-2">
@@ -571,6 +577,19 @@ export function AdminGeneralView({
                   value={venue}
                   onChange={(e) => setVenue(e.target.value)}
                   className="w-full rounded-xl border border-neutral-700 bg-neutral-950 px-3 py-2 text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-amber-400 mb-1">
+                  Acta de Partido, Incidencias & Tarjetas (Corrección de Imprevistos)
+                </label>
+                <textarea
+                  rows={2}
+                  value={refereeNotes}
+                  onChange={(e) => setRefereeNotes(e.target.value)}
+                  placeholder="Ej: Goles: 2x Carlos Pérez (min 12, 28). TA: Juan Ruiz min 34. Cambio de horario autorizado por lluvia."
+                  className="w-full rounded-xl border border-neutral-700 bg-neutral-950 px-3 py-2 text-xs text-white placeholder-neutral-500 focus:border-amber-500 focus:outline-none"
                 />
               </div>
 

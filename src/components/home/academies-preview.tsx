@@ -4,8 +4,10 @@ import { academiesData } from "@/data/academies-data";
 import { AcademyBadge } from "@/components/academies/academy-badge";
 
 export function AcademiesPreview() {
-  // Mostramos 6 academias destacadas en la home
-  const featured = academiesData.slice(0, 6);
+  // Mostramos 6 academias destacadas en la home, priorizando a La Paz Futsal
+  const laPaz = academiesData.find((a) => a.slug === "la-paz-futsal");
+  const others = academiesData.filter((a) => a.slug !== "la-paz-futsal");
+  const featured = laPaz ? [laPaz, ...others.slice(0, 5)] : academiesData.slice(0, 6);
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
