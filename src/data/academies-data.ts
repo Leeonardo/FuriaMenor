@@ -1,0 +1,884 @@
+export type Municipality = "Libertador" | "Chacao" | "Baruta" | "Sucre" | "El Hatillo";
+
+export type SportDiscipline = "Fútbol Sala" | "Fútbol Campo" | "Fútbol 7";
+
+export type AcademyCategory =
+  | "Sub-6"
+  | "Sub-8"
+  | "Sub-10"
+  | "Sub-12"
+  | "Sub-14"
+  | "Sub-16"
+  | "Sub-18"
+  | "Sub-20";
+
+export interface AcademyPlayer {
+  dorsal: number;
+  name: string;
+  position: "Portero" | "Cierre" | "Ala" | "Pívot" | "Defensa" | "Medio" | "Delantero";
+  ci: string;
+  birthYear: number;
+  goals?: number;
+}
+
+export interface CategoryRoster {
+  coach: string;
+  assistant: string;
+  captain?: string;
+  players: AcademyPlayer[];
+}
+
+export interface AcademyVenue {
+  name: string;
+  sector: string;
+  address: string;
+  surface: "Tabloncillo" | "Césped Sintético" | "Cemento Pulido";
+  schedule: string;
+}
+
+export interface AcademyPerformance {
+  activeTournament: string;
+  matchesPlayed: number;
+  wins: number;
+  draws: number;
+  losses: number;
+  goalsFor: number;
+  goalsAgainst: number;
+  averagePosition: string;
+  winRate: string;
+  achievements: string[];
+}
+
+export interface AcademyGalleryItem {
+  id: string;
+  caption: string;
+  category: string;
+  colorBg: string;
+  aspect: "landscape" | "portrait";
+}
+
+export interface Academy {
+  id: string;
+  slug: string;
+  name: string;
+  officialName: string;
+  shortName: string;
+  foundationYear: number;
+  motto: string;
+  bio: string;
+  municipality: Municipality;
+  zoneDetail: string;
+  disciplines: SportDiscipline[];
+  categories: AcademyCategory[];
+  colors: {
+    primary: string;
+    secondary: string;
+    textHex: string;
+    names: string[];
+  };
+  socials: {
+    instagram?: string;
+    facebook?: string;
+    whatsapp?: string;
+    email?: string;
+    website?: string;
+  };
+  contact: {
+    coordinator: string;
+    phone: string;
+    officeHours: string;
+  };
+  venues: AcademyVenue[];
+  performance: AcademyPerformance;
+  rosters: Partial<Record<AcademyCategory, CategoryRoster>>;
+  gallery: AcademyGalleryItem[];
+}
+
+export const CARACAS_MUNICIPALITIES: Municipality[] = [
+  "Libertador",
+  "Chacao",
+  "Baruta",
+  "Sucre",
+  "El Hatillo",
+];
+
+export const SPORT_DISCIPLINES: SportDiscipline[] = [
+  "Fútbol Sala",
+  "Fútbol 7",
+  "Fútbol Campo",
+];
+
+export const ACADEMY_CATEGORIES: AcademyCategory[] = [
+  "Sub-6",
+  "Sub-8",
+  "Sub-10",
+  "Sub-12",
+  "Sub-14",
+  "Sub-16",
+  "Sub-18",
+  "Sub-20",
+];
+
+export const academiesData: Academy[] = [
+  // 1. DVO Paraíso
+  {
+    id: "acad-01",
+    slug: "dvo-paraiso",
+    name: "DVO Paraíso",
+    officialName: "Deportivo Paraíso Futsal Club",
+    shortName: "DVO Paraíso",
+    foundationYear: 2014,
+    motto: "Disciplina, Pasión y Cantera Caraqueña",
+    bio: "Academia referente en el suroeste de Caracas con más de 12 años forjando talentos de alto rendimiento para el fútbol sala menor y selecciones distritales.",
+    municipality: "Libertador",
+    zoneDetail: "El Paraíso · Av. Páez",
+    disciplines: ["Fútbol Sala", "Fútbol 7"],
+    categories: ["Sub-6", "Sub-8", "Sub-10", "Sub-12", "Sub-14", "Sub-16", "Sub-18"],
+    colors: {
+      primary: "#dc2626", // Rojo Furia
+      secondary: "#fbbf24", // Dorado
+      textHex: "#ffffff",
+      names: ["Rojo Escarlata", "Oro Olímpico"],
+    },
+    socials: {
+      instagram: "@dvoparaisofc",
+      facebook: "dvoparaisofutsal",
+      whatsapp: "+58 412 555 0101",
+      email: "coordinacion@dvoparaiso.com",
+    },
+    contact: {
+      coordinator: "Prof. Marcos Zambrano",
+      phone: "+58 (412) 555-0101",
+      officeHours: "Lunes a Viernes: 2:00 PM - 7:30 PM",
+    },
+    venues: [
+      {
+        name: "Cancha Gimnasio Libertador del 23 de Enero",
+        sector: "23 de Enero",
+        address: "Av. Principal del 23 de Enero, Caracas",
+        surface: "Tabloncillo",
+        schedule: "Martes y Jueves: 3:00 PM - 7:00 PM",
+      },
+      {
+        name: "Polideportivo Parque El Paraíso",
+        sector: "El Paraíso",
+        address: "Av. José Antonio Páez, frente al Pedagógico",
+        surface: "Cemento Pulido",
+        schedule: "Sábados: 8:00 AM - 1:00 PM",
+      },
+    ],
+    performance: {
+      activeTournament: "Torneo Daeris · Temporada 2026",
+      matchesPlayed: 18,
+      wins: 13,
+      draws: 3,
+      losses: 2,
+      goalsFor: 64,
+      goalsAgainst: 22,
+      averagePosition: "2° Lugar General",
+      winRate: "72%",
+      achievements: [
+        "Campeón Torneo Apertura Sub-12 Daeris 2025",
+        "Subcampeón Liga Menor Distrital Sub-14 2024",
+        "Premio Fair Play Categoría Sub-10 2025",
+      ],
+    },
+    rosters: {
+      "Sub-12": {
+        coach: "DT. Carlos Méndez",
+        assistant: "AT. Robert Silva",
+        captain: "Santiago Gómez (#10)",
+        players: [
+          { dorsal: 1, name: "Diego Albornoz", position: "Portero", ci: "V-34.110.401", birthYear: 2014 },
+          { dorsal: 2, name: "Sebastián Rivas", position: "Cierre", ci: "V-34.110.402", birthYear: 2014 },
+          { dorsal: 3, name: "Gabriel Mendoza", position: "Cierre", ci: "V-34.110.403", birthYear: 2014 },
+          { dorsal: 7, name: "Andrés Velásquez", position: "Ala", ci: "V-34.110.404", birthYear: 2014, goals: 7 },
+          { dorsal: 8, name: "Mateo Chacón", position: "Ala", ci: "V-34.110.405", birthYear: 2014, goals: 5 },
+          { dorsal: 10, name: "Santiago Gómez", position: "Pívot", ci: "V-34.110.406", birthYear: 2014, goals: 11 },
+          { dorsal: 11, name: "Lucas Padrón", position: "Ala", ci: "V-34.110.407", birthYear: 2014, goals: 4 },
+          { dorsal: 12, name: "Alejandro Ruiz", position: "Portero", ci: "V-34.110.408", birthYear: 2014 },
+        ],
+      },
+      "Sub-10": {
+        coach: "DT. Fernando Quintero",
+        assistant: "AT. Marcos Ruiz",
+        captain: "Matías Rojas (#9)",
+        players: [
+          { dorsal: 1, name: "Daniel Briceño", position: "Portero", ci: "V-35.210.101", birthYear: 2016 },
+          { dorsal: 4, name: "Samuel Ortiz", position: "Cierre", ci: "V-35.210.102", birthYear: 2016 },
+          { dorsal: 8, name: "Joaquín Lugo", position: "Ala", ci: "V-35.210.103", birthYear: 2016, goals: 6 },
+          { dorsal: 9, name: "Matías Rojas", position: "Pívot", ci: "V-35.210.104", birthYear: 2016, goals: 9 },
+          { dorsal: 10, name: "Enmanuel Paz", position: "Ala", ci: "V-35.210.105", birthYear: 2016, goals: 4 },
+        ],
+      },
+      "Sub-14": {
+        coach: "DT. Marcos Zambrano",
+        assistant: "AT. Elio Cardozo",
+        captain: "Leonardo Herrera (#5)",
+        players: [
+          { dorsal: 1, name: "Brayan Toro", position: "Portero", ci: "V-32.901.801", birthYear: 2012 },
+          { dorsal: 5, name: "Leonardo Herrera", position: "Cierre", ci: "V-32.901.802", birthYear: 2012, goals: 3 },
+          { dorsal: 7, name: "Kevin Paredes", position: "Ala", ci: "V-32.901.803", birthYear: 2012, goals: 8 },
+          { dorsal: 9, name: "Yonder Escalona", position: "Pívot", ci: "V-32.901.804", birthYear: 2012, goals: 12 },
+        ],
+      },
+    },
+    gallery: [
+      { id: "g1", caption: "Plantel Sub-12 celebrando el pase a Semifinales en el Gimnasio Libertador", category: "Sub-12", colorBg: "from-red-950 to-neutral-900", aspect: "landscape" },
+      { id: "g2", caption: "Entrenamiento táctico de repliegue y transición defensiva", category: "Cantera", colorBg: "from-neutral-900 to-red-950", aspect: "portrait" },
+      { id: "g3", caption: "Semillero Sub-8 en jornada de iniciación formativa", category: "Sub-8", colorBg: "from-amber-950 to-neutral-900", aspect: "landscape" },
+      { id: "g4", caption: "Entrega de trofeo al arquero menos goleado de la división", category: "Premios", colorBg: "from-neutral-900 to-neutral-950", aspect: "landscape" },
+    ],
+  },
+
+  // 2. Fénix FS
+  {
+    id: "acad-02",
+    slug: "fenix-fs",
+    name: "Fénix FS",
+    officialName: "Fénix Futsal Academia",
+    shortName: "Fénix FS",
+    foundationYear: 2018,
+    motto: "Resurgir, Luchar y Triunfar",
+    bio: "Club formador caracterizado por su estilo dinámico, velocidad de juego y alta intensidad en canchas de La Candelaria y San Agustín.",
+    municipality: "Libertador",
+    zoneDetail: "San Agustín · La Candelaria",
+    disciplines: ["Fútbol Sala"],
+    categories: ["Sub-8", "Sub-10", "Sub-12", "Sub-14", "Sub-16"],
+    colors: {
+      primary: "#ea580c", // Naranja Fénix
+      secondary: "#e11d48", // Carmesí
+      textHex: "#ffffff",
+      names: ["Naranja Fuego", "Rojo Rubí"],
+    },
+    socials: {
+      instagram: "@fenixfutsal_ccs",
+      whatsapp: "+58 424 112 3344",
+      email: "contacto@fenixfs.com.ve",
+    },
+    contact: {
+      coordinator: "Lic. Javier Oropeza",
+      phone: "+58 (424) 112-3344",
+      officeHours: "Lunes a Jueves: 3:00 PM - 8:00 PM",
+    },
+    venues: [
+      {
+        name: "Cancha Municipal Parque Carabobo",
+        sector: "La Candelaria",
+        address: "Av. Universidad, Parque Carabobo",
+        surface: "Cemento Pulido",
+        schedule: "Lunes y Miércoles: 4:00 PM - 8:00 PM",
+      },
+      {
+        name: "Complejo Deportivo San Agustín del Norte",
+        sector: "San Agustín",
+        address: "Final Av. Leonardo da Vinci",
+        surface: "Tabloncillo",
+        schedule: "Viernes: 3:30 PM - 7:30 PM",
+      },
+    ],
+    performance: {
+      activeTournament: "Torneo Daeris · 1ra División",
+      matchesPlayed: 16,
+      wins: 11,
+      draws: 2,
+      losses: 3,
+      goalsFor: 52,
+      goalsAgainst: 26,
+      averagePosition: "3° Lugar General",
+      winRate: "68%",
+      achievements: [
+        "Subcampeón Copa Élite Parque Carabobo 2025",
+        "Goleador del Torneo Sub-14 2025",
+      ],
+    },
+    rosters: {
+      "Sub-12": {
+        coach: "DT. Javier Oropeza",
+        assistant: "AT. Nelson Blanco",
+        captain: "Ángel Romero (#7)",
+        players: [
+          { dorsal: 1, name: "Moisés Castillo", position: "Portero", ci: "V-34.809.111", birthYear: 2014 },
+          { dorsal: 3, name: "Darwin Peña", position: "Cierre", ci: "V-34.809.112", birthYear: 2014 },
+          { dorsal: 7, name: "Ángel Romero", position: "Ala", ci: "V-34.809.113", birthYear: 2014, goals: 9 },
+          { dorsal: 10, name: "Kendry Salazar", position: "Pívot", ci: "V-34.809.114", birthYear: 2014, goals: 8 },
+        ],
+      },
+    },
+    gallery: [
+      { id: "g1", caption: "Calentamiento previo al clásico ante DVO Paraíso", category: "Jornada", colorBg: "from-orange-950 to-neutral-900", aspect: "landscape" },
+      { id: "g2", caption: "Charla técnica del profesor Oropeza en el entretiempo", category: "Vestuario", colorBg: "from-neutral-900 to-orange-950", aspect: "portrait" },
+    ],
+  },
+
+  // 3. Fratelsa Sport
+  {
+    id: "acad-03",
+    slug: "fratelsa-sport",
+    name: "Fratelsa Sport",
+    officialName: "Asociación Civil Fratelsa Sport Club",
+    shortName: "Fratelsa",
+    foundationYear: 2011,
+    motto: "Formación de Excelencia y Valores Ciudadanos",
+    bio: "Una de las instituciones formativas de mayor envergadura en el este de Caracas, con planteles multidisciplinarios en futsal, fútbol 7 y fútbol campo federado.",
+    municipality: "Chacao",
+    zoneDetail: "Chacao · Sebucán · Altamira",
+    disciplines: ["Fútbol Sala", "Fútbol 7", "Fútbol Campo"],
+    categories: ["Sub-6", "Sub-8", "Sub-10", "Sub-12", "Sub-14", "Sub-16", "Sub-18", "Sub-20"],
+    colors: {
+      primary: "#2563eb", // Azul Real
+      secondary: "#facc15", // Amarillo Canario
+      textHex: "#ffffff",
+      names: ["Azul Real", "Amarillo Canario"],
+    },
+    socials: {
+      instagram: "@fratelsasport",
+      facebook: "fratelsasportoficial",
+      whatsapp: "+58 414 200 8899",
+      website: "https://fratelsasport.com",
+    },
+    contact: {
+      coordinator: "Prof. Gerardo Benítez",
+      phone: "+58 (414) 200-8899",
+      officeHours: "Lunes a Viernes: 1:30 PM - 7:00 PM",
+    },
+    venues: [
+      {
+        name: "Complejo Deportivo Sebucán",
+        sector: "Sebucán",
+        address: "Av. Principal de Sebucán con Av. Los Chorros",
+        surface: "Césped Sintético",
+        schedule: "Lunes a Jueves: 3:00 PM - 7:00 PM",
+      },
+      {
+        name: "Canchas Bello Campo Chacao",
+        sector: "Chacao",
+        address: "Calle Los Ángeles, Bello Campo",
+        surface: "Tabloncillo",
+        schedule: "Viernes y Sábados: 8:00 AM - 12:00 PM",
+      },
+    ],
+    performance: {
+      activeTournament: "Torneo Daeris · Liga Élite Infantil",
+      matchesPlayed: 20,
+      wins: 15,
+      draws: 3,
+      losses: 2,
+      goalsFor: 78,
+      goalsAgainst: 18,
+      averagePosition: "1° Lugar General",
+      winRate: "75%",
+      achievements: [
+        "Campeón Torneo Daeris Infantil Sub-10 2025",
+        "Campeón Torneo Daeris Infantil Sub-12 2025",
+        "Valla Menos Vencida de Caracas Sub-12 2025",
+      ],
+    },
+    rosters: {
+      "Sub-12": {
+        coach: "DT. Gerardo Benítez",
+        assistant: "AT. Alejandro Moros",
+        captain: "Mathías Silva (#8)",
+        players: [
+          { dorsal: 1, name: "Juan Pablo Cárdenas", position: "Portero", ci: "V-34.500.201", birthYear: 2014 },
+          { dorsal: 2, name: "César Infante", position: "Cierre", ci: "V-34.500.202", birthYear: 2014 },
+          { dorsal: 8, name: "Mathías Silva", position: "Ala", ci: "V-34.500.203", birthYear: 2014, goals: 10 },
+          { dorsal: 10, name: "Ignacio Vegas", position: "Pívot", ci: "V-34.500.204", birthYear: 2014, goals: 13 },
+        ],
+      },
+      "Sub-8": {
+        coach: "DT. Valentina Suárez",
+        assistant: "AT. Carlos Bello",
+        players: [
+          { dorsal: 1, name: "Lucas Mora", position: "Portero", ci: "V-36.100.901", birthYear: 2018 },
+          { dorsal: 7, name: "Thiago Benítez", position: "Ala", ci: "V-36.100.902", birthYear: 2018, goals: 8 },
+        ],
+      },
+    },
+    gallery: [
+      { id: "g1", caption: "Ceremonia de premiación campeones Sub-10 en Sebucán", category: "Campeones", colorBg: "from-blue-950 to-neutral-900", aspect: "landscape" },
+      { id: "g2", caption: "Postales del entrenamiento vespertino categoría Sub-16", category: "Entrenamientos", colorBg: "from-neutral-900 to-blue-950", aspect: "portrait" },
+    ],
+  },
+
+  // 4. Futsaconexion
+  {
+    id: "acad-04",
+    slug: "futsaconexion",
+    name: "Futsaconexion",
+    officialName: "Club Social y Deportivo Futsaconexion",
+    shortName: "Futconexión",
+    foundationYear: 2019,
+    motto: "Conectando Juventud, Deporte y Futuro",
+    bio: "Proyecto de impacto social y deportivo que conecta niños y jóvenes del oeste caraqueño a través de la competencia sana y el fútbol sala formativo.",
+    municipality: "Libertador",
+    zoneDetail: "La Vega · Montalbán",
+    disciplines: ["Fútbol Sala", "Fútbol 7"],
+    categories: ["Sub-8", "Sub-10", "Sub-12", "Sub-14", "Sub-16", "Sub-18"],
+    colors: {
+      primary: "#059669", // Verde Esmeralda
+      secondary: "#0284c7", // Azul Cielo
+      textHex: "#ffffff",
+      names: ["Verde Esperanza", "Azul Eléctrico"],
+    },
+    socials: {
+      instagram: "@futsaconexion_ccs",
+      whatsapp: "+58 412 889 1234",
+      email: "contacto@futsaconexion.com",
+    },
+    contact: {
+      coordinator: "Prof. Franklin Colmenares",
+      phone: "+58 (412) 889-1234",
+      officeHours: "Martes a Sábado: 2:00 PM - 6:30 PM",
+    },
+    venues: [
+      {
+        name: "Cancha Deportiva La Vega",
+        sector: "La Vega",
+        address: "Sector Los Cangilones, Cancha Central",
+        surface: "Cemento Pulido",
+        schedule: "Martes y Jueves: 3:00 PM - 6:30 PM",
+      },
+      {
+        name: "Gimnasio Cubierto Montalbán",
+        sector: "Montalbán",
+        address: "Av. Teherán, diagonal a la UCAB",
+        surface: "Tabloncillo",
+        schedule: "Sábados: 9:00 AM - 1:00 PM",
+      },
+    ],
+    performance: {
+      activeTournament: "Torneo Daeris · 1ra División",
+      matchesPlayed: 15,
+      wins: 9,
+      draws: 3,
+      losses: 3,
+      goalsFor: 44,
+      goalsAgainst: 24,
+      averagePosition: "4° Lugar General",
+      winRate: "60%",
+      achievements: [
+        "Campeón Copa Navidad La Vega 2024",
+        "Clasificados a Liguilla Final Torneo Daeris 2026",
+      ],
+    },
+    rosters: {
+      "Sub-12": {
+        coach: "DT. Franklin Colmenares",
+        assistant: "AT. Yorman Torres",
+        captain: "Jonathan Lugo (#10)",
+        players: [
+          { dorsal: 1, name: "Jesús Palacios", position: "Portero", ci: "V-34.700.101", birthYear: 2014 },
+          { dorsal: 5, name: "Yonder Bello", position: "Cierre", ci: "V-34.700.102", birthYear: 2014 },
+          { dorsal: 10, name: "Jonathan Lugo", position: "Ala", ci: "V-34.700.103", birthYear: 2014, goals: 7 },
+        ],
+      },
+    },
+    gallery: [
+      { id: "g1", caption: "Jornada dominical en las canchas de Montalbán", category: "Torneo", colorBg: "from-emerald-950 to-neutral-900", aspect: "landscape" },
+    ],
+  },
+
+  // 5. Union Libertador
+  {
+    id: "acad-05",
+    slug: "union-libertador",
+    name: "Union Libertador",
+    officialName: "Club Unión Libertador Futsal",
+    shortName: "Unión Lib",
+    foundationYear: 2008,
+    motto: "Tradición, Cantera y Orgullo del 23",
+    bio: "Decano del fútbol sala comunitario con sede histórica en el 23 de Enero. Ha impulsado a más de una veintena de atletas a ligas profesionales nacionales.",
+    municipality: "Libertador",
+    zoneDetail: "23 de Enero · Caño Amarillo",
+    disciplines: ["Fútbol Sala", "Fútbol 7"],
+    categories: ["Sub-6", "Sub-8", "Sub-10", "Sub-12", "Sub-14", "Sub-16", "Sub-18", "Sub-20"],
+    colors: {
+      primary: "#7c3aed", // Púrpura Imperial
+      secondary: "#f59e0b", // Ámbar
+      textHex: "#ffffff",
+      names: ["Púrpura Libertador", "Oro Caraqueño"],
+    },
+    socials: {
+      instagram: "@unionlibertadorfs",
+      facebook: "unionlibertadorfutsal",
+      whatsapp: "+58 416 333 4455",
+    },
+    contact: {
+      coordinator: "Prof. Argenis Montero",
+      phone: "+58 (416) 333-4455",
+      officeHours: "Lunes a Viernes: 2:00 PM - 7:00 PM",
+    },
+    venues: [
+      {
+        name: "Cancha Gimnasio Libertador del 23 de Enero",
+        sector: "23 de Enero",
+        address: "Av. Principal del 23 de Enero, Caracas",
+        surface: "Tabloncillo",
+        schedule: "Lunes a Viernes: 3:00 PM - 8:00 PM",
+      },
+    ],
+    performance: {
+      activeTournament: "Torneo Daeris · 1ra División",
+      matchesPlayed: 19,
+      wins: 12,
+      draws: 4,
+      losses: 3,
+      goalsFor: 58,
+      goalsAgainst: 28,
+      averagePosition: "3° Lugar General",
+      winRate: "63%",
+      achievements: [
+        "Tricampeón Municipal Futsal Menor (2022, 2023, 2024)",
+        "Mejor Escuela Formativa del Municipio Libertador 2024",
+      ],
+    },
+    rosters: {
+      "Sub-12": {
+        coach: "DT. Argenis Montero",
+        assistant: "AT. Wilmer Castro",
+        captain: "Gabriel Pacheco (#4)",
+        players: [
+          { dorsal: 1, name: "Keiber Gómez", position: "Portero", ci: "V-34.333.101", birthYear: 2014 },
+          { dorsal: 4, name: "Gabriel Pacheco", position: "Cierre", ci: "V-34.333.102", birthYear: 2014, goals: 3 },
+          { dorsal: 9, name: "Luis Carmona", position: "Pívot", ci: "V-34.333.103", birthYear: 2014, goals: 11 },
+        ],
+      },
+    },
+    gallery: [
+      { id: "g1", caption: "Fiesta de la afición en las gradas del 23 de Enero", category: "Gradas", colorBg: "from-purple-950 to-neutral-900", aspect: "landscape" },
+    ],
+  },
+
+  // 6. Tetsu Futsal
+  {
+    id: "acad-06",
+    slug: "tetsu-futsal",
+    name: "Tetsu Futsal",
+    officialName: "Club Deportivo Tetsu Futsal",
+    shortName: "Tetsu",
+    foundationYear: 2020,
+    motto: "Voluntad de Hierro y Puntería Implacable",
+    bio: "Academia especializada en técnica individual y sistemas tácticos modernos de fútbol sala con base en el eje este de la Gran Caracas.",
+    municipality: "Sucre",
+    zoneDetail: "La California · Petare · Los Ruices",
+    disciplines: ["Fútbol Sala"],
+    categories: ["Sub-10", "Sub-12", "Sub-14", "Sub-16"],
+    colors: {
+      primary: "#0284c7", // Azul Petróleo
+      secondary: "#64748b", // Gris Titanio
+      textHex: "#ffffff",
+      names: ["Azul Titanio", "Plata Deportivo"],
+    },
+    socials: {
+      instagram: "@tetsufutsal",
+      whatsapp: "+58 424 990 0101",
+      email: "tetsu@deportivocaracas.com",
+    },
+    contact: {
+      coordinator: "Prof. Kenjiro Takahashi",
+      phone: "+58 (424) 990-0101",
+      officeHours: "Martes a Jueves: 3:00 PM - 7:00 PM",
+    },
+    venues: [
+      {
+        name: "Polideportivo La California Norte",
+        sector: "La California",
+        address: "Av. Sanz con Av. Francisco de Miranda",
+        surface: "Tabloncillo",
+        schedule: "Martes y Jueves: 4:00 PM - 7:30 PM",
+      },
+    ],
+    performance: {
+      activeTournament: "Torneo Daeris · 2da División",
+      matchesPlayed: 14,
+      wins: 9,
+      draws: 2,
+      losses: 3,
+      goalsFor: 41,
+      goalsAgainst: 21,
+      averagePosition: "2° Lugar Ascenso",
+      winRate: "64%",
+      achievements: [
+        "Líder de Goleo en Fase Regular Torneo Daeris 2da Div",
+      ],
+    },
+    rosters: {
+      "Sub-12": {
+        coach: "DT. Kenjiro Takahashi",
+        assistant: "AT. Daniel Alviarez",
+        captain: "Manuel Rojas (#10)",
+        players: [
+          { dorsal: 1, name: "Reinaldo Silva", position: "Portero", ci: "V-34.990.101", birthYear: 2014 },
+          { dorsal: 10, name: "Manuel Rojas", position: "Pívot", ci: "V-34.990.102", birthYear: 2014, goals: 9 },
+        ],
+      },
+    },
+    gallery: [
+      { id: "g1", caption: "Sesión de disparo a puerta y jugadas preparadas en táctica fija", category: "Táctica", colorBg: "from-sky-950 to-neutral-900", aspect: "landscape" },
+    ],
+  },
+
+  // 7. Black Bulls
+  {
+    id: "acad-07",
+    slug: "black-bulls",
+    name: "Black Bulls",
+    officialName: "Black Bulls Academy Club",
+    shortName: "Black Bulls",
+    foundationYear: 2017,
+    motto: "Fuerza, Carácter y Victoria",
+    bio: "Club de alto despliegue físico y formación táctica con sedes en Las Mercedes y Santa Fe, enfocado en el desarrollo competitivo integral.",
+    municipality: "Baruta",
+    zoneDetail: "Santa Fe · Las Mercedes",
+    disciplines: ["Fútbol 7", "Fútbol Sala"],
+    categories: ["Sub-10", "Sub-12", "Sub-14", "Sub-16", "Sub-18"],
+    colors: {
+      primary: "#171717", // Negro Carbón
+      secondary: "#dc2626", // Rojo Furia
+      textHex: "#ffffff",
+      names: ["Negro Onix", "Rojo Sangre"],
+    },
+    socials: {
+      instagram: "@blackbulls_ccs",
+      whatsapp: "+58 414 777 2211",
+    },
+    contact: {
+      coordinator: "Prof. Ricardo Falconi",
+      phone: "+58 (414) 777-2211",
+      officeHours: "Lunes a Viernes: 2:00 PM - 6:30 PM",
+    },
+    venues: [
+      {
+        name: "Canchas Polideportivo Santa Fe",
+        sector: "Santa Fe Norte",
+        address: "Av. José María Vargas, Santa Fe",
+        surface: "Césped Sintético",
+        schedule: "Lunes a Jueves: 3:30 PM - 7:30 PM",
+      },
+    ],
+    performance: {
+      activeTournament: "Torneo Daeris · 2da División",
+      matchesPlayed: 14,
+      wins: 8,
+      draws: 2,
+      losses: 4,
+      goalsFor: 39,
+      goalsAgainst: 26,
+      averagePosition: "4° Lugar",
+      winRate: "57%",
+      achievements: [
+        "Subcampeón Torneo Baruta Futsal Cup 2024",
+      ],
+    },
+    rosters: {
+      "Sub-12": {
+        coach: "DT. Ricardo Falconi",
+        assistant: "AT. Gustavo Vielma",
+        players: [
+          { dorsal: 1, name: "Christian Bravo", position: "Portero", ci: "V-34.660.101", birthYear: 2014 },
+          { dorsal: 9, name: "Mauricio Bello", position: "Pívot", ci: "V-34.660.102", birthYear: 2014, goals: 7 },
+        ],
+      },
+    },
+    gallery: [
+      { id: "g1", caption: "Cuadrangular de preparación en Santa Fe", category: "Amistoso", colorBg: "from-neutral-900 to-red-950", aspect: "landscape" },
+    ],
+  },
+
+  // 8. Espartanos Cutira
+  {
+    id: "acad-08",
+    slug: "espartanos-cutira",
+    name: "Espartanos Cutira",
+    officialName: "Club Deportivo Espartanos de Cutira",
+    shortName: "Espartanos",
+    foundationYear: 2016,
+    motto: "Corazón Guerrero en Cada Partido",
+    bio: "Auténtica cantera popular en el sector Cutira de Catia. Cantera prolífica en la detección de talentos rápidos y con gran dominio del balón pie a pie.",
+    municipality: "Libertador",
+    zoneDetail: "Catia · Cutira · Sucre",
+    disciplines: ["Fútbol Sala"],
+    categories: ["Sub-8", "Sub-10", "Sub-12", "Sub-14", "Sub-16"],
+    colors: {
+      primary: "#b91c1c", // Carmesí Espartano
+      secondary: "#78716c", // Bronce
+      textHex: "#ffffff",
+      names: ["Carmesí Espartano", "Bronce Antiguo"],
+    },
+    socials: {
+      instagram: "@espartanos_cutira",
+      whatsapp: "+58 412 444 8822",
+    },
+    contact: {
+      coordinator: "Prof. Héctor Guédez",
+      phone: "+58 (412) 444-8822",
+      officeHours: "Lunes a Viernes: 3:00 PM - 7:30 PM",
+    },
+    venues: [
+      {
+        name: "Cancha Techada de Cutira",
+        sector: "Cutira, Catia",
+        address: "Av. Sucre, sector Cutira",
+        surface: "Cemento Pulido",
+        schedule: "Lunes a Viernes: 3:30 PM - 7:30 PM",
+      },
+    ],
+    performance: {
+      activeTournament: "Torneo Daeris · 1ra División",
+      matchesPlayed: 15,
+      wins: 10,
+      draws: 2,
+      losses: 3,
+      goalsFor: 49,
+      goalsAgainst: 25,
+      averagePosition: "3° Lugar",
+      winRate: "66%",
+      achievements: [
+        "Campeón Copa Ciudad de Catia 2024",
+      ],
+    },
+    rosters: {
+      "Sub-12": {
+        coach: "DT. Héctor Guédez",
+        assistant: "AT. Jean Carlos Rivas",
+        players: [
+          { dorsal: 1, name: "Yonder Medina", position: "Portero", ci: "V-34.444.101", birthYear: 2014 },
+          { dorsal: 10, name: "Brayan Escalona", position: "Ala", ci: "V-34.444.102", birthYear: 2014, goals: 10 },
+        ],
+      },
+    },
+    gallery: [
+      { id: "g1", caption: "Celebración en la cancha de Cutira tras triunfo en la última fecha", category: "Victoria", colorBg: "from-red-950 to-neutral-900", aspect: "landscape" },
+    ],
+  },
+
+  // 9. Academia Winners
+  {
+    id: "acad-09",
+    slug: "academia-winners",
+    name: "Academia Winners",
+    officialName: "Winners Soccer Academy El Hatillo",
+    shortName: "Winners",
+    foundationYear: 2019,
+    motto: "Metodología, Formación y Triunfo",
+    bio: "Metodología de entrenamiento europeo aplicada al fútbol menor caraqueño. Instalaciones de césped sintético y preparación integral de arqueros y jugadores de campo.",
+    municipality: "El Hatillo",
+    zoneDetail: "La Boyera · Los Naranjos",
+    disciplines: ["Fútbol Campo", "Fútbol 7", "Fútbol Sala"],
+    categories: ["Sub-6", "Sub-8", "Sub-10", "Sub-12", "Sub-14", "Sub-16", "Sub-18"],
+    colors: {
+      primary: "#0d9488", // Verde Azulado
+      secondary: "#f97316", // Naranja Eléctrico
+      textHex: "#ffffff",
+      names: ["Verde Azulado", "Naranja Eléctrico"],
+    },
+    socials: {
+      instagram: "@winnersacademy_ccs",
+      whatsapp: "+58 414 330 9988",
+      email: "info@winnersacademy.com",
+    },
+    contact: {
+      coordinator: "Prof. Stephanie De Sousa",
+      phone: "+58 (414) 330-9988",
+      officeHours: "Lunes a Viernes: 2:00 PM - 7:00 PM",
+    },
+    venues: [
+      {
+        name: "Complejo Deportivo La Boyera",
+        sector: "La Boyera",
+        address: "Av. Intercomunal La Boyera, El Hatillo",
+        surface: "Césped Sintético",
+        schedule: "Lunes a Jueves: 3:00 PM - 7:00 PM",
+      },
+    ],
+    performance: {
+      activeTournament: "Torneo Daeris · Liga Desarrollo",
+      matchesPlayed: 14,
+      wins: 8,
+      draws: 3,
+      losses: 3,
+      goalsFor: 42,
+      goalsAgainst: 22,
+      averagePosition: "3° Lugar General",
+      winRate: "57%",
+      achievements: [
+        "Campeón Festival de Escuelas del Hatillo 2025",
+      ],
+    },
+    rosters: {
+      "Sub-12": {
+        coach: "DT. Stephanie De Sousa",
+        assistant: "AT. Luis Da Silva",
+        players: [
+          { dorsal: 1, name: "Felipe Da Silva", position: "Portero", ci: "V-34.220.101", birthYear: 2014 },
+          { dorsal: 7, name: "Joao Dos Santos", position: "Ala", ci: "V-34.220.102", birthYear: 2014, goals: 8 },
+        ],
+      },
+    },
+    gallery: [
+      { id: "g1", caption: "Clínica deportiva con profesores internacionales en La Boyera", category: "Clínicas", colorBg: "from-teal-950 to-neutral-900", aspect: "landscape" },
+    ],
+  },
+];
+
+/**
+ * Busca una academia por su ID o por su slug
+ */
+export function getAcademyBySlug(slugOrId: string): Academy | undefined {
+  const clean = slugOrId.toLowerCase().trim();
+  return academiesData.find(
+    (a) =>
+      a.slug === clean ||
+      a.id === clean ||
+      a.name.toLowerCase().replace(/\s+/g, "-") === clean
+  );
+}
+
+/**
+ * Filtra academias según los criterios de búsqueda interactiva
+ */
+export function filterAcademies(
+  academies: Academy[],
+  options: {
+    query?: string;
+    municipality?: Municipality | "all";
+    discipline?: SportDiscipline | "all";
+    category?: AcademyCategory | "all";
+  }
+): Academy[] {
+  const { query, municipality, discipline, category } = options;
+  const cleanQuery = query?.toLowerCase().trim();
+
+  return academies.filter((acad) => {
+    // 1. Filtro Municipio
+    if (municipality && municipality !== "all" && acad.municipality !== municipality) {
+      return false;
+    }
+
+    // 2. Filtro Disciplina
+    if (discipline && discipline !== "all" && !acad.disciplines.includes(discipline)) {
+      return false;
+    }
+
+    // 3. Filtro Categoría
+    if (category && category !== "all" && !acad.categories.includes(category)) {
+      return false;
+    }
+
+    // 4. Búsqueda por texto (nombre, zona o sedes)
+    if (cleanQuery) {
+      const matchName = acad.name.toLowerCase().includes(cleanQuery);
+      const matchOfficial = acad.officialName.toLowerCase().includes(cleanQuery);
+      const matchZone = acad.zoneDetail.toLowerCase().includes(cleanQuery);
+      const matchVenue = acad.venues.some((v) =>
+        v.name.toLowerCase().includes(cleanQuery) || v.sector.toLowerCase().includes(cleanQuery)
+      );
+      if (!matchName && !matchOfficial && !matchZone && !matchVenue) {
+        return false;
+      }
+    }
+
+    return true;
+  });
+}

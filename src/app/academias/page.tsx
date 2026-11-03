@@ -1,60 +1,58 @@
-import { Building2, MapPin, Users, ArrowRight } from "lucide-react";
-import Link from "next/link";
+import { Metadata } from "next";
+import { AcademiesDirectory } from "@/components/academies/academies-directory";
+import { Building2, ShieldCheck, MapPin, Award } from "lucide-react";
 
-export const metadata = {
-  title: "Academias & Clubes | Furia Menor",
-  description: "Directorio de escuelas y clubes de fútbol menor en Caracas. Fichas, categorías y contacto.",
+export const metadata: Metadata = {
+  title: "Directorio de Academias y Clubes | Furia Menor",
+  description:
+    "Directorio oficial interactivo de escuelas y clubes formativos de fútbol menor y fútbol sala en Caracas. Filtros por municipio, disciplina, categorías, sedes y planteles.",
 };
-
-const academies = [
-  { name: "DVO Paraçoto", zone: "Caracas", categories: "Sub-6, Sub-8, Sub-10, Sub-12, Sub-14, Sub-16, Sub-18", description: "Formación integral con énfasis en técnica y disciplina." },
-  { name: "Fénix FS", zone: "Caracas", categories: "Sub-8, Sub-10, Sub-12, Sub-14", description: "Club con sólida trayectoria en torneos caraqueños." },
-  { name: "Fratelsa Sport", zone: "Caracas", categories: "Sub-6, Sub-8, Sub-10, Sub-12", description: "Semillero con enfoque en desarrollo por etapas." },
-  { name: "Futsaconexion", zone: "Caracas", categories: "Sub-8, Sub-10, Sub-12, Sub-14, Sub-16", description: "Promoción del fútbol sala y fútbol campo en todas las categorías." },
-  { name: "Union Libertador", zone: "Caracas", categories: "Sub-6, Sub-8, Sub-10, Sub-12, Sub-14, Sub-16, Sub-18", description: "Tradición y compromiso con la formación de jóvenes valores." },
-  { name: "Tetsu Futsal", zone: "Caracas", categories: "Sub-10, Sub-12, Sub-14", description: "Especialistas en formación técnica para el futsal." },
-  { name: "Black Bulls", zone: "Caracas", categories: "Sub-10, Sub-12, Sub-14, Sub-16", description: "Proyectos formativos con proyección competitiva." },
-  { name: "Espartanos Cutira", zone: "Caracas", categories: "Sub-14, Sub-16", description: "Academia en constante crecimiento en el fútbol base." },
-];
 
 export default function AcademiasPage() {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mb-6">
-        <p className="text-xs uppercase tracking-[0.3em] text-red-400">Academias & Clubes</p>
-        <h1 className="mt-1 text-2xl font-bold sm:text-3xl">Directorio de Escuelas de Fútbol Menor</h1>
-        <p className="mt-1 text-neutral-400">Vitrina interactiva de clubes que forman talento en Caracas</p>
-      </div>
-      <div className="grid gap-4 md:grid-cols-2">
-        {academies.map((academy) => (
-          <div key={academy.name} className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-6 transition hover:border-red-500/40">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-600/20 text-red-400">
-                  <Building2 className="h-5 w-5" />
-                </div>
-                <div>
-                  <h2 className="text-lg font-semibold">{academy.name}</h2>
-                  <div className="mt-1 flex items-center gap-2 text-sm text-neutral-400">
-                    <MapPin className="h-4 w-4" />
-                    <span>{academy.zone}</span>
-                  </div>
-                </div>
+    <div className="min-h-screen bg-neutral-950 text-white">
+      {/* Hero Header Deportivo */}
+      <section className="relative overflow-hidden border-b border-neutral-800 bg-gradient-to-b from-neutral-900 via-neutral-950 to-neutral-950 px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+        <div className="absolute inset-0 -z-10 opacity-20 pointer-events-none bg-[radial-gradient(#dc2626_1px,transparent_1px)] [background-size:20px_20px]" />
+        
+        <div className="mx-auto max-w-7xl">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="space-y-3">
+              <div className="inline-flex items-center gap-2 rounded-full border border-red-500/30 bg-red-600/10 px-3 py-1 text-xs font-black tracking-widest text-red-400 uppercase">
+                <ShieldCheck className="h-3.5 w-3.5" />
+                <span>Registro Oficial de Clubes</span>
               </div>
-              <span className="rounded-full border border-neutral-700 px-2 py-1 text-xs text-neutral-400">Caracas</span>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight uppercase">
+                Directorio de <span className="text-red-500">Academias</span> y Clubes
+              </h1>
+              <p className="max-w-2xl text-sm sm:text-base text-neutral-400 leading-relaxed">
+                Directorio integral del fútbol menor y fútbol sala caraqueño. Explora las escuelas formativas, consulta sus sedes de entrenamiento en los 5 municipios, disciplinas y planteles activos desde Sub-6 hasta Sub-20.
+              </p>
             </div>
-            <p className="mt-4 text-sm text-neutral-300">{academy.description}</p>
-            <div className="mt-4 flex items-center gap-2 text-sm text-neutral-400">
-              <Users className="h-4 w-4" />
-              <span>Categorías: {academy.categories}</span>
+
+            {/* Micro badges de estadísticas rápidas */}
+            <div className="grid grid-cols-3 gap-3 shrink-0">
+              <div className="rounded-2xl border border-neutral-800 bg-neutral-900/80 p-3 text-center">
+                <p className="text-xl sm:text-2xl font-black text-white">9</p>
+                <p className="text-[10px] font-semibold uppercase text-neutral-400">Clubes Top</p>
+              </div>
+              <div className="rounded-2xl border border-neutral-800 bg-neutral-900/80 p-3 text-center">
+                <p className="text-xl sm:text-2xl font-black text-red-500">5</p>
+                <p className="text-[10px] font-semibold uppercase text-neutral-400">Municipios</p>
+              </div>
+              <div className="rounded-2xl border border-neutral-800 bg-neutral-900/80 p-3 text-center">
+                <p className="text-xl sm:text-2xl font-black text-amber-400">8+</p>
+                <p className="text-[10px] font-semibold uppercase text-neutral-400">Categorías</p>
+              </div>
             </div>
-            <Link href="#" className="mt-4 inline-flex items-center gap-1 text-sm text-red-400 transition hover:text-red-300">
-              Ver ficha completa
-              <ArrowRight className="h-4 w-4" />
-            </Link>
           </div>
-        ))}
-      </div>
+        </div>
+      </section>
+
+      {/* Contenido Principal con Filtros y Directorio */}
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <AcademiesDirectory />
+      </main>
     </div>
   );
 }

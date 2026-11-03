@@ -1,52 +1,62 @@
 import Link from "next/link";
-import { ArrowRight, Building2, MapPin, Users } from "lucide-react";
-
-const academies = [
-  { name: "DVO Paraçoto", zone: "Caracas", category: "Sub-6 a Sub-18" },
-  { name: "Fénix FS", zone: "Caracas", category: "Sub-8 a Sub-14" },
-  { name: "Fratelsa Sport", zone: "Caracas", category: "Sub-6 a Sub-12" },
-  { name: "Futsaconexion", zone: "Caracas", category: "Sub-8 a Sub-16" },
-  { name: "Union Libertador", zone: "Caracas", category: "Sub-6 a Sub-18" },
-  { name: "Tetsu Futsal", zone: "Caracas", category: "Sub-10 a Sub-14" },
-];
+import { ArrowRight, MapPin, Users, Trophy } from "lucide-react";
+import { academiesData } from "@/data/academies-data";
+import { AcademyBadge } from "@/components/academies/academy-badge";
 
 export function AcademiesPreview() {
+  // Mostramos 6 academias destacadas en la home
+  const featured = academiesData.slice(0, 6);
+
   return (
     <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-xs uppercase tracking-[0.3em] text-red-400">Academias & Clubes</p>
-          <h2 className="mt-1 text-xl font-bold sm:text-2xl">Vitrina de Escuelas de Fútbol Menor</h2>
-          <p className="mt-1 text-sm text-neutral-400">Formando talento en Caracas</p>
+          <h2 className="mt-1 text-xl font-bold sm:text-2xl text-white uppercase tracking-tight">
+            Vitrina de Escuelas de Fútbol Menor
+          </h2>
+          <p className="mt-1 text-sm text-neutral-400">
+            Clubes federados y semilleros que forman talento en Caracas
+          </p>
         </div>
-        <Link href="/academias" className="flex items-center gap-1 text-sm text-red-400 transition hover:text-red-300">
-          Ver directorio completo
+        <Link
+          href="/academias"
+          className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-red-400 transition hover:text-red-300"
+        >
+          <span>Ver directorio completo</span>
           <ArrowRight className="h-4 w-4" />
         </Link>
       </div>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {academies.map((academy) => (
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {featured.map((academy) => (
           <Link
-            key={academy.name}
-            href="/academias"
-            className="group flex items-center justify-between rounded-xl border border-neutral-800 bg-neutral-900/60 p-4 transition hover:border-red-500/40 hover:bg-neutral-900"
+            key={academy.id}
+            href={`/academias/${academy.slug}`}
+            className="group flex items-center justify-between rounded-2xl border border-neutral-800 bg-neutral-900/60 p-4 transition duration-300 hover:border-red-500/40 hover:bg-neutral-900 hover:shadow-xl"
           >
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-600/20 text-red-400">
-                <Building2 className="h-4 w-4" />
+            <div className="flex items-center gap-3.5 min-w-0">
+              <div className="shrink-0 transition-transform duration-300 group-hover:scale-105">
+                <AcademyBadge slug={academy.slug} size={50} />
               </div>
-              <div>
-                <p className="font-medium group-hover:text-white">{academy.name}</p>
-                <div className="mt-1 flex items-center gap-2 text-xs text-neutral-500">
-                  <MapPin className="h-3 w-3" />
-                  <span>{academy.zone}</span>
-                  <span>•</span>
-                  <Users className="h-3 w-3" />
-                  <span>{academy.category}</span>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <span className="rounded bg-red-600/20 px-1.5 py-0.2 text-[9px] font-bold text-red-400 uppercase">
+                    {academy.municipality}
+                  </span>
+                </div>
+                <p className="font-bold text-white group-hover:text-red-400 transition truncate text-sm mt-0.5">
+                  {academy.name}
+                </p>
+                <div className="mt-1 flex items-center gap-2 text-xs text-neutral-400">
+                  <Users className="h-3 w-3 text-neutral-500 shrink-0" />
+                  <span className="truncate text-[11px]">
+                    {academy.categories[0]} a {academy.categories[academy.categories.length - 1]}
+                  </span>
                 </div>
               </div>
             </div>
-            <ArrowRight className="h-4 w-4 text-neutral-600 transition group-hover:translate-x-1 group-hover:text-red-400" />
+            <ArrowRight className="h-4 w-4 text-neutral-600 transition group-hover:translate-x-1 group-hover:text-red-400 shrink-0 ml-2" />
           </Link>
         ))}
       </div>
