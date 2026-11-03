@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,8 +15,21 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Furia Menor | Gestión de Torneos de Fútbol Menor",
-  description: "Plataforma integral de gestión digital para torneos de fútbol menor. Desde Sub-6 hasta Sub-18, futsal.",
+  title: "Furia Menor | Periódico Digital de Fútbol Menor en Caracas",
+  description:
+    "Cobertura integral de ligas, torneos, escuelas, academias y categorías infantiles/juveniles en Caracas. Noticias, resultados, tablas, entrevistas, galería y más. Proyección nacional.",
+  keywords: [
+    "fútbol menor",
+    "fútbol base",
+    "Caracas",
+    "torneos infantiles",
+    "academias de fútbol",
+    "Sub-6",
+    "Sub-12",
+    "Sub-18",
+    "futsal",
+    "Venezuela",
+  ],
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
@@ -28,7 +43,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="es"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-neutral-950 text-neutral-100">{children}</body>
+      <body className="min-h-full flex flex-col bg-neutral-950 text-neutral-100">
+        <Header />
+        <main className="flex-1">{children}</main>
+        <Footer />
+      </body>
     </html>
   );
 }
