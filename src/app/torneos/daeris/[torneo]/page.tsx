@@ -5,7 +5,7 @@ import { getDaerisSubTournament, getSubTournamentData } from "@/data/daeris-subt
 import { TournamentOfficialTable } from "@/components/tournaments/tournament-official-table";
 import { TournamentCategorySelector } from "@/components/tournaments/tournament-category-selector";
 import { MatchCard } from "@/components/tournaments/match-card";
-import { Clock, Goal, MapPin, Shield, Trophy, ArrowRight, UserCheck, Users } from "lucide-react";
+import { Clock, Goal, MapPin, Shield, Trophy, ArrowRight, UserCheck, Users, Camera } from "lucide-react";
 
 interface SubTournamentPageProps {
   params: Promise<{ torneo: string }>;
@@ -50,16 +50,16 @@ export default async function SubTournamentHomePage({
         />
       )}
 
-      {/* 1. SECCIÓN DE PARTIDOS CON CUERPO ARBITRAL OFICIAL */}
+      {/* 1. SECCIÓN DE PARTIDOS CON CUERPO ARBITRAL OFICIAL Y POST DESCARGABLE */}
       <section>
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="text-xl font-extrabold text-white flex items-center gap-2">
               <Clock className="h-5 w-5 text-red-400" />
-              Jornada en Curso · Marcadores, Fixture & Árbitros {activeCategory && `(${activeCategory})`}
+              Jornada en Curso · Fixture, Árbitros & Post Descargable {activeCategory && `(${activeCategory})`}
             </h2>
             <p className="text-xs text-neutral-400 mt-0.5">
-              Partidos programados y disputados con designación arbitral oficial
+              Partidos con designación arbitral oficial y generador de flyers en formato post e historias para redes
             </p>
           </div>
           <Link
@@ -77,6 +77,8 @@ export default async function SubTournamentHomePage({
               match={upcomingMatches[0]}
               baseTournamentPath={basePath}
               currentCategory={activeCategory || undefined}
+              tournamentName={tournament.name}
+              badgeKey={tournament.badgeKey}
             />
           )}
 
@@ -85,6 +87,8 @@ export default async function SubTournamentHomePage({
               match={finishedMatches[0]}
               baseTournamentPath={basePath}
               currentCategory={activeCategory || undefined}
+              tournamentName={tournament.name}
+              badgeKey={tournament.badgeKey}
             />
           ) : (
             upcomingMatches.length > 1 && (
@@ -92,6 +96,8 @@ export default async function SubTournamentHomePage({
                 match={upcomingMatches[1]}
                 baseTournamentPath={basePath}
                 currentCategory={activeCategory || undefined}
+                tournamentName={tournament.name}
+                badgeKey={tournament.badgeKey}
               />
             )
           )}
