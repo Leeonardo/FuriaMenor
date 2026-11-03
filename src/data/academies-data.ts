@@ -65,6 +65,7 @@ export interface Academy {
   officialName: string;
   shortName: string;
   foundationYear: number;
+  founder?: string;
   motto: string;
   bio: string;
   municipality: Municipality;
@@ -836,8 +837,9 @@ export const academiesData: Academy[] = [
     officialName: "Club Deportivo & Cancha de Futsal La Paz",
     shortName: "La Paz FS",
     foundationYear: 2017,
+    founder: "Karing Hunbg",
     motto: "Pasión, garra y formación deportiva comunitaria",
-    bio: "Emblemático club deportivo y centro neurálgico del fútbol sala menor en Caracas. Con sede en la Cancha de Futsal La Paz, es hogar de torneos comunales y federados de alto nivel, formando atletas desde la categoría Sub-8 hasta Sub-18 con valores de disciplina y compañerismo.",
+    bio: "Emblemático club deportivo y centro neurálgico del fútbol sala menor en Caracas, fundado por Karing Hunbg y bajo la coordinación general de Eudis Toro. Con sede en la Cancha de Futsal La Paz, es hogar de torneos comunales y federados de alto nivel, formando atletas desde la categoría Sub-8 hasta Sub-18 con valores de disciplina y compañerismo.",
     municipality: "Libertador",
     zoneDetail: "Sector La Paz · F3J3+88X Caracas 1020",
     disciplines: ["Fútbol Sala"],
@@ -862,7 +864,7 @@ export const academiesData: Academy[] = [
       email: "lapazfutsal.caracas@gmail.com",
     },
     contact: {
-      coordinator: "Prof. Carlos Morales / Coordinación Deportiva",
+      coordinator: "Eudis Toro",
       phone: "+58 414-2345678",
       officeHours: "Lunes a Sábado: 8:00 AM - 9:00 PM",
     },
@@ -1044,15 +1046,17 @@ export function filterAcademies(
       return false;
     }
 
-    // 4. Búsqueda por texto (nombre, zona o sedes)
+    // 4. Búsqueda por texto (nombre, zona, sedes, coordinador o fundador)
     if (cleanQuery) {
       const matchName = acad.name.toLowerCase().includes(cleanQuery);
       const matchOfficial = acad.officialName.toLowerCase().includes(cleanQuery);
       const matchZone = acad.zoneDetail.toLowerCase().includes(cleanQuery);
+      const matchCoordinator = acad.contact.coordinator.toLowerCase().includes(cleanQuery);
+      const matchFounder = acad.founder ? acad.founder.toLowerCase().includes(cleanQuery) : false;
       const matchVenue = acad.venues.some((v) =>
         v.name.toLowerCase().includes(cleanQuery) || v.sector.toLowerCase().includes(cleanQuery)
       );
-      if (!matchName && !matchOfficial && !matchZone && !matchVenue) {
+      if (!matchName && !matchOfficial && !matchZone && !matchVenue && !matchCoordinator && !matchFounder) {
         return false;
       }
     }

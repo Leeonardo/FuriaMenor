@@ -134,6 +134,11 @@ export function AcademyProfileView({ academy }: AcademyProfileViewProps) {
                 <span className="rounded-full bg-neutral-800 px-3 py-0.5 text-xs font-semibold text-neutral-300">
                   Fundado en {academy.foundationYear}
                 </span>
+                {academy.founder && (
+                  <span className="rounded-full bg-amber-500/10 border border-amber-500/20 px-3 py-0.5 text-xs font-semibold text-amber-300">
+                    Fundador: <strong className="text-white">{academy.founder}</strong>
+                  </span>
+                )}
                 <span className="rounded-full border border-neutral-700 bg-neutral-950 px-2.5 py-0.5 text-xs text-neutral-400">
                   ID: {academy.id}
                 </span>
@@ -244,20 +249,27 @@ export function AcademyProfileView({ academy }: AcademyProfileViewProps) {
               )}
             </div>
 
-            {/* Ficha de Coordinación */}
-            <div className="rounded-2xl border border-neutral-800 bg-neutral-950/70 p-3 text-xs text-neutral-300 space-y-1 w-full sm:w-auto">
+            {/* Ficha de Coordinación y Directiva */}
+            <div className="rounded-2xl border border-neutral-800 bg-neutral-950/70 p-3 text-xs text-neutral-300 space-y-1.5 w-full sm:w-auto">
+              {academy.founder && (
+                <div className="flex items-center gap-1.5">
+                  <Award className="h-3.5 w-3.5 text-amber-400 shrink-0" />
+                  <span className="font-semibold text-white">Fundador:</span>
+                  <span className="text-amber-300/90 font-medium">{academy.founder}</span>
+                </div>
+              )}
               <div className="flex items-center gap-1.5">
-                <UserCheck className="h-3.5 w-3.5 text-neutral-400" />
+                <UserCheck className="h-3.5 w-3.5 text-neutral-400 shrink-0" />
                 <span className="font-semibold text-white">Coordinador:</span>
                 <span>{academy.contact.coordinator}</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Phone className="h-3.5 w-3.5 text-neutral-400" />
+                <Phone className="h-3.5 w-3.5 text-neutral-400 shrink-0" />
                 <span className="text-neutral-400">Tlf:</span>
                 <span className="font-mono text-neutral-200">{academy.contact.phone}</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Clock className="h-3.5 w-3.5 text-neutral-400" />
+                <Clock className="h-3.5 w-3.5 text-neutral-400 shrink-0" />
                 <span className="text-neutral-400">Atención:</span>
                 <span>{academy.contact.officeHours}</span>
               </div>
