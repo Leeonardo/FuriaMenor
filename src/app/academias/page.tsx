@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { AcademiesDirectory } from "@/components/academies/academies-directory";
-import { Building2, ShieldCheck, MapPin, Award } from "lucide-react";
+import { academiesData } from "@/data/academies-data";
+import { ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Directorio de Academias y Clubes | Furia Menor",
@@ -33,7 +34,7 @@ export default function AcademiasPage() {
             {/* Micro badges de estadísticas rápidas */}
             <div className="grid grid-cols-3 gap-3 shrink-0">
               <div className="rounded-2xl border border-neutral-800 bg-neutral-900/80 p-3 text-center">
-                <p className="text-xl sm:text-2xl font-black text-white">9</p>
+                <p className="text-xl sm:text-2xl font-black text-white">{academiesData.length}</p>
                 <p className="text-[10px] font-semibold uppercase text-neutral-400">Clubes Top</p>
               </div>
               <div className="rounded-2xl border border-neutral-800 bg-neutral-900/80 p-3 text-center">

@@ -27,6 +27,7 @@ import {
   Layers,
   Sparkles,
   Camera,
+  Star,
 } from "lucide-react";
 
 // Inline brand SVGs for Instagram, Facebook and WhatsApp
@@ -122,7 +123,7 @@ export function AcademyProfileView({ academy }: AcademyProfileViewProps) {
           {/* Escudo + Datos Principales */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
             <div className="relative shrink-0 drop-shadow-2xl">
-              <AcademyBadge slug={academy.slug} size={110} />
+              <AcademyBadge slug={academy.slug} size={110} logoUrl={academy.logoUrl} />
             </div>
 
             <div className="space-y-2">
@@ -149,6 +150,31 @@ export function AcademyProfileView({ academy }: AcademyProfileViewProps) {
               <p className="text-xs sm:text-sm italic text-amber-400/90 font-medium">
                 "{academy.motto}"
               </p>
+
+              {/* Rating Google Maps si está disponible */}
+              {academy.rating && (
+                <div className="flex flex-wrap items-center gap-3 pt-1">
+                  <div className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-xs font-bold text-amber-400">
+                    <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                    <span>{academy.rating.score.toFixed(1)}</span>
+                    <span className="text-neutral-400 font-normal">
+                      ({academy.rating.reviewsCount} opiniones en {academy.rating.source})
+                    </span>
+                  </div>
+                  {academy.googleMapsUrl && (
+                    <a
+                      href={academy.googleMapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-red-400 hover:text-red-300 transition"
+                    >
+                      <MapPin className="h-3.5 w-3.5" />
+                      <span>Cómo llegar</span>
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                  )}
+                </div>
+              )}
 
               {/* Colores oficiales */}
               <div className="pt-2 flex items-center gap-2 text-xs text-neutral-300">
@@ -303,6 +329,21 @@ export function AcademyProfileView({ academy }: AcademyProfileViewProps) {
                     <span className="text-neutral-300 font-medium">{venue.schedule}</span>
                   </div>
                 </div>
+
+                {venue.googleMapsUrl && (
+                  <div className="pt-2 border-t border-neutral-800/60 flex items-center justify-between">
+                    <a
+                      href={venue.googleMapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-[11px] font-bold text-red-400 hover:text-red-300 transition"
+                    >
+                      <ExternalLink className="h-3 w-3" />
+                      <span>Cómo llegar (Google Maps)</span>
+                    </a>
+                    <span className="text-[10px] text-neutral-500 font-mono">F3J3+88X</span>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -625,7 +666,7 @@ export function AcademyProfileView({ academy }: AcademyProfileViewProps) {
                 className="group flex items-center gap-3 rounded-2xl border border-neutral-800 bg-neutral-950/70 p-4 transition hover:border-red-500/40 hover:bg-neutral-900"
               >
                 <div className="shrink-0 group-hover:scale-105 transition-transform">
-                  <AcademyBadge slug={rel.slug} size={48} />
+                  <AcademyBadge slug={rel.slug} size={48} logoUrl={rel.logoUrl} />
                 </div>
                 <div className="min-w-0">
                   <p className="font-bold text-white text-xs group-hover:text-red-400 transition truncate">

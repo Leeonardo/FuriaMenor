@@ -26,6 +26,7 @@ import {
   RotateCcw,
   Sparkles,
   ChevronRight,
+  Star,
 } from "lucide-react";
 
 export function AcademiesDirectory() {
@@ -241,7 +242,7 @@ export function AcademiesDirectory() {
                     className="shrink-0 transition-transform duration-300 group-hover:scale-105 drop-shadow-xl"
                     title={`Ver ficha técnica de ${acad.name}`}
                   >
-                    <AcademyBadge slug={acad.slug} size={64} />
+                    <AcademyBadge slug={acad.slug} size={64} logoUrl={acad.logoUrl} />
                   </Link>
 
                   <div className="flex flex-col items-end gap-1.5">
@@ -264,6 +265,17 @@ export function AcademiesDirectory() {
                 <p className="text-xs text-neutral-400 italic mt-0.5 line-clamp-1">
                   "{acad.motto}"
                 </p>
+
+                {/* Rating Google si está disponible */}
+                {acad.rating && (
+                  <div className="mt-2 flex items-center gap-1.5 text-xs text-amber-400 font-semibold">
+                    <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                    <span>{acad.rating.score.toFixed(1)}</span>
+                    <span className="text-[11px] text-neutral-400 font-normal">
+                      ({acad.rating.reviewsCount} opiniones en {acad.rating.source})
+                    </span>
+                  </div>
+                )}
 
                 {/* Ubicación y Zona */}
                 <div className="mt-3 flex items-center gap-1.5 text-xs text-neutral-300">

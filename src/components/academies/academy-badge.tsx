@@ -4,11 +4,31 @@ interface AcademyBadgeProps {
   slug: string;
   size?: number;
   className?: string;
+  logoUrl?: string;
 }
 
-export function AcademyBadge({ slug, size = 64, className = "" }: AcademyBadgeProps) {
+export function AcademyBadge({ slug, size = 64, className = "", logoUrl }: AcademyBadgeProps) {
   const s = size;
   const viewBox = "0 0 100 100";
+
+  // Si tiene logo personalizado o es La Paz Futsal
+  if (slug === "la-paz-futsal" || logoUrl) {
+    const src = logoUrl || "/images/academies/la-paz-futsal.png";
+    return (
+      <div
+        style={{ width: s, height: s }}
+        className={`relative inline-flex items-center justify-center overflow-hidden rounded-full shadow-lg transition-transform ${className}`}
+      >
+        <img
+          src={src}
+          alt={`Escudo ${slug}`}
+          width={s}
+          height={s}
+          className="h-full w-full object-cover rounded-full"
+        />
+      </div>
+    );
+  }
 
   switch (slug) {
     // 1. DVO Paraíso: Escudo Rojo Escarlata con León Dorado

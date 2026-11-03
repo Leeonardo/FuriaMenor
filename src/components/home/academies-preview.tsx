@@ -37,7 +37,7 @@ export function AcademiesPreview() {
           >
             <div className="flex items-center gap-3.5 min-w-0">
               <div className="shrink-0 transition-transform duration-300 group-hover:scale-105">
-                <AcademyBadge slug={academy.slug} size={50} />
+                <AcademyBadge slug={academy.slug} size={50} logoUrl={academy.logoUrl} />
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5">

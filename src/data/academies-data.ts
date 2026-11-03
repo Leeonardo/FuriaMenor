@@ -34,6 +34,7 @@ export interface AcademyVenue {
   address: string;
   surface: "Tabloncillo" | "Césped Sintético" | "Cemento Pulido";
   schedule: string;
+  googleMapsUrl?: string;
 }
 
 export interface AcademyPerformance {
@@ -92,6 +93,13 @@ export interface Academy {
   performance: AcademyPerformance;
   rosters: Partial<Record<AcademyCategory, CategoryRoster>>;
   gallery: AcademyGalleryItem[];
+  logoUrl?: string;
+  rating?: {
+    score: number;
+    reviewsCount: number;
+    source: string;
+  };
+  googleMapsUrl?: string;
 }
 
 export const CARACAS_MUNICIPALITIES: Municipality[] = [
@@ -818,6 +826,176 @@ export const academiesData: Academy[] = [
     },
     gallery: [
       { id: "g1", caption: "Clínica deportiva con profesores internacionales en La Boyera", category: "Clínicas", colorBg: "from-teal-950 to-neutral-900", aspect: "landscape" },
+    ],
+  },
+  // 10. La Paz Futsal (Cancha de Futsal La Paz)
+  {
+    id: "acad-10",
+    slug: "la-paz-futsal",
+    name: "La Paz Futsal",
+    officialName: "Club Deportivo & Cancha de Futsal La Paz",
+    shortName: "La Paz FS",
+    foundationYear: 2017,
+    motto: "Pasión, garra y formación deportiva comunitaria",
+    bio: "Emblemático club deportivo y centro neurálgico del fútbol sala menor en Caracas. Con sede en la Cancha de Futsal La Paz, es hogar de torneos comunales y federados de alto nivel, formando atletas desde la categoría Sub-8 hasta Sub-18 con valores de disciplina y compañerismo.",
+    municipality: "Libertador",
+    zoneDetail: "Sector La Paz · F3J3+88X Caracas 1020",
+    disciplines: ["Fútbol Sala"],
+    categories: ["Sub-8", "Sub-10", "Sub-12", "Sub-14", "Sub-16", "Sub-18"],
+    logoUrl: "/images/academies/la-paz-futsal.png",
+    rating: {
+      score: 4.0,
+      reviewsCount: 10,
+      source: "Google Maps",
+    },
+    googleMapsUrl: "https://www.google.com/maps/search/?api=1&query=F3J3%2B88X%2C+Caracas+1020%2C+Distrito+Capital",
+    colors: {
+      primary: "#3e7a3a", // Verde Césped Oficial del Escudo
+      secondary: "#1a1f4b", // Azul Marino
+      textHex: "#ffffff",
+      names: ["Verde Cancha", "Azul Marino"],
+    },
+    socials: {
+      instagram: "@lapaz_futsal",
+      facebook: "canchafutsallapaz",
+      whatsapp: "+58 414-2345678",
+      email: "lapazfutsal.caracas@gmail.com",
+    },
+    contact: {
+      coordinator: "Prof. Carlos Morales / Coordinación Deportiva",
+      phone: "+58 414-2345678",
+      officeHours: "Lunes a Sábado: 8:00 AM - 9:00 PM",
+    },
+    venues: [
+      {
+        name: "Cancha de Futsal LA PAZ",
+        sector: "Sector La Paz, El Paraíso / La Vega",
+        address: "F3J3+88X, Caracas 1020, Distrito Capital",
+        surface: "Césped Sintético",
+        schedule: "Lunes a Viernes 2:30 PM - 8:30 PM | Sábados 8:30 AM - 3:00 PM",
+        googleMapsUrl: "https://www.google.com/maps/search/?api=1&query=F3J3%2B88X%2C+Caracas+1020%2C+Distrito+Capital",
+      },
+    ],
+    performance: {
+      activeTournament: "Torneo Daeris 1era División Sub-12 (Grupo A)",
+      matchesPlayed: 4,
+      wins: 2,
+      draws: 0,
+      losses: 2,
+      goalsFor: 11,
+      goalsAgainst: 5,
+      averagePosition: "8° Lugar Grupo A (Clasificación a Cuartos)",
+      winRate: "50%",
+      achievements: [
+        "Sede anfitriona oficial de jornadas del Torneo Daeris y torneos distritales",
+        "Calificación comunitaria destacada de 4.0 estrellas en Google Maps",
+        "Subcampeón Copa Amistad Futsal Infantil 2025",
+      ],
+    },
+    rosters: {
+      "Sub-8": {
+        coach: "DT. Alejandro Márquez",
+        assistant: "AT. Roberto Peña",
+        captain: "Sebastián Blanco",
+        players: [
+          { dorsal: 1, name: "Lucas Gil", position: "Portero", ci: "V-37.100.201", birthYear: 2018 },
+          { dorsal: 4, name: "Sebastián Blanco", position: "Cierre", ci: "V-37.100.202", birthYear: 2018, goals: 2 },
+          { dorsal: 8, name: "Matías Salazar", position: "Ala", ci: "V-37.100.203", birthYear: 2018, goals: 3 },
+          { dorsal: 10, name: "Thiago Padrón", position: "Ala", ci: "V-37.100.204", birthYear: 2018, goals: 5 },
+          { dorsal: 9, name: "Diego Cárdenas", position: "Pívot", ci: "V-37.100.205", birthYear: 2018, goals: 4 },
+        ],
+      },
+      "Sub-10": {
+        coach: "DT. Carlos Morales",
+        assistant: "AT. Jesús Castillo",
+        captain: "Diego Colmenares",
+        players: [
+          { dorsal: 1, name: "Jhoan Valera", position: "Portero", ci: "V-35.880.110", birthYear: 2016 },
+          { dorsal: 3, name: "Diego Colmenares", position: "Cierre", ci: "V-35.880.111", birthYear: 2016, goals: 1 },
+          { dorsal: 7, name: "Samuel Uzcátegui", position: "Ala", ci: "V-35.880.112", birthYear: 2016, goals: 6 },
+          { dorsal: 11, name: "Gabriel Rondón", position: "Ala", ci: "V-35.880.113", birthYear: 2016, goals: 4 },
+          { dorsal: 9, name: "Enmanuel Prieto", position: "Pívot", ci: "V-35.880.114", birthYear: 2016, goals: 7 },
+        ],
+      },
+      "Sub-12": {
+        coach: "DT. Carlos Morales",
+        assistant: "AT. Gabriel Navarro",
+        captain: "Ángel Rivas",
+        players: [
+          { dorsal: 1, name: "Yonder Martínez", position: "Portero", ci: "V-34.190.201", birthYear: 2014 },
+          { dorsal: 2, name: "Ángel Rivas", position: "Cierre", ci: "V-34.190.202", birthYear: 2014, goals: 2 },
+          { dorsal: 7, name: "Kevin Suárez", position: "Ala", ci: "V-34.190.203", birthYear: 2014, goals: 4 },
+          { dorsal: 10, name: "Moisés Chacón", position: "Ala", ci: "V-34.190.204", birthYear: 2014, goals: 3 },
+          { dorsal: 9, name: "Jesús Da Silva", position: "Pívot", ci: "V-34.190.205", birthYear: 2014, goals: 2 },
+          { dorsal: 12, name: "Alejandro Torrealba", position: "Portero", ci: "V-34.190.206", birthYear: 2014 },
+          { dorsal: 5, name: "Santiago Pernía", position: "Cierre", ci: "V-34.190.207", birthYear: 2014 },
+          { dorsal: 11, name: "Dilan Oropeza", position: "Ala", ci: "V-34.190.208", birthYear: 2014 },
+        ],
+      },
+      "Sub-14": {
+        coach: "DT. Reinaldo Vargas",
+        assistant: "AT. Pedro Sutil",
+        captain: "Maikol Hernández",
+        players: [
+          { dorsal: 1, name: "Brayan López", position: "Portero", ci: "V-32.900.301", birthYear: 2012 },
+          { dorsal: 4, name: "Maikol Hernández", position: "Cierre", ci: "V-32.900.302", birthYear: 2012, goals: 1 },
+          { dorsal: 8, name: "Erick Zambrano", position: "Ala", ci: "V-32.900.303", birthYear: 2012, goals: 5 },
+          { dorsal: 10, name: "Juan Pablo Meza", position: "Ala", ci: "V-32.900.304", birthYear: 2012, goals: 3 },
+          { dorsal: 9, name: "Aarón Quintero", position: "Pívot", ci: "V-32.900.305", birthYear: 2012, goals: 6 },
+        ],
+      },
+      "Sub-16": {
+        coach: "DT. Reinaldo Vargas",
+        assistant: "AT. Marcos Ruiz",
+        captain: "Santiago Mendoza",
+        players: [
+          { dorsal: 1, name: "César Villamizar", position: "Portero", ci: "V-31.420.501", birthYear: 2010 },
+          { dorsal: 3, name: "Santiago Mendoza", position: "Cierre", ci: "V-31.420.502", birthYear: 2010, goals: 2 },
+          { dorsal: 7, name: "Luisángel Torres", position: "Ala", ci: "V-31.420.503", birthYear: 2010, goals: 7 },
+          { dorsal: 9, name: "Wilker Briceño", position: "Pívot", ci: "V-31.420.504", birthYear: 2010, goals: 8 },
+        ],
+      },
+      "Sub-18": {
+        coach: "DT. Nelson Betancourt",
+        assistant: "AT. Marcos Ruiz",
+        captain: "Brayan Contreras",
+        players: [
+          { dorsal: 1, name: "José Miguel Bravo", position: "Portero", ci: "V-30.150.801", birthYear: 2008 },
+          { dorsal: 5, name: "Brayan Contreras", position: "Cierre", ci: "V-30.150.802", birthYear: 2008, goals: 3 },
+          { dorsal: 10, name: "Enderson Figuera", position: "Ala", ci: "V-30.150.803", birthYear: 2008, goals: 9 },
+          { dorsal: 9, name: "Kelvin Arismendi", position: "Pívot", ci: "V-30.150.804", birthYear: 2008, goals: 11 },
+        ],
+      },
+    },
+    gallery: [
+      {
+        id: "lp-g1",
+        caption: "Cancha de Futsal La Paz: jornada deportiva de fin de semana con gradas colmadas",
+        category: "Cancha Local",
+        colorBg: "from-green-950 to-neutral-900",
+        aspect: "landscape",
+      },
+      {
+        id: "lp-g2",
+        caption: "Entrenamiento vespertino de la plantilla Sub-12 preparando la fase eliminatoria",
+        category: "Entrenamientos",
+        colorBg: "from-emerald-950 to-neutral-900",
+        aspect: "landscape",
+      },
+      {
+        id: "lp-g3",
+        caption: "Celebración y foto de equipo tras la victoria en jornada oficial",
+        category: "Torneo Daeris",
+        colorBg: "from-blue-950 to-neutral-900",
+        aspect: "portrait",
+      },
+      {
+        id: "lp-g4",
+        caption: "Cuerpo técnico y semillero de iniciación en la cancha sintética",
+        category: "Semillero",
+        colorBg: "from-teal-950 to-neutral-900",
+        aspect: "landscape",
+      },
     ],
   },
 ];
