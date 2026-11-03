@@ -1,4 +1,4 @@
-﻿import { OfficialTableRow } from "@/components/tournaments/tournament-official-table";
+import { OfficialTableRow } from "@/components/tournaments/tournament-official-table";
 import { Scorer, Goalkeeper } from "@/data/daeris";
 import {
   createGenericStandings,
@@ -8,6 +8,12 @@ import {
 } from "@/data/generic-tournament-data";
 
 export type TournamentId = "daeris" | "prueba";
+
+export interface MatchReferees {
+  principal: string; // Árbitro Principal
+  asistente: string; // Segundo Árbitro / Asistente
+  mesa?: string;     // Cronometrador / Mesa Técnica
+}
 
 export interface TournamentMatchItem {
   id: string;
@@ -22,6 +28,7 @@ export interface TournamentMatchItem {
   venue: string;
   status: "scheduled" | "live" | "finished";
   jornada?: string;
+  referees?: MatchReferees; // Cuerpo arbitral de la jornada
 }
 
 export interface TournamentData {
@@ -62,7 +69,7 @@ export const tournamentsList: Record<TournamentId, TournamentData> = {
     status: "En Curso",
     venue: "Cancha Gimnasio Libertador del 23 de Enero, Caracas",
     venueShort: "Gimnasio Libertador, 23 de Enero",
-    categories: ["Sub-6", "Sub-8", "Sub-10", "Sub-12", "Sub-14", "Sub-16", "Sub-18"],
+    categories: ["Sub-8", "Sub-10", "Sub-12", "Sub-14", "Sub-16", "Sub-18", "Sub-20"],
     totalTeams: 11,
     groupName: "GRUPO A",
     qualificationRule: "CLASIFICAN LOS 8 PRIMEROS DE CADA GRUPO",
@@ -80,6 +87,11 @@ export const tournamentsList: Record<TournamentId, TournamentData> = {
       venue: "Cancha Gimnasio Libertador del 23 de Enero",
       status: "scheduled",
       jornada: "JORNADA SÁBADO · FECHA OFICIAL",
+      referees: {
+        principal: "Árbitro 1 (Principal)",
+        asistente: "Árbitro 2 (Auxiliar)",
+        mesa: "Anotador 1 (Mesa Técnica)",
+      },
     },
     matches: createGenericMatches("Torneo Daeris", "Sub-12 Élite", "Gimnasio Libertador, 23 de Enero", "Equipo"),
     standings: createGenericStandings("Equipo"),
@@ -120,6 +132,11 @@ export const tournamentsList: Record<TournamentId, TournamentData> = {
       venue: "Cancha Parque Central, Caracas",
       status: "scheduled",
       jornada: "JORNADA 1 · PRUEBA",
+      referees: {
+        principal: "Árbitro 3 (Principal)",
+        asistente: "Árbitro 4 (Auxiliar)",
+        mesa: "Anotador 2 (Mesa Técnica)",
+      },
     },
     matches: createGenericMatches("Torneo de Prueba", "Sub-12", "Cancha Parque Central, Caracas", "Equipo"),
     standings: createGenericStandings("Equipo"),

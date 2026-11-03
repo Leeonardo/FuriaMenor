@@ -1,5 +1,6 @@
-﻿import React from "react";
-import { Trophy } from "lucide-react";
+import React from "react";
+import Link from "next/link";
+import { Trophy, Users } from "lucide-react";
 
 export interface OfficialTableRow {
   pos: number;
@@ -21,6 +22,8 @@ interface TournamentOfficialTableProps {
   qualificationRule?: string;
   qualificationCutoff?: number;
   rows: OfficialTableRow[];
+  baseTournamentPath?: string;
+  currentCategory?: string;
 }
 
 /**
@@ -29,6 +32,7 @@ interface TournamentOfficialTableProps {
  * - POS | EQUIPOS | JJ | JG | JE | JP | GA | GE | DIF | PTS
  * - Clasificados y Eliminados
  * - Leyenda con regla clasificatoria
+ * - Cada equipo es clicable para acceder a su plantilla oficial
  */
 export function TournamentOfficialTable({
   title = "TABLA DE POSICIONES CATEGORIA SUB 12 ELITE",
@@ -36,6 +40,8 @@ export function TournamentOfficialTable({
   qualificationRule = "CLASIFICAN LOS 8 PRIMEROS DE CADA GRUPO",
   qualificationCutoff = 8,
   rows,
+  baseTournamentPath,
+  currentCategory,
 }: TournamentOfficialTableProps) {
   return (
     <div className="w-full overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950 shadow-2xl backdrop-blur-md">
@@ -49,9 +55,17 @@ export function TournamentOfficialTable({
             {title}
           </h3>
         </div>
-        <span className="rounded-full bg-red-500/10 border border-red-500/30 px-3 py-0.5 text-xs font-bold text-red-400 uppercase tracking-widest">
-          {groupName}
-        </span>
+        <div className="flex items-center gap-2">
+          {baseTournamentPath && (
+            <span className="text-[11px] text-neutral-400 hidden sm:inline flex items-center gap-1">
+              <Users className="h-3 w-3 text-red-400" />
+              Haz clic en cualquier equipo para ver su plantilla
+            </span>
+          )}
+          <span className="rounded-full bg-red-500/10 border border-red-500/30 px-3 py-0.5 text-xs font-bold text-red-400 uppercase tracking-widest">
+            {groupName}
+          </span>
+        </div>
       </div>
 
       {/* 2. Tabla de posiciones con estructura reglamentaria y estética moderna */}
@@ -75,6 +89,11 @@ export function TournamentOfficialTable({
             {rows.map((row, idx) => {
               const isEliminated = row.status === "eliminado";
               const isClassified = row.pos <= qualificationCutoff && !isEliminated;
+              const teamSlug = row.team.toLowerCase().replace(/\s+/g, "-");
+              const catParam = currentCategory ? `?cat=${currentCategory}` : "";
+              const teamHref = baseTournamentPath
+                ? `${baseTournamentPath}/equipos/${teamSlug}${catParam}`
+                : undefined;
 
               return (
                 <tr
@@ -101,14 +120,30 @@ export function TournamentOfficialTable({
                     </span>
                   </td>
 
-                  <td className="py-3 px-4 text-left font-bold text-white flex items-center gap-2.5">
-                    {isClassified && (
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shrink-0 shadow-sm shadow-emerald-400/50" />
-                    )}
-                    {isEliminated && (
-                      <span className="h-1.5 w-1.5 rounded-full bg-red-400 shrink-0 shadow-sm shadow-red-400/50" />
-                    )}
-                    <span className="truncate uppercase tracking-wide">{row.team}</span>
+                  <td className="py-3 px-4 text-left font-bold text-white">
+                    <div className="flex items-center gap-2.5">
+                      {isClassified && (
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shrink-0 shadow-sm shadow-emerald-400/50" />
+                      )}
+                      {isEliminated && (
+                        <span className="h-1.5 w-1.5 rounded-full bg-red-400 shrink-0 shadow-sm shadow-red-400/50" />
+                      )}
+
+                      {teamHref ? (
+                        <Link
+                          href={teamHref}
+                          className="truncate uppercase tracking-wide hover:text-red-400 transition hover:underline group flex items-center gap-1.5"
+                          title={`Ver plantilla de ${row.team}`}
+                        >
+                          <span>{row.team}</span>
+                          <span className="text-[10px] text-neutral-500 font-normal group-hover:text-red-400 opacity-0 group-hover:opacity-100 transition">
+                            (Ver plantilla)
+                          </span>
+                        </Link>
+                      ) : (
+                        <span className="truncate uppercase tracking-wide">{row.team}</span>
+                      )}
+                    </div>
                   </td>
 
                   <td className="py-3 px-2 text-center text-neutral-300 font-semibold">{row.jj}</td>

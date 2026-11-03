@@ -1,15 +1,16 @@
 import { TournamentMatchItem } from "@/data/tournaments-data";
 import { OfficialTableRow } from "@/components/tournaments/tournament-official-table";
 import { Scorer, Goalkeeper } from "@/data/daeris";
+import { TeamProfile } from "@/data/tournament-id-system";
 import {
   MINOR_CATEGORIES,
   MinorCategory,
-  isMinorCategory,
   createGenericStandings,
   createCategoryStandings,
   createGenericScorers,
   createGenericKeepers,
   createGenericMatches,
+  createGenericTeamProfiles,
 } from "@/data/generic-tournament-data";
 
 export type DaerisSubId =
@@ -25,6 +26,7 @@ export interface CategoryPayload {
   topScorers: Scorer[];
   leastConceded: Goalkeeper[];
   matches: TournamentMatchItem[];
+  teams: TeamProfile[];
 }
 
 export interface DaerisSubTournament {
@@ -53,22 +55,26 @@ export interface DaerisSubTournament {
   standings: OfficialTableRow[];
   topScorers: Scorer[];
   leastConceded: Goalkeeper[];
+  teams: TeamProfile[];
 }
 
 /**
  * Genera el paquete completo de datos para una categoría infantil
  */
 function buildCategoryPayload(
+  tournamentSlug: string,
   tournamentName: string,
   category: MinorCategory,
   venue: string,
-  prefix: string
+  prefix: string,
+  tournamentCode = "DAE"
 ): CategoryPayload {
   return {
     standings: createCategoryStandings(category, prefix),
     topScorers: createGenericScorers(prefix, category),
     leastConceded: createGenericKeepers(prefix, category),
     matches: createGenericMatches(tournamentName, category, venue, prefix),
+    teams: createGenericTeamProfiles(tournamentSlug, tournamentName, category, tournamentCode),
   };
 }
 
@@ -76,27 +82,33 @@ function buildCategoryPayload(
  * Genera el diccionario para todas las categorías (Sub-8 a Sub-20)
  */
 function buildAllMinorCategories(
+  tournamentSlug: string,
   tournamentName: string,
   venue: string,
-  prefix: string
+  prefix: string,
+  tournamentCode = "DAE"
 ): Record<MinorCategory, CategoryPayload> {
   const result = {} as Record<MinorCategory, CategoryPayload>;
   for (const cat of MINOR_CATEGORIES) {
-    result[cat] = buildCategoryPayload(tournamentName, cat, venue, prefix);
+    result[cat] = buildCategoryPayload(tournamentSlug, tournamentName, cat, venue, prefix, tournamentCode);
   }
   return result;
 }
 
 const infantil1raCatData = buildAllMinorCategories(
+  "infantil-1ra-division",
   "Torneo Infantil 1ra Div",
   "Gimnasio Libertador, 23 de Enero",
-  "Equipo"
+  "Equipo",
+  "DAE"
 );
 
 const infantil2daCatData = buildAllMinorCategories(
+  "infantil-2da-division",
   "Torneo Infantil 2da Div",
   "Gimnasio Libertador, 23 de Enero",
-  "Equipo"
+  "Equipo",
+  "DAE"
 );
 
 export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
@@ -125,6 +137,7 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
     standings: createGenericStandings("Equipo"),
     topScorers: createGenericScorers("Equipo"),
     leastConceded: createGenericKeepers("Equipo"),
+    teams: createGenericTeamProfiles("institucional", "Torneo Institucional", "Institucional", "DAE"),
   },
 
   // 2. Fútbol 7 Institucional
@@ -152,6 +165,7 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
     standings: createGenericStandings("Equipo"),
     topScorers: createGenericScorers("Equipo"),
     leastConceded: createGenericKeepers("Equipo"),
+    teams: createGenericTeamProfiles("futbol-7-institucional", "Fútbol 7 Institucional", "Fútbol 7", "DAE"),
   },
 
   // 3. Master 50
@@ -179,6 +193,7 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
     standings: createGenericStandings("Equipo"),
     topScorers: createGenericScorers("Equipo"),
     leastConceded: createGenericKeepers("Equipo"),
+    teams: createGenericTeamProfiles("master-50", "Master 50", "Master 50", "DAE"),
   },
 
   // 4. Torneo Libre Parque Carabobo
@@ -206,6 +221,7 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
     standings: createGenericStandings("Equipo"),
     topScorers: createGenericScorers("Equipo"),
     leastConceded: createGenericKeepers("Equipo"),
+    teams: createGenericTeamProfiles("libre-parque-carabobo", "Torneo Libre Parque Carabobo", "Libre", "DAE"),
   },
 
   // 5. Torneo Infantil 1era División
@@ -236,6 +252,7 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
     standings: infantil1raCatData["Sub-12"].standings,
     topScorers: infantil1raCatData["Sub-12"].topScorers,
     leastConceded: infantil1raCatData["Sub-12"].leastConceded,
+    teams: infantil1raCatData["Sub-12"].teams,
   },
 
   // 6. Torneo Infantil 2da División
@@ -266,6 +283,7 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
     standings: infantil2daCatData["Sub-12"].standings,
     topScorers: infantil2daCatData["Sub-12"].topScorers,
     leastConceded: infantil2daCatData["Sub-12"].leastConceded,
+    teams: infantil2daCatData["Sub-12"].teams,
   },
 };
 
@@ -297,6 +315,7 @@ export function getSubTournamentData(
   topScorers: Scorer[];
   leastConceded: Goalkeeper[];
   matches: TournamentMatchItem[];
+  teams: TeamProfile[];
   activeCategory: MinorCategory | null;
 } {
   if (tournament.hasCategories && tournament.categoryData) {
@@ -316,6 +335,7 @@ export function getSubTournamentData(
       topScorers: payload.topScorers,
       leastConceded: payload.leastConceded,
       matches: payload.matches,
+      teams: payload.teams,
       activeCategory: chosenCat,
     };
   }
@@ -325,6 +345,24 @@ export function getSubTournamentData(
     topScorers: tournament.topScorers,
     leastConceded: tournament.leastConceded,
     matches: tournament.matches,
+    teams: tournament.teams,
     activeCategory: null,
   };
+}
+
+/**
+ * Busca un equipo por su slug dentro del torneo
+ */
+export function getTeamInTournament(
+  tournament: DaerisSubTournament,
+  teamSlug: string,
+  categoryParam?: string | null
+): TeamProfile | undefined {
+  const { teams } = getSubTournamentData(tournament, categoryParam);
+  return teams.find(
+    (t) =>
+      t.slug.toLowerCase() === teamSlug.toLowerCase() ||
+      t.name.toLowerCase().replace(/\s+/g, "-") === teamSlug.toLowerCase() ||
+      t.id.toLowerCase() === teamSlug.toLowerCase()
+  );
 }

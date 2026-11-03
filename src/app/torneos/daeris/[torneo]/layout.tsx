@@ -26,6 +26,7 @@ export default async function SubTournamentLayout({ children, params }: SubTourn
     { label: "Resultados", href: `${basePath}/resultados`, icon: CheckCircle2 },
     { label: "Tabla de Posiciones", href: `${basePath}/posiciones`, icon: Trophy },
     { label: "Goleador & Valla", href: `${basePath}/estadisticas`, icon: Goal },
+    { label: "Equipos & Plantillas", href: `${basePath}/equipos`, icon: Users },
   ];
 
   return (

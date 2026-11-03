@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 import { getDaerisSubTournament, getSubTournamentData } from "@/data/daeris-subtournaments";
 import { TournamentOfficialTable } from "@/components/tournaments/tournament-official-table";
 import { TournamentCategorySelector } from "@/components/tournaments/tournament-category-selector";
-import { Clock, Goal, MapPin, Shield, Trophy, ArrowRight } from "lucide-react";
+import { MatchCard } from "@/components/tournaments/match-card";
+import { Clock, Goal, MapPin, Shield, Trophy, ArrowRight, UserCheck, Users } from "lucide-react";
 
 interface SubTournamentPageProps {
   params: Promise<{ torneo: string }>;
@@ -30,6 +31,7 @@ export default async function SubTournamentHomePage({
     topScorers,
     leastConceded,
     matches,
+    teams,
     activeCategory,
   } = getSubTournamentData(tournament, categoryParam);
 
@@ -48,13 +50,18 @@ export default async function SubTournamentHomePage({
         />
       )}
 
-      {/* 1. SECCIÓN DE PARTIDOS RÁPIDOS (PRÓXIMOS Y RESULTADOS) */}
+      {/* 1. SECCIÓN DE PARTIDOS CON CUERPO ARBITRAL OFICIAL */}
       <section>
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-extrabold text-white flex items-center gap-2">
-            <Clock className="h-5 w-5 text-red-400" />
-            Jornada en Curso · Marcadores y Fixture {activeCategory && `(${activeCategory})`}
-          </h2>
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="text-xl font-extrabold text-white flex items-center gap-2">
+              <Clock className="h-5 w-5 text-red-400" />
+              Jornada en Curso · Marcadores, Fixture & Árbitros {activeCategory && `(${activeCategory})`}
+            </h2>
+            <p className="text-xs text-neutral-400 mt-0.5">
+              Partidos programados y disputados con designación arbitral oficial
+            </p>
+          </div>
           <Link
             href={`${basePath}/calendario${catQueryString}`}
             className="text-xs font-bold text-red-400 hover:text-red-300 transition flex items-center gap-1"
@@ -64,99 +71,61 @@ export default async function SubTournamentHomePage({
           </Link>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
-          {/* Próximo partido */}
-          <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-5">
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400 bg-blue-500/10 px-2.5 py-0.5 rounded-full border border-blue-500/30">
-                Próximo Partido
-              </span>
-              {activeCategory && (
-                <span className="text-[10px] font-bold text-neutral-400 uppercase bg-neutral-800 px-2 py-0.5 rounded-full">
-                  {activeCategory}
-                </span>
-              )}
-            </div>
-            {upcomingMatches.length > 0 ? (
-              <div className="mt-4">
-                <div className="flex items-center justify-between text-xs text-neutral-400 mb-2">
-                  <span>{upcomingMatches[0].jornada || "Fecha Oficial"}</span>
-                  <span>{upcomingMatches[0].matchDate} · {upcomingMatches[0].matchTime}</span>
-                </div>
-                <div className="flex items-center justify-between py-2 border-y border-neutral-800/80 my-2">
-                  <span className="font-bold text-white text-base">{upcomingMatches[0].homeTeam}</span>
-                  <span className="text-xs text-neutral-500 font-black px-2">VS</span>
-                  <span className="font-bold text-white text-base text-right">{upcomingMatches[0].awayTeam}</span>
-                </div>
-                <div className="flex items-center gap-1.5 text-xs text-neutral-500 mt-2">
-                  <MapPin className="h-3.5 w-3.5 text-red-400" />
-                  <span>{upcomingMatches[0].venue}</span>
-                </div>
-              </div>
-            ) : (
-              <p className="mt-4 text-xs text-neutral-400">Sin partidos programados pendientes para esta categoría.</p>
-            )}
-          </div>
+        <div className="grid gap-5 md:grid-cols-2">
+          {upcomingMatches.length > 0 && (
+            <MatchCard
+              match={upcomingMatches[0]}
+              baseTournamentPath={basePath}
+              currentCategory={activeCategory || undefined}
+            />
+          )}
 
-          {/* Último resultado */}
-          <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-5">
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
-                Último Resultado
-              </span>
-              {activeCategory && (
-                <span className="text-[10px] font-bold text-neutral-400 uppercase bg-neutral-800 px-2 py-0.5 rounded-full">
-                  {activeCategory}
-                </span>
-              )}
-            </div>
-            {finishedMatches.length > 0 ? (
-              <div className="mt-4">
-                <div className="flex items-center justify-between text-xs text-neutral-400 mb-2">
-                  <span>{finishedMatches[0].jornada || "Fecha Finalizada"}</span>
-                  <span>{finishedMatches[0].matchDate}</span>
-                </div>
-                <div className="flex items-center justify-between py-2 border-y border-neutral-800/80 my-2">
-                  <span className="font-bold text-white text-base">{finishedMatches[0].homeTeam}</span>
-                  <span className="font-black text-red-400 text-lg px-2">
-                    {finishedMatches[0].homeScore} - {finishedMatches[0].awayScore}
-                  </span>
-                  <span className="font-bold text-white text-base text-right">{finishedMatches[0].awayTeam}</span>
-                </div>
-                <div className="flex items-center justify-between text-[11px] text-neutral-500 mt-2">
-                  <span>Finalizado</span>
-                  <Link href={`${basePath}/resultados${catQueryString}`} className="text-red-400 hover:underline">
-                    Ver todos los resultados
-                  </Link>
-                </div>
-              </div>
-            ) : (
-              <p className="mt-4 text-xs text-neutral-400">Aún no se han disputado encuentros en esta fecha.</p>
-            )}
-          </div>
+          {finishedMatches.length > 0 ? (
+            <MatchCard
+              match={finishedMatches[0]}
+              baseTournamentPath={basePath}
+              currentCategory={activeCategory || undefined}
+            />
+          ) : (
+            upcomingMatches.length > 1 && (
+              <MatchCard
+                match={upcomingMatches[1]}
+                baseTournamentPath={basePath}
+                currentCategory={activeCategory || undefined}
+              />
+            )
+          )}
         </div>
       </section>
 
-      {/* 2. TABLA OFICIAL REGLAMENTARIA */}
+      {/* 2. TABLA OFICIAL REGLAMENTARIA (CON EQUIPOS CLICABLES) */}
       <section>
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="text-xl font-extrabold text-white flex items-center gap-2">
               <Trophy className="h-5 w-5 text-amber-400" />
               Tabla de Posiciones Oficial {activeCategory && `· ${activeCategory}`}
             </h2>
             <p className="text-xs text-neutral-400 mt-0.5">
-              Planilla oficial de clasificación reglamentaria correspondiente a {tournament.name}{" "}
-              {activeCategory && `(Categoría ${activeCategory})`}
+              Planilla oficial de clasificación correspondiente a {tournament.name}. Haz clic en cualquier equipo para consultar su plantilla.
             </p>
           </div>
-          <Link
-            href={`${basePath}/posiciones${catQueryString}`}
-            className="text-xs font-bold text-red-400 hover:text-red-300 transition flex items-center gap-1"
-          >
-            Ver tabla completa
-            <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href={`${basePath}/equipos${catQueryString}`}
+              className="text-xs font-bold text-neutral-300 hover:text-white transition flex items-center gap-1 border border-neutral-800 bg-neutral-900 px-3 py-1.5 rounded-xl"
+            >
+              <Users className="h-3.5 w-3.5 text-red-400" />
+              Ver los {teams.length} Equipos
+            </Link>
+            <Link
+              href={`${basePath}/posiciones${catQueryString}`}
+              className="text-xs font-bold text-red-400 hover:text-red-300 transition flex items-center gap-1"
+            >
+              Ver tabla completa
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
         </div>
 
         <TournamentOfficialTable
@@ -165,6 +134,8 @@ export default async function SubTournamentHomePage({
           qualificationRule={tournament.qualificationRule}
           qualificationCutoff={tournament.qualificationCutoff}
           rows={standings}
+          baseTournamentPath={basePath}
+          currentCategory={activeCategory || undefined}
         />
       </section>
 

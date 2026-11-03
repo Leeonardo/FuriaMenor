@@ -1,6 +1,15 @@
 import { OfficialTableRow } from "@/components/tournaments/tournament-official-table";
-import { TournamentMatchItem } from "@/data/tournaments-data";
+import { TournamentMatchItem, MatchReferees } from "@/data/tournaments-data";
 import { Scorer, Goalkeeper } from "@/data/daeris";
+import {
+  generatePlayerTournamentId,
+  generateTeamId,
+  normalizeCategoryCode,
+  normalizeDivisionCode,
+  TeamPlayerItem,
+  TeamProfile,
+  PlayerPosition,
+} from "@/data/tournament-id-system";
 
 export const MINOR_CATEGORIES = [
   "Sub-8",
@@ -51,7 +60,6 @@ export function createCategoryStandings(
     return createGenericStandings(`${prefix}`);
   }
 
-  // Desplazamiento dinámico para dar dinamismo visual al cambiar de categoría
   const catOffset: Record<MinorCategory, number> = {
     "Sub-8": 1,
     "Sub-10": 2,
@@ -105,7 +113,33 @@ export function createGenericKeepers(teamPrefix = "Equipo", category: MinorCateg
 }
 
 /**
- * Partidos genéricos
+ * Cuerpos arbitrales designados por encuentro
+ */
+export const genericReferees: MatchReferees[] = [
+  {
+    principal: "Árbitro 1 (Principal)",
+    asistente: "Árbitro 2 (Segundo Árbitro)",
+    mesa: "Anotador 1 (Cronometrador / Mesa)",
+  },
+  {
+    principal: "Árbitro 3 (Principal)",
+    asistente: "Árbitro 4 (Segundo Árbitro)",
+    mesa: "Anotador 2 (Cronometrador / Mesa)",
+  },
+  {
+    principal: "Árbitro 5 (Principal)",
+    asistente: "Árbitro 6 (Segundo Árbitro)",
+    mesa: "Anotador 3 (Cronometrador / Mesa)",
+  },
+  {
+    principal: "Árbitro 7 (Principal)",
+    asistente: "Árbitro 8 (Segundo Árbitro)",
+    mesa: "Anotador 4 (Cronometrador / Mesa)",
+  },
+];
+
+/**
+ * Partidos genéricos con cuerpo arbitral oficial
  */
 export function createGenericMatches(
   tournamentName: string,
@@ -127,6 +161,7 @@ export function createGenericMatches(
       venue,
       status: "scheduled",
       jornada: `JORNADA 1 · PRÓXIMA FECHA (${category})`,
+      referees: genericReferees[0],
     },
     {
       id: `${tournamentName.toLowerCase().replace(/\s+/g, "-")}-${category.toLowerCase()}-2`,
@@ -141,6 +176,7 @@ export function createGenericMatches(
       venue,
       status: "scheduled",
       jornada: `JORNADA 1 · PRÓXIMA FECHA (${category})`,
+      referees: genericReferees[1],
     },
     {
       id: `${tournamentName.toLowerCase().replace(/\s+/g, "-")}-${category.toLowerCase()}-3`,
@@ -155,6 +191,7 @@ export function createGenericMatches(
       venue,
       status: "finished",
       jornada: `JORNADA ANTERIOR · RESULTADO (${category})`,
+      referees: genericReferees[2],
     },
     {
       id: `${tournamentName.toLowerCase().replace(/\s+/g, "-")}-${category.toLowerCase()}-4`,
@@ -169,6 +206,101 @@ export function createGenericMatches(
       venue,
       status: "finished",
       jornada: `JORNADA ANTERIOR · RESULTADO (${category})`,
+      referees: genericReferees[3],
     },
   ];
+}
+
+/**
+ * Genera la plantilla oficial y perfil de los 11 equipos de un torneo/categoría
+ * con IDs únicos de Torneo-Jugador para actualización automática en base de datos.
+ */
+export function createGenericTeamProfiles(
+  tournamentSlug: string,
+  tournamentName: string,
+  category = "Sub-12",
+  tournamentCode = "DAE"
+): TeamProfile[] {
+  const divisionCode = normalizeDivisionCode(tournamentSlug);
+  const catCode = normalizeCategoryCode(category);
+
+  const positions: PlayerPosition[] = [
+    "Portero",
+    "Cierre",
+    "Cierre",
+    "Ala",
+    "Ala",
+    "Ala",
+    "Ala",
+    "Pívot",
+    "Pívot",
+    "Portero",
+  ];
+
+  const dorsales = [1, 2, 3, 4, 7, 8, 11, 9, 10, 12];
+
+  const teams: TeamProfile[] = [];
+
+  for (let t = 1; t <= 11; t++) {
+    const teamNumStr = String(t).padStart(2, "0");
+    const teamCode = `EQ${teamNumStr}`;
+    const teamId = generateTeamId(tournamentCode, divisionCode, catCode, teamNumStr);
+    const teamSlug = `equipo-${t}`;
+    const teamName = `Equipo ${t}`;
+
+    const roster: TeamPlayerItem[] = [];
+
+    for (let p = 0; p < 10; p++) {
+      const dorsal = dorsales[p];
+      const pos = positions[p];
+      // CI única determinista basada en el número de equipo y dorsal
+      const ciRaw = 33000000 + t * 1000 + dorsal * 10;
+      const ciFormatted = `V-${String(ciRaw).replace(/(\d{2})(\d{3})(\d{3})/, "$1.$2.$3")}`;
+      const playerUniqueId = generatePlayerTournamentId(
+        tournamentCode,
+        divisionCode,
+        catCode,
+        teamCode,
+        `V${ciRaw}`
+      );
+
+      const isKeeper = pos === "Portero";
+      const isTopScorer = dorsal === 10 || dorsal === 9;
+
+      roster.push({
+        id: playerUniqueId,
+        ci: ciFormatted,
+        dorsal,
+        name: `Jugador ${t}-${dorsal}`,
+        position: pos,
+        category,
+        teamId,
+        teamName,
+        matchesPlayed: 6,
+        goals: isKeeper ? 0 : isTopScorer ? (t === 1 ? 8 : 4) : p % 3,
+        yellowCards: p % 4 === 0 ? 1 : 0,
+        redCards: 0,
+        cleanSheets: isKeeper ? (t <= 3 ? 3 : 1) : undefined,
+        goalsConceded: isKeeper ? (t === 1 ? 3 : 6) : undefined,
+      });
+    }
+
+    teams.push({
+      id: teamId,
+      slug: teamSlug,
+      name: teamName,
+      shortName: `EQ ${t}`,
+      tournamentId: tournamentCode.toLowerCase(),
+      subTournamentSlug: tournamentSlug,
+      subTournamentName: tournamentName,
+      category,
+      coach: `Director Técnico ${t}`,
+      assistantCoach: `Asistente Técnico ${t}`,
+      delegate: `Delegado ${t}`,
+      venue: "Cancha Principal, Gimnasio Libertador",
+      roster,
+    });
+  }
+
+  return teams;
 }

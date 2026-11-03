@@ -22,6 +22,7 @@ export default async function SubTournamentPosicionesPage({ params, searchParams
   }
 
   const { standings, activeCategory } = getSubTournamentData(tournament, categoryParam);
+  const basePath = `/torneos/daeris/${tournament.slug}`;
 
   return (
     <div className="space-y-6">
@@ -32,7 +33,7 @@ export default async function SubTournamentPosicionesPage({ params, searchParams
         </h2>
         <p className="text-sm text-neutral-400 mt-1">
           Planilla oficial de clasificación correspondiente a {tournament.name}{" "}
-          {activeCategory && `(Categoría ${activeCategory})`}
+          {activeCategory && `(Categoría ${activeCategory})`}. Haz clic en el nombre de cualquier equipo para ver su plantilla.
         </p>
       </div>
 
@@ -50,6 +51,8 @@ export default async function SubTournamentPosicionesPage({ params, searchParams
           qualificationRule={tournament.qualificationRule}
           qualificationCutoff={tournament.qualificationCutoff}
           rows={standings}
+          baseTournamentPath={basePath}
+          currentCategory={activeCategory || undefined}
         />
       </div>
     </div>

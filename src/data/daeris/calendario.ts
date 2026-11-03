@@ -1,4 +1,4 @@
-export const CATEGORIES = ["Sub-6", "Sub-8", "Sub-10", "Sub-12", "Sub-14", "Sub-16", "Sub-18"] as const;
+export const CATEGORIES = ["Sub-8", "Sub-10", "Sub-12", "Sub-14", "Sub-16", "Sub-18", "Sub-20"] as const;
 export const MODALITIES = ["primera", "segunda"] as const;
 
 export type Category = (typeof CATEGORIES)[number];
@@ -10,6 +10,12 @@ export const modalityLabels: Record<Modality, string> = {
   primera: "1ra División",
   segunda: "2da División",
 };
+
+export interface MatchReferees {
+  principal: string;
+  asistente: string;
+  mesa?: string;
+}
 
 export interface Match {
   id: string;
@@ -26,6 +32,7 @@ export interface Match {
   status: MatchStatus;
   matchday: number;
   jornada?: string;
+  referees?: MatchReferees;
 }
 
 export const torneoDaerisMatches: Match[] = [
@@ -34,7 +41,7 @@ export const torneoDaerisMatches: Match[] = [
     category: "Sub-10",
     modality: "segunda",
     division: "2da División",
-    homeTeam: "DVO Paraçoto",
+    homeTeam: "DVO Paraíso",
     awayTeam: "Black Bulls",
     homeScore: null,
     awayScore: null,
@@ -44,13 +51,18 @@ export const torneoDaerisMatches: Match[] = [
     status: "scheduled",
     matchday: 1,
     jornada: "JORNADA SÁBADO 24-10-2026",
+    referees: {
+      principal: "Árbitro 1 (Principal)",
+      asistente: "Árbitro 2 (Auxiliar)",
+      mesa: "Anotador 1 (Mesa Técnica)",
+    },
   },
   {
     id: "td-002",
     category: "Sub-14",
     modality: "segunda",
     division: "2da División",
-    homeTeam: "DVO Paraçoto",
+    homeTeam: "DVO Paraíso",
     awayTeam: "Black Bulls",
     homeScore: null,
     awayScore: null,
@@ -60,13 +72,18 @@ export const torneoDaerisMatches: Match[] = [
     status: "scheduled",
     matchday: 1,
     jornada: "JORNADA SÁBADO 24-10-2026",
+    referees: {
+      principal: "Árbitro 3 (Principal)",
+      asistente: "Árbitro 4 (Auxiliar)",
+      mesa: "Anotador 2 (Mesa Técnica)",
+    },
   },
   {
     id: "td-003",
     category: "Sub-16",
     modality: "segunda",
     division: "2da División",
-    homeTeam: "DVO Paraçoto",
+    homeTeam: "DVO Paraíso",
     awayTeam: "Espartanos Cutira",
     homeScore: null,
     awayScore: null,
@@ -76,6 +93,11 @@ export const torneoDaerisMatches: Match[] = [
     status: "scheduled",
     matchday: 1,
     jornada: "JORNADA SÁBADO 24-10-2026",
+    referees: {
+      principal: "Árbitro 5 (Principal)",
+      asistente: "Árbitro 6 (Auxiliar)",
+      mesa: "Anotador 3 (Mesa Técnica)",
+    },
   },
   {
     id: "td-004",
@@ -92,13 +114,18 @@ export const torneoDaerisMatches: Match[] = [
     status: "scheduled",
     matchday: 1,
     jornada: "JORNADA SÁBADO 24-10-2026",
+    referees: {
+      principal: "Árbitro 7 (Principal)",
+      asistente: "Árbitro 8 (Auxiliar)",
+      mesa: "Anotador 4 (Mesa Técnica)",
+    },
   },
   {
     id: "td-005",
     category: "Sub-12",
     modality: "segunda",
     division: "2da División",
-    homeTeam: "DVO Paraçoto",
+    homeTeam: "DVO Paraíso",
     awayTeam: "Union Libertador",
     homeScore: null,
     awayScore: null,
@@ -108,6 +135,11 @@ export const torneoDaerisMatches: Match[] = [
     status: "scheduled",
     matchday: 1,
     jornada: "JORNADA SÁBADO 24-10-2026",
+    referees: {
+      principal: "Árbitro 1 (Principal)",
+      asistente: "Árbitro 2 (Auxiliar)",
+      mesa: "Anotador 1 (Mesa Técnica)",
+    },
   },
   {
     id: "td-006",
@@ -124,13 +156,18 @@ export const torneoDaerisMatches: Match[] = [
     status: "scheduled",
     matchday: 1,
     jornada: "JORNADA SÁBADO 24-10-2026",
+    referees: {
+      principal: "Árbitro 3 (Principal)",
+      asistente: "Árbitro 4 (Auxiliar)",
+      mesa: "Anotador 2 (Mesa Técnica)",
+    },
   },
   {
     id: "td-007",
     category: "Sub-8",
     modality: "primera",
     division: "1ra División",
-    homeTeam: "DVO Paraçoto",
+    homeTeam: "DVO Paraíso",
     awayTeam: "Fratelsa Sport Blanco",
     homeScore: null,
     awayScore: null,
@@ -140,6 +177,11 @@ export const torneoDaerisMatches: Match[] = [
     status: "scheduled",
     matchday: 1,
     jornada: "JORNADA SÁBADO 24-10-2026",
+    referees: {
+      principal: "Árbitro 5 (Principal)",
+      asistente: "Árbitro 6 (Auxiliar)",
+      mesa: "Anotador 3 (Mesa Técnica)",
+    },
   },
   {
     id: "td-008",
@@ -156,6 +198,11 @@ export const torneoDaerisMatches: Match[] = [
     status: "scheduled",
     matchday: 1,
     jornada: "JORNADA SÁBADO 24-10-2026",
+    referees: {
+      principal: "Árbitro 7 (Principal)",
+      asistente: "Árbitro 8 (Auxiliar)",
+      mesa: "Anotador 4 (Mesa Técnica)",
+    },
   },
   {
     id: "td-009",
@@ -172,6 +219,11 @@ export const torneoDaerisMatches: Match[] = [
     status: "scheduled",
     matchday: 1,
     jornada: "JORNADA SÁBADO 24-10-2026",
+    referees: {
+      principal: "Árbitro 1 (Principal)",
+      asistente: "Árbitro 2 (Auxiliar)",
+      mesa: "Anotador 1 (Mesa Técnica)",
+    },
   },
   {
     id: "td-010",
@@ -188,5 +240,10 @@ export const torneoDaerisMatches: Match[] = [
     status: "scheduled",
     matchday: 1,
     jornada: "JORNADA SÁBADO 24-10-2026",
+    referees: {
+      principal: "Árbitro 3 (Principal)",
+      asistente: "Árbitro 4 (Auxiliar)",
+      mesa: "Anotador 2 (Mesa Técnica)",
+    },
   },
 ];
