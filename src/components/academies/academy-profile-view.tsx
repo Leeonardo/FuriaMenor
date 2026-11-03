@@ -197,8 +197,17 @@ export function AcademyProfileView({ academy }: AcademyProfileViewProps) {
                     style={{ backgroundColor: academy.colors.secondary }}
                     title={academy.colors.names[1]}
                   />
+                  {academy.colors.tertiary && (
+                    <span
+                      className="h-3.5 w-3.5 rounded-full border border-neutral-700 shadow-sm"
+                      style={{ backgroundColor: academy.colors.tertiary }}
+                      title={academy.colors.names[2] || "Blanco"}
+                    />
+                  )}
                   <span className="text-xs text-neutral-300 font-medium">
-                    {academy.colors.names.join(" y ")}
+                    {academy.colors.names.length > 2
+                      ? `${academy.colors.names.slice(0, -1).join(", ")} y ${academy.colors.names[academy.colors.names.length - 1]}`
+                      : academy.colors.names.join(" y ")}
                   </span>
                 </div>
               </div>

@@ -75,6 +75,7 @@ export interface Academy {
   colors: {
     primary: string;
     secondary: string;
+    tertiary?: string;
     textHex: string;
     names: string[];
   };
@@ -854,8 +855,9 @@ export const academiesData: Academy[] = [
     colors: {
       primary: "#3e7a3a", // Verde Césped Oficial del Escudo
       secondary: "#1a1f4b", // Azul Marino
+      tertiary: "#ffffff", // Blanco
       textHex: "#ffffff",
-      names: ["Verde Cancha", "Azul Marino"],
+      names: ["Verde Cancha", "Azul Marino", "Blanco"],
     },
     socials: {
       instagram: "@lapaz_futsal",
