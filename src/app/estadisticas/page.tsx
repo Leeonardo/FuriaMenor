@@ -1,18 +1,33 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import Link from "next/link";
-import { Goal, Shield, Filter, ArrowLeft } from "lucide-react";
+import { Goal, Shield, Filter, ArrowLeft, ShieldCheck } from "lucide-react";
 import { daerisSubList, DaerisSubId } from "@/data/daeris-subtournaments";
-import { createGenericScorers, createGenericKeepers } from "@/data/generic-tournament-data";
+import {
+  createGenericScorers,
+  createGenericKeepers,
+  MINOR_CATEGORIES,
+  MinorCategory,
+} from "@/data/generic-tournament-data";
 
 export default function EstadisticasPage() {
   const [selectedTournament, setSelectedTournament] = useState<"daeris" | "prueba">("daeris");
   const [selectedDaerisSub, setSelectedDaerisSub] = useState<DaerisSubId>("infantil-1ra");
+  const [selectedCategory, setSelectedCategory] = useState<MinorCategory>("Sub-12");
 
   const currentSub = daerisSubList.find((s) => s.id === selectedDaerisSub) || daerisSubList[0];
-  const scorers = selectedTournament === "daeris" ? currentSub.topScorers : createGenericScorers("Equipo");
-  const keepers = selectedTournament === "daeris" ? currentSub.leastConceded : createGenericKeepers("Equipo");
+
+  let scorers = currentSub.topScorers;
+  let keepers = currentSub.leastConceded;
+
+  if (selectedTournament === "prueba") {
+    scorers = createGenericScorers("Equipo");
+    keepers = createGenericKeepers("Equipo");
+  } else if (currentSub.hasCategories && currentSub.categoryData) {
+    scorers = currentSub.categoryData[selectedCategory]?.topScorers || currentSub.topScorers;
+    keepers = currentSub.categoryData[selectedCategory]?.leastConceded || currentSub.leastConceded;
+  }
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100">
@@ -36,40 +51,42 @@ export default function EstadisticasPage() {
             Goleador del Torneo & Valla Menos Vencida
           </h1>
           <p className="mt-1 text-sm text-neutral-400">
-            Máximos artilleros y porterías menos vencidas por cada división y torneo
+            Máximos artilleros y porterías menos vencidas por cada división y categoría formativa
           </p>
         </div>
 
         {/* Filtros */}
-        <div className="mb-8 flex flex-wrap items-center gap-4 rounded-2xl border border-neutral-800 bg-neutral-900/60 p-4">
-          <div className="flex items-center gap-2 text-neutral-400">
-            <Filter className="h-4 w-4 text-red-400" />
-            <span className="text-xs font-bold uppercase tracking-wider text-neutral-300">
-              Torneo:
-            </span>
-          </div>
+        <div className="mb-8 flex flex-col gap-4 rounded-2xl border border-neutral-800 bg-neutral-900/60 p-4 sm:p-5">
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-2 text-neutral-400">
+              <Filter className="h-4 w-4 text-red-400" />
+              <span className="text-xs font-bold uppercase tracking-wider text-neutral-300">
+                Torneo:
+              </span>
+            </div>
 
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => setSelectedTournament("daeris")}
-              className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
-                selectedTournament === "daeris"
-                  ? "bg-red-600 text-white shadow-md shadow-red-600/30"
-                  : "bg-neutral-800 text-neutral-400 hover:text-white"
-              }`}
-            >
-              Torneo Daeris (6 Divisiones)
-            </button>
-            <button
-              onClick={() => setSelectedTournament("prueba")}
-              className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
-                selectedTournament === "prueba"
-                  ? "bg-sky-600 text-white shadow-md shadow-sky-600/30"
-                  : "bg-neutral-800 text-neutral-400 hover:text-white"
-              }`}
-            >
-              Torneo de Prueba
-            </button>
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setSelectedTournament("daeris")}
+                className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
+                  selectedTournament === "daeris"
+                    ? "bg-red-600 text-white shadow-md shadow-red-600/30"
+                    : "bg-neutral-800 text-neutral-400 hover:text-white"
+                }`}
+              >
+                Torneo Daeris (6 Divisiones)
+              </button>
+              <button
+                onClick={() => setSelectedTournament("prueba")}
+                className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
+                  selectedTournament === "prueba"
+                    ? "bg-sky-600 text-white shadow-md shadow-sky-600/30"
+                    : "bg-neutral-800 text-neutral-400 hover:text-white"
+                }`}
+              >
+                Torneo de Prueba
+              </button>
+            </div>
           </div>
 
           {selectedTournament === "daeris" && (
@@ -90,6 +107,36 @@ export default function EstadisticasPage() {
               ))}
             </div>
           )}
+
+          {/* Selector de Categorías si la división seleccionada tiene categorías (Sub-8 a Sub-20) */}
+          {selectedTournament === "daeris" && currentSub.hasCategories && (
+            <div className="w-full pt-3 border-t border-neutral-800">
+              <div className="flex items-center gap-2 mb-2">
+                <ShieldCheck className="h-3.5 w-3.5 text-red-400" />
+                <span className="text-xs font-bold uppercase tracking-wider text-neutral-300">
+                  Categoría Menor Segmentada:
+                </span>
+                <span className="text-[11px] font-bold text-red-400 ml-auto">
+                  {selectedCategory}
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {MINOR_CATEGORIES.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setSelectedCategory(cat)}
+                    className={`rounded-lg px-3 py-1.5 text-xs font-bold transition ${
+                      selectedCategory === cat
+                        ? "bg-red-600 text-white shadow-md shadow-red-600/30 ring-1 ring-red-400"
+                        : "bg-neutral-800/90 text-neutral-400 hover:bg-neutral-800 hover:text-white"
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Tablas de Goleadores y Vallas */}
@@ -104,12 +151,13 @@ export default function EstadisticasPage() {
                 <div>
                   <h2 className="text-lg font-bold text-white">Goleador del Torneo</h2>
                   <p className="text-xs text-neutral-400">
-                    {selectedTournament === "daeris" ? currentSub.name : "Torneo de Prueba"}
+                    {selectedTournament === "daeris" ? currentSub.name : "Torneo de Prueba"}{" "}
+                    {currentSub.hasCategories && `(${selectedCategory})`}
                   </p>
                 </div>
               </div>
               <span className="rounded-full bg-red-500/10 px-2.5 py-0.5 text-xs font-bold text-red-400">
-                Líderes
+                Artilleros
               </span>
             </div>
 
@@ -163,7 +211,8 @@ export default function EstadisticasPage() {
                 <div>
                   <h2 className="text-lg font-bold text-white">Valla Menos Vencida</h2>
                   <p className="text-xs text-neutral-400">
-                    {selectedTournament === "daeris" ? currentSub.name : "Torneo de Prueba"}
+                    {selectedTournament === "daeris" ? currentSub.name : "Torneo de Prueba"}{" "}
+                    {currentSub.hasCategories && `(${selectedCategory})`}
                   </p>
                 </div>
               </div>

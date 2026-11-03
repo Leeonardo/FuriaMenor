@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { Menu, Search, X, ChevronDown } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 const navItems = [
   { label: "Inicio", href: "/" },
@@ -14,11 +14,8 @@ const navItems = [
   { label: "Academias", href: "/academias" },
 ];
 
-const categories = ["Sub-6", "Sub-8", "Sub-10", "Sub-12", "Sub-14", "Sub-16", "Sub-18", "Sub-20"];
-
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeCategory, setActiveCategory] = useState("Sub-12");
 
   return (
     <header className="sticky top-0 z-50 border-b border-neutral-800 bg-neutral-950/95 backdrop-blur-xl">
@@ -86,29 +83,6 @@ export function Header() {
           </button>
         </div>
       </nav>
-
-      {/* Barra de categorías para filtrado rápido */}
-      <div className="border-t border-neutral-800/80 bg-neutral-900/30">
-        <div className="mx-auto flex max-w-7xl items-center gap-2 overflow-x-auto px-4 py-2 sm:px-6 lg:px-8 scrollbar-none">
-          <span className="flex items-center gap-1 text-xs text-neutral-500 whitespace-nowrap font-medium pr-1">
-            <ChevronDown className="h-3 w-3" />
-            Categorías:
-          </span>
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`whitespace-nowrap rounded-full px-3 py-0.5 text-xs font-medium transition ${
-                activeCategory === cat
-                  ? "bg-red-600 text-white shadow-sm"
-                  : "border border-neutral-800 text-neutral-400 hover:border-neutral-700 hover:text-white bg-neutral-900/50"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-      </div>
 
       {/* Menú mobile */}
       {mobileOpen && (

@@ -1,4 +1,5 @@
 ﻿import React from "react";
+import { Trophy } from "lucide-react";
 
 export interface OfficialTableRow {
   pos: number;
@@ -23,13 +24,11 @@ interface TournamentOfficialTableProps {
 }
 
 /**
- * Tabla de Posiciones Oficial estilo planilla de competición
- * Diseño exacto al modelo reglamentario:
- * - Encabezado Cyan para título de la categoría
- * - Sub-encabezado Rojo para el Grupo
- * - Cabecera de columnas Amarilla (POS, EQUIPOS, JJ, JG, JE, JP, GA, GE, DIF, PTS)
- * - Filas con estado clasificados / eliminados
- * - Leyenda con clasificados (cyan), eliminados (rojo) y regla clasificatoria (amarillo)
+ * Tabla de Posiciones Oficial adaptada al estilo y diseño de Furia Menor
+ * Mantiene la estructura exacta reglamentaria:
+ * - POS | EQUIPOS | JJ | JG | JE | JP | GA | GE | DIF | PTS
+ * - Clasificados y Eliminados
+ * - Leyenda con regla clasificatoria
  */
 export function TournamentOfficialTable({
   title = "TABLA DE POSICIONES CATEGORIA SUB 12 ELITE",
@@ -39,39 +38,40 @@ export function TournamentOfficialTable({
   rows,
 }: TournamentOfficialTableProps) {
   return (
-    <div className="w-full overflow-hidden rounded-xl border border-neutral-700 bg-neutral-900/90 shadow-2xl">
-      {/* 1. Encabezado Cyan de la Categoría */}
-      <div className="bg-[#00E5FF] px-4 py-3 text-center border-b-2 border-black">
-        <h3 className="text-sm sm:text-base font-black tracking-wider text-black uppercase">
-          {title}
-        </h3>
-      </div>
-
-      {/* 2. Sub-encabezado Rojo del Grupo */}
-      <div className="bg-[#EF4444] px-4 py-1.5 text-center border-b-2 border-black">
-        <p className="text-xs sm:text-sm font-extrabold tracking-widest text-black uppercase">
+    <div className="w-full overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950 shadow-2xl backdrop-blur-md">
+      {/* 1. Encabezado estilizado con identidad de Furia Menor */}
+      <div className="bg-gradient-to-r from-red-950/60 via-neutral-900 to-neutral-950 px-5 py-3.5 border-b border-neutral-800 flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-600/20 text-red-400 border border-red-500/30">
+            <Trophy className="h-4 w-4" />
+          </div>
+          <h3 className="text-sm sm:text-base font-extrabold tracking-wide text-white uppercase">
+            {title}
+          </h3>
+        </div>
+        <span className="rounded-full bg-red-500/10 border border-red-500/30 px-3 py-0.5 text-xs font-bold text-red-400 uppercase tracking-widest">
           {groupName}
-        </p>
+        </span>
       </div>
 
-      {/* 3. Tabla con columnas Amarillas */}
+      {/* 2. Tabla de posiciones con estructura reglamentaria y estética moderna */}
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[620px] text-xs sm:text-sm border-collapse text-black">
+        <table className="w-full min-w-[640px] text-xs sm:text-sm border-collapse text-neutral-200">
           <thead>
-            <tr className="bg-[#FFFF00] border-b-2 border-black font-black text-center">
-              <th className="py-2 px-2 border-r border-black w-12">POS</th>
-              <th className="py-2 px-3 border-r border-black text-left">EQUIPOS</th>
-              <th className="py-2 px-2 border-r border-black w-10">JJ</th>
-              <th className="py-2 px-2 border-r border-black w-10">JG</th>
-              <th className="py-2 px-2 border-r border-black w-10">JE</th>
-              <th className="py-2 px-2 border-r border-black w-10">JP</th>
-              <th className="py-2 px-2 border-r border-black w-10">GA</th>
-              <th className="py-2 px-2 border-r border-black w-10">GE</th>
-              <th className="py-2 px-2 border-r border-black w-12">DIF</th>
-              <th className="py-2 px-3 w-12">PTS</th>
+            <tr className="bg-neutral-900/90 border-b border-neutral-800 text-neutral-400 font-extrabold text-center uppercase tracking-wider text-[11px] sm:text-xs">
+              <th className="py-3 px-3 w-12 text-center">POS</th>
+              <th className="py-3 px-4 text-left">EQUIPOS</th>
+              <th className="py-3 px-2 w-11">JJ</th>
+              <th className="py-3 px-2 w-11">JG</th>
+              <th className="py-3 px-2 w-11">JE</th>
+              <th className="py-3 px-2 w-11">JP</th>
+              <th className="py-3 px-2 w-12">GA</th>
+              <th className="py-3 px-2 w-12">GE</th>
+              <th className="py-3 px-2 w-14">DIF</th>
+              <th className="py-3 px-4 w-16 text-right text-red-400 font-black">PTS</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-neutral-800/60 font-medium">
             {rows.map((row, idx) => {
               const isEliminated = row.status === "eliminado";
               const isClassified = row.pos <= qualificationCutoff && !isEliminated;
@@ -79,33 +79,60 @@ export function TournamentOfficialTable({
               return (
                 <tr
                   key={row.team}
-                  className={`border-b border-black font-bold transition ${
+                  className={`transition-colors duration-150 ${
                     isEliminated
-                      ? "bg-[#EF4444] text-black font-extrabold"
-                      : idx % 2 === 0
-                      ? "bg-white text-black hover:bg-neutral-100"
-                      : "bg-[#F8FAFC] text-black hover:bg-neutral-100"
-                  }`}
+                      ? "bg-red-950/30 text-red-200 hover:bg-red-950/50 border-l-4 border-l-red-500"
+                      : isClassified
+                      ? "hover:bg-neutral-900/60 border-l-4 border-l-emerald-500/70"
+                      : "hover:bg-neutral-900/40 border-l-4 border-l-transparent"
+                  } ${idx % 2 === 0 ? "bg-neutral-950" : "bg-neutral-900/30"}`}
                 >
-                  <td className="py-2 px-2 text-center border-r border-black font-black">
-                    {row.pos}
+                  <td className="py-3 px-3 text-center font-black">
+                    <span
+                      className={`inline-flex h-6 w-6 items-center justify-center rounded-md text-xs ${
+                        row.pos <= 3
+                          ? "bg-amber-400/20 text-amber-300 font-black border border-amber-400/30"
+                          : isEliminated
+                          ? "bg-red-500/20 text-red-400 font-black"
+                          : "text-neutral-400"
+                      }`}
+                    >
+                      {row.pos}
+                    </span>
                   </td>
-                  <td className="py-2 px-3 border-r border-black text-left flex items-center gap-2">
+
+                  <td className="py-3 px-4 text-left font-bold text-white flex items-center gap-2.5">
                     {isClassified && (
-                      <span className="h-2 w-2 rounded-full bg-[#00E5FF] border border-black inline-block shrink-0" />
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shrink-0 shadow-sm shadow-emerald-400/50" />
                     )}
-                    <span className="truncate uppercase">{row.team}</span>
+                    {isEliminated && (
+                      <span className="h-1.5 w-1.5 rounded-full bg-red-400 shrink-0 shadow-sm shadow-red-400/50" />
+                    )}
+                    <span className="truncate uppercase tracking-wide">{row.team}</span>
                   </td>
-                  <td className="py-2 px-2 text-center border-r border-black font-semibold">{row.jj}</td>
-                  <td className="py-2 px-2 text-center border-r border-black font-semibold">{row.jg}</td>
-                  <td className="py-2 px-2 text-center border-r border-black font-semibold">{row.je}</td>
-                  <td className="py-2 px-2 text-center border-r border-black font-semibold">{row.jp}</td>
-                  <td className="py-2 px-2 text-center border-r border-black font-semibold">{row.ga}</td>
-                  <td className="py-2 px-2 text-center border-r border-black font-semibold">{row.ge}</td>
-                  <td className="py-2 px-2 text-center border-r border-black font-black">
-                    {row.dif > 0 ? `${row.dif}` : row.dif}
+
+                  <td className="py-3 px-2 text-center text-neutral-300 font-semibold">{row.jj}</td>
+                  <td className="py-3 px-2 text-center text-neutral-300">{row.jg}</td>
+                  <td className="py-3 px-2 text-center text-neutral-400">{row.je}</td>
+                  <td className="py-3 px-2 text-center text-neutral-400">{row.jp}</td>
+                  <td className="py-3 px-2 text-center text-neutral-300">{row.ga}</td>
+                  <td className="py-3 px-2 text-center text-neutral-400">{row.ge}</td>
+                  <td className="py-3 px-2 text-center font-bold">
+                    <span
+                      className={
+                        row.dif > 0
+                          ? "text-emerald-400"
+                          : row.dif < 0
+                          ? "text-red-400"
+                          : "text-neutral-400"
+                      }
+                    >
+                      {row.dif > 0 ? `+${row.dif}` : row.dif}
+                    </span>
                   </td>
-                  <td className="py-2 px-3 text-center font-black text-sm">{row.pts}</td>
+                  <td className="py-3 px-4 text-right font-black text-red-400 text-base">
+                    {row.pts}
+                  </td>
                 </tr>
               );
             })}
@@ -113,23 +140,25 @@ export function TournamentOfficialTable({
         </table>
       </div>
 
-      {/* 4. Leyenda Inferior Exacta a la imagen */}
-      <div className="bg-white p-3 sm:p-4 border-t-2 border-black flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-        {/* Cuadro de Estados */}
-        <div className="w-full sm:w-auto border border-black text-black font-bold divide-y divide-black">
-          <div className="flex items-center">
-            <span className="w-12 h-6 bg-[#00E5FF] border-r border-black shrink-0" />
-            <span className="px-3 py-1 font-black uppercase text-[11px]">CLASIFICADOS</span>
+      {/* 3. Leyenda Inferior adaptada a la estética deportiva oscura */}
+      <div className="bg-neutral-900/80 px-5 py-3.5 border-t border-neutral-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-neutral-400">
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400/50" />
+            <span className="font-semibold text-neutral-300 uppercase tracking-wider text-[11px]">
+              Clasificados (Puestos 1 al {qualificationCutoff})
+            </span>
           </div>
-          <div className="flex items-center">
-            <span className="w-12 h-6 bg-[#EF4444] border-r border-black shrink-0" />
-            <span className="px-3 py-1 font-black uppercase text-[11px]">ELIMINADOS</span>
+          <div className="flex items-center gap-2">
+            <span className="h-2.5 w-2.5 rounded-full bg-red-500 shadow-sm shadow-red-500/50" />
+            <span className="font-semibold text-neutral-300 uppercase tracking-wider text-[11px]">
+              Eliminados
+            </span>
           </div>
         </div>
 
-        {/* Regla de Clasificación en Amarillo */}
-        <div className="w-full sm:w-auto bg-[#FFFF00] border-2 border-black px-4 py-2 text-center shadow-sm">
-          <p className="font-black text-black uppercase tracking-wide text-xs sm:text-sm">
+        <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-3.5 py-1.5 text-center">
+          <p className="font-bold text-amber-300 uppercase tracking-wide text-xs">
             {qualificationRule}
           </p>
         </div>

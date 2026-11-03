@@ -1,10 +1,10 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import Link from "next/link";
 import { DaerisBadgeRenderer } from "@/components/ui/daeris-sub-badge-renderer";
 import { DaerisSubId, daerisSubList, DaerisSubTournament } from "@/data/daeris-subtournaments";
-import { CheckCircle2, ChevronRight, ExternalLink, Layers, MapPin, Users } from "lucide-react";
+import { CheckCircle2, ChevronRight, ExternalLink, Layers, MapPin, Users, ShieldCheck } from "lucide-react";
 
 interface DaerisSubtournamentsPanelProps {
   selectedSubId: DaerisSubId;
@@ -37,7 +37,7 @@ export function DaerisSubtournamentsPanel({
                 Ramas y Divisiones de Torneo Daeris
               </h3>
               <p className="text-xs sm:text-sm text-neutral-400">
-                Selecciona una de las 6 categorías para ver sus partidos, tabla oficial y goleadores
+                Selecciona una de las 6 categorías para filtrar la home o ingresa a su página oficial
               </p>
             </div>
           </div>
@@ -68,10 +68,15 @@ export function DaerisSubtournamentsPanel({
               }`}
             >
               <div className="flex items-center gap-4">
-                {/* Insignia del torneo */}
-                <div className="shrink-0 transition-transform duration-200 group-hover:scale-105">
-                  <DaerisBadgeRenderer badgeKey={sub.badgeKey} size={54} />
-                </div>
+                {/* Insignia del torneo: clicable para navegar directamente */}
+                <Link
+                  href={`/torneos/daeris/${sub.slug}`}
+                  onClick={(e) => e.stopPropagation()}
+                  title={`Ingresar a ${sub.name}`}
+                  className="shrink-0 transition-transform duration-200 hover:scale-110"
+                >
+                  <DaerisBadgeRenderer badgeKey={sub.badgeKey} size={56} />
+                </Link>
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-1 mb-1">
@@ -87,13 +92,25 @@ export function DaerisSubtournamentsPanel({
                   </div>
 
                   <h4 className="text-sm font-bold text-white group-hover:text-red-400 transition leading-snug line-clamp-1">
-                    {sub.name}
+                    <Link
+                      href={`/torneos/daeris/${sub.slug}`}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {sub.name}
+                    </Link>
                   </h4>
 
                   <div className="mt-1 flex items-center gap-1 text-[11px] text-neutral-400 truncate">
                     <MapPin className="h-3 w-3 text-red-400 shrink-0" />
                     <span className="truncate">{sub.venue}</span>
                   </div>
+
+                  {sub.hasCategories && (
+                    <div className="mt-1.5 flex items-center gap-1 text-[10px] text-red-400 font-semibold">
+                      <ShieldCheck className="h-3 w-3" />
+                      <span>Sub-8 a Sub-20</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -108,7 +125,7 @@ export function DaerisSubtournamentsPanel({
                   onClick={(e) => e.stopPropagation()}
                   className="text-red-400 hover:text-red-300 font-semibold flex items-center gap-1 hover:underline"
                 >
-                  Página del Torneo
+                  Ver Torneo
                   <ExternalLink className="h-3 w-3" />
                 </Link>
               </div>

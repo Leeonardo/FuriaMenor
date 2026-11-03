@@ -1,8 +1,12 @@
-﻿import { TournamentMatchItem } from "@/data/tournaments-data";
+import { TournamentMatchItem } from "@/data/tournaments-data";
 import { OfficialTableRow } from "@/components/tournaments/tournament-official-table";
 import { Scorer, Goalkeeper } from "@/data/daeris";
 import {
+  MINOR_CATEGORIES,
+  MinorCategory,
+  isMinorCategory,
   createGenericStandings,
+  createCategoryStandings,
   createGenericScorers,
   createGenericKeepers,
   createGenericMatches,
@@ -15,6 +19,13 @@ export type DaerisSubId =
   | "libre-parquecarabobo"
   | "infantil-1ra"
   | "infantil-2da";
+
+export interface CategoryPayload {
+  standings: OfficialTableRow[];
+  topScorers: Scorer[];
+  leastConceded: Goalkeeper[];
+  matches: TournamentMatchItem[];
+}
 
 export interface DaerisSubTournament {
   id: DaerisSubId;
@@ -30,6 +41,9 @@ export interface DaerisSubTournament {
   groupName: string;
   qualificationRule: string;
   qualificationCutoff: number;
+  hasCategories?: boolean;
+  categories?: readonly MinorCategory[];
+  categoryData?: Record<MinorCategory, CategoryPayload>;
   accent: {
     border: string;
     pill: string;
@@ -40,6 +54,50 @@ export interface DaerisSubTournament {
   topScorers: Scorer[];
   leastConceded: Goalkeeper[];
 }
+
+/**
+ * Genera el paquete completo de datos para una categoría infantil
+ */
+function buildCategoryPayload(
+  tournamentName: string,
+  category: MinorCategory,
+  venue: string,
+  prefix: string
+): CategoryPayload {
+  return {
+    standings: createCategoryStandings(category, prefix),
+    topScorers: createGenericScorers(prefix, category),
+    leastConceded: createGenericKeepers(prefix, category),
+    matches: createGenericMatches(tournamentName, category, venue, prefix),
+  };
+}
+
+/**
+ * Genera el diccionario para todas las categorías (Sub-8 a Sub-20)
+ */
+function buildAllMinorCategories(
+  tournamentName: string,
+  venue: string,
+  prefix: string
+): Record<MinorCategory, CategoryPayload> {
+  const result = {} as Record<MinorCategory, CategoryPayload>;
+  for (const cat of MINOR_CATEGORIES) {
+    result[cat] = buildCategoryPayload(tournamentName, cat, venue, prefix);
+  }
+  return result;
+}
+
+const infantil1raCatData = buildAllMinorCategories(
+  "Torneo Infantil 1ra Div",
+  "Gimnasio Libertador, 23 de Enero",
+  "Equipo"
+);
+
+const infantil2daCatData = buildAllMinorCategories(
+  "Torneo Infantil 2da Div",
+  "Gimnasio Libertador, 23 de Enero",
+  "Equipo"
+);
 
 export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
   // 1. Torneo Institucional
@@ -56,6 +114,7 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
     groupName: "GRUPO INSTITUCIONAL A",
     qualificationRule: "CLASIFICAN LOS 8 PRIMEROS A CUARTOS DE FINAL",
     qualificationCutoff: 8,
+    hasCategories: false,
     description: "Torneo institucional de futsal para entidades públicas y privadas.",
     accent: {
       border: "border-amber-500/50 hover:border-amber-400",
@@ -82,6 +141,7 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
     groupName: "GRUPO F7 ÚNICO",
     qualificationRule: "CLASIFICAN LOS 8 PRIMEROS DE CADA GRUPO",
     qualificationCutoff: 8,
+    hasCategories: false,
     description: "Competición de fútbol 7 en césped sintético institucional.",
     accent: {
       border: "border-emerald-500/50 hover:border-emerald-400",
@@ -108,6 +168,7 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
     groupName: "GRUPO MASTER VETERANOS",
     qualificationRule: "CLASIFICAN LOS 8 PRIMEROS DE CADA GRUPO",
     qualificationCutoff: 8,
+    hasCategories: false,
     description: "Torneo de veteranos mayores de 50 años en Caracas.",
     accent: {
       border: "border-yellow-500/50 hover:border-yellow-400",
@@ -134,6 +195,7 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
     groupName: "GRUPO LIBRE NOCTURNO",
     qualificationRule: "CLASIFICAN LOS 8 PRIMEROS DE CADA GRUPO",
     qualificationCutoff: 8,
+    hasCategories: false,
     description: "Circuito de futsal libre de alta intensidad en Parque Carabobo.",
     accent: {
       border: "border-orange-500/50 hover:border-orange-400",
@@ -152,7 +214,7 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
     slug: "infantil-1ra-division",
     name: "Torneo Infantil 1era División",
     shortName: "Infantil 1ra Div",
-    categoryLabel: "Sub-6 a Sub-18 · Élite",
+    categoryLabel: "Sub-8 a Sub-20 · Élite",
     badgeKey: "infantil-1ra",
     venue: "Gimnasio Libertador del 23 de Enero, Caracas",
     teamsCount: 11,
@@ -160,16 +222,20 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
     groupName: "GRUPO A",
     qualificationRule: "CLASIFICAN LOS 8 PRIMEROS DE CADA GRUPO",
     qualificationCutoff: 8,
-    description: "Competencia formativa élite de futsal menor caraqueño con los mejores clubes de 1ra división.",
+    hasCategories: true,
+    categories: MINOR_CATEGORIES,
+    categoryData: infantil1raCatData,
+    description: "Competencia formativa élite de fútbol menor caraqueño segmentada desde la Sub-8 hasta la Sub-20.",
     accent: {
       border: "border-red-500/50 hover:border-red-500",
       pill: "bg-red-500/10 text-red-400 border-red-500/30",
       text: "text-red-400",
     },
-    matches: createGenericMatches("Torneo Infantil 1ra Div", "Sub-12 Élite", "Gimnasio Libertador, 23 de Enero", "Equipo"),
-    standings: createGenericStandings("Equipo"),
-    topScorers: createGenericScorers("Equipo"),
-    leastConceded: createGenericKeepers("Equipo"),
+    // Datos default (Sub-12)
+    matches: infantil1raCatData["Sub-12"].matches,
+    standings: infantil1raCatData["Sub-12"].standings,
+    topScorers: infantil1raCatData["Sub-12"].topScorers,
+    leastConceded: infantil1raCatData["Sub-12"].leastConceded,
   },
 
   // 6. Torneo Infantil 2da División
@@ -178,7 +244,7 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
     slug: "infantil-2da-division",
     name: "Torneo Infantil 2da División",
     shortName: "Infantil 2da Div",
-    categoryLabel: "Sub-6 a Sub-18 · Ascenso",
+    categoryLabel: "Sub-8 a Sub-20 · Ascenso",
     badgeKey: "infantil-2da",
     venue: "Gimnasio Libertador del 23 de Enero, Caracas",
     teamsCount: 11,
@@ -186,16 +252,20 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
     groupName: "GRUPO B",
     qualificationRule: "CLASIFICAN LOS 8 PRIMEROS DE CADA GRUPO",
     qualificationCutoff: 8,
-    description: "Rama formativa de desarrollo y ascenso con escuelas emergentes del fútbol base.",
+    hasCategories: true,
+    categories: MINOR_CATEGORIES,
+    categoryData: infantil2daCatData,
+    description: "Rama formativa de desarrollo y ascenso segmentada desde la Sub-8 hasta la Sub-20.",
     accent: {
       border: "border-blue-500/50 hover:border-blue-400",
       pill: "bg-blue-500/10 text-blue-400 border-blue-500/30",
       text: "text-blue-400",
     },
-    matches: createGenericMatches("Torneo Infantil 2da Div", "Sub-12 Ascenso", "Gimnasio Libertador, 23 de Enero", "Equipo"),
-    standings: createGenericStandings("Equipo"),
-    topScorers: createGenericScorers("Equipo"),
-    leastConceded: createGenericKeepers("Equipo"),
+    // Datos default (Sub-12)
+    matches: infantil2daCatData["Sub-12"].matches,
+    standings: infantil2daCatData["Sub-12"].standings,
+    topScorers: infantil2daCatData["Sub-12"].topScorers,
+    leastConceded: infantil2daCatData["Sub-12"].leastConceded,
   },
 };
 
@@ -214,4 +284,47 @@ export function getDaerisSubTournament(slugOrId: string): DaerisSubTournament | 
       t.id.replace("-", "") === normalized.replace("-", "") ||
       t.slug.replace(/-/g, "") === normalized.replace(/-/g, "")
   );
+}
+
+/**
+ * Obtiene los datos activos (respetando la categoría seleccionada Sub-8 a Sub-20 si aplica)
+ */
+export function getSubTournamentData(
+  tournament: DaerisSubTournament,
+  categoryParam?: string | null
+): {
+  standings: OfficialTableRow[];
+  topScorers: Scorer[];
+  leastConceded: Goalkeeper[];
+  matches: TournamentMatchItem[];
+  activeCategory: MinorCategory | null;
+} {
+  if (tournament.hasCategories && tournament.categoryData) {
+    let chosenCat: MinorCategory = "Sub-12";
+    if (categoryParam) {
+      const match = MINOR_CATEGORIES.find(
+        (c) => c.toLowerCase() === categoryParam.toLowerCase().trim()
+      );
+      if (match) {
+        chosenCat = match;
+      }
+    }
+
+    const payload = tournament.categoryData[chosenCat];
+    return {
+      standings: payload.standings,
+      topScorers: payload.topScorers,
+      leastConceded: payload.leastConceded,
+      matches: payload.matches,
+      activeCategory: chosenCat,
+    };
+  }
+
+  return {
+    standings: tournament.standings,
+    topScorers: tournament.topScorers,
+    leastConceded: tournament.leastConceded,
+    matches: tournament.matches,
+    activeCategory: null,
+  };
 }

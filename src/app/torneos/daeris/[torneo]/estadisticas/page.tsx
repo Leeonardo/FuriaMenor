@@ -1,31 +1,49 @@
-﻿import React from "react";
+import React from "react";
 import { notFound } from "next/navigation";
-import { getDaerisSubTournament } from "@/data/daeris-subtournaments";
+import { getDaerisSubTournament, getSubTournamentData } from "@/data/daeris-subtournaments";
+import { TournamentCategorySelector } from "@/components/tournaments/tournament-category-selector";
 import { Goal, Shield } from "lucide-react";
 
 interface PageProps {
   params: Promise<{ torneo: string }>;
+  searchParams: Promise<{ cat?: string; categoria?: string }>;
 }
 
-export default async function SubTournamentEstadisticasPage({ params }: PageProps) {
+export default async function SubTournamentEstadisticasPage({ params, searchParams }: PageProps) {
   const { torneo: torneoSlug } = await params;
+  const query = await searchParams;
+  const categoryParam = query?.cat || query?.categoria;
+
   const tournament = getDaerisSubTournament(torneoSlug);
 
   if (!tournament) {
     notFound();
   }
 
+  const { topScorers, leastConceded, activeCategory } = getSubTournamentData(
+    tournament,
+    categoryParam
+  );
+
   return (
     <div className="space-y-6">
       <div className="border-b border-neutral-800 pb-4">
         <h2 className="text-2xl font-black text-white flex items-center gap-2">
           <Goal className="h-6 w-6 text-red-400" />
-          Goleador del Torneo & Valla Menos Vencida
+          Goleador del Torneo & Valla Menos Vencida {activeCategory && `· ${activeCategory}`}
         </h2>
         <p className="text-sm text-neutral-400 mt-1">
-          Rendimiento individual oficial de artilleros y porterías en {tournament.name}
+          Rendimiento individual oficial de artilleros y porterías en {tournament.name}{" "}
+          {activeCategory && `(Categoría ${activeCategory})`}
         </p>
       </div>
+
+      {tournament.hasCategories && activeCategory && (
+        <TournamentCategorySelector
+          activeCategory={activeCategory}
+          title={`Selecciona la Categoría Menor para consultar sus Líderes de Goleo y Porterías`}
+        />
+      )}
 
       <div className="grid gap-8 lg:grid-cols-2">
         {/* 1. Goleadores */}
@@ -37,7 +55,9 @@ export default async function SubTournamentEstadisticasPage({ params }: PageProp
               </div>
               <div>
                 <h3 className="text-base font-bold text-white">Goleador del Torneo</h3>
-                <p className="text-xs text-neutral-400">{tournament.shortName}</p>
+                <p className="text-xs text-neutral-400">
+                  {tournament.shortName} {activeCategory && `· ${activeCategory}`}
+                </p>
               </div>
             </div>
             <span className="rounded-full bg-red-500/10 px-2.5 py-0.5 text-xs font-bold text-red-400">
@@ -56,7 +76,7 @@ export default async function SubTournamentEstadisticasPage({ params }: PageProp
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-800/60">
-                {tournament.topScorers.map((scorer, idx) => (
+                {topScorers.map((scorer, idx) => (
                   <tr key={scorer.player} className="hover:bg-neutral-800/30 transition">
                     <td className="py-3 font-bold text-neutral-400">
                       <span
@@ -94,7 +114,9 @@ export default async function SubTournamentEstadisticasPage({ params }: PageProp
               </div>
               <div>
                 <h3 className="text-base font-bold text-white">Valla Menos Vencida</h3>
-                <p className="text-xs text-neutral-400">Arquerías del Torneo</p>
+                <p className="text-xs text-neutral-400">
+                  Arquerías del Torneo {activeCategory && `· ${activeCategory}`}
+                </p>
               </div>
             </div>
             <span className="rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-bold text-emerald-400">
@@ -115,7 +137,7 @@ export default async function SubTournamentEstadisticasPage({ params }: PageProp
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-800/60">
-                {tournament.leastConceded.map((keeper, idx) => (
+                {leastConceded.map((keeper, idx) => (
                   <tr key={keeper.player} className="hover:bg-neutral-800/30 transition">
                     <td className="py-3 font-bold text-neutral-400">
                       <span

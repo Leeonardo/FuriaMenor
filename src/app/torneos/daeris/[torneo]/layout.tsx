@@ -1,9 +1,9 @@
-﻿import React from "react";
+import React from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDaerisSubTournament } from "@/data/daeris-subtournaments";
 import { DaerisBadgeRenderer } from "@/components/ui/daeris-sub-badge-renderer";
-import { ChevronRight, Home, Calendar, Trophy, Goal, CheckCircle2, MapPin, Users } from "lucide-react";
+import { ChevronRight, Home, Calendar, Trophy, Goal, CheckCircle2, MapPin, Users, ShieldCheck } from "lucide-react";
 
 interface SubTournamentLayoutProps {
   children: React.ReactNode;
@@ -69,6 +69,12 @@ export default async function SubTournamentLayout({ children, params }: SubTourn
                   <span className="rounded-full bg-neutral-800 px-2.5 py-0.5 text-xs font-semibold text-neutral-300">
                     {tournament.status}
                   </span>
+                  {tournament.hasCategories && (
+                    <span className="rounded-full bg-red-500/10 border border-red-500/30 px-2.5 py-0.5 text-xs font-bold text-red-400 flex items-center gap-1">
+                      <ShieldCheck className="h-3 w-3" />
+                      7 Categorías (Sub-8 a Sub-20)
+                    </span>
+                  )}
                 </div>
 
                 <h1 className="mt-2 text-2xl font-black text-white sm:text-3xl lg:text-4xl">
@@ -83,7 +89,7 @@ export default async function SubTournamentLayout({ children, params }: SubTourn
                   <span>·</span>
                   <span className="flex items-center gap-1.5">
                     <Users className="h-3.5 w-3.5 text-neutral-400" />
-                    {tournament.teamsCount} Equipos en competencia
+                    {tournament.teamsCount} Equipos por categoría
                   </span>
                 </div>
               </div>

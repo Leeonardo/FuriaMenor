@@ -1,13 +1,13 @@
-﻿import React from "react";
+import React from "react";
 import Link from "next/link";
 import { DaerisBadge } from "@/components/ui/tournament-badges";
 import { DaerisBadgeRenderer } from "@/components/ui/daeris-sub-badge-renderer";
 import { daerisSubList } from "@/data/daeris-subtournaments";
-import { ArrowLeft, ArrowRight, ChevronRight, Layers, MapPin, Trophy, Users } from "lucide-react";
+import { ArrowRight, ChevronRight, Layers, MapPin, Trophy, Users, ShieldCheck } from "lucide-react";
 
 export const metadata = {
   title: "Torneo Daeris | Circuito Oficial de Futsal",
-  description: "Circuito Torneo Daeris en Caracas. Conoce sus 6 competiciones oficiales: Infantil 1ra y 2da División, Institucional, Fútbol 7, Master 50 y Libre Parque Carabobo.",
+  description: "Circuito Torneo Daeris en Caracas. Conoce sus 6 competiciones oficiales: Infantil 1ra y 2da División (Sub-8 a Sub-20), Institucional, Fútbol 7, Master 50 y Libre Parque Carabobo.",
 };
 
 export default function TorneoDaerisHubPage() {
@@ -48,8 +48,8 @@ export default function TorneoDaerisHubPage() {
                 </h1>
                 <p className="mt-2 text-sm sm:text-base text-neutral-300 max-w-2xl leading-relaxed">
                   Bienvenido al centro oficial del Torneo Daeris. Selecciona a continuación
-                  la rama o competición que deseas consultar para acceder a su calendario,
-                  resultados, tabla de posiciones oficial y líderes de goleo.
+                  cualquiera de sus 6 competiciones para ingresar a su portal exclusivo con calendario,
+                  resultados, tabla de posiciones oficial y estadísticas individuales.
                 </p>
                 <div className="mt-3 flex items-center gap-2 text-xs text-neutral-400">
                   <MapPin className="h-4 w-4 text-red-400" />
@@ -62,17 +62,19 @@ export default function TorneoDaerisHubPage() {
 
         {/* Las 6 Competiciones de Daeris */}
         <div>
-          <div className="mb-6 flex items-center justify-between">
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
             <div>
               <div className="flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-red-400 font-bold">
                 <Layers className="h-4 w-4" />
                 Divisiones & Modalidades
               </div>
-              <h2 className="text-xl font-extrabold text-white mt-1">
-                Las 6 Competiciones de Torneo Daeris
+              <h2 className="text-xl sm:text-2xl font-extrabold text-white mt-1">
+                Las 6 Competiciones Oficiales de Torneo Daeris
               </h2>
             </div>
-            <span className="text-xs text-neutral-400">6 Torneos Activos</span>
+            <span className="text-xs text-neutral-400 bg-neutral-900 border border-neutral-800 px-3 py-1 rounded-full">
+              Cada insignia e información es interactiva
+            </span>
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -83,21 +85,35 @@ export default function TorneoDaerisHubPage() {
               >
                 <div>
                   <div className="flex items-center justify-between gap-4 mb-4">
-                    <div className="transition-transform duration-300 group-hover:scale-105">
+                    {/* Insignia clicable directa */}
+                    <Link
+                      href={`/torneos/daeris/${sub.slug}`}
+                      className="transition-transform duration-300 hover:scale-110 shrink-0"
+                      title={`Ver ${sub.name}`}
+                    >
                       <DaerisBadgeRenderer badgeKey={sub.badgeKey} size={64} />
-                    </div>
+                    </Link>
                     <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider ${sub.accent.pill}`}>
                       {sub.categoryLabel}
                     </span>
                   </div>
 
                   <h3 className="text-lg font-bold text-white group-hover:text-red-400 transition leading-snug">
-                    {sub.name}
+                    <Link href={`/torneos/daeris/${sub.slug}`}>
+                      {sub.name}
+                    </Link>
                   </h3>
 
                   <p className="mt-2 text-xs text-neutral-400 leading-relaxed line-clamp-2">
                     {sub.description}
                   </p>
+
+                  {sub.hasCategories && (
+                    <div className="mt-3 flex items-center gap-1.5 text-xs text-red-400 font-semibold bg-red-500/10 border border-red-500/20 px-2.5 py-1 rounded-lg">
+                      <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
+                      <span>Segmentado en Sub-8, Sub-10, Sub-12, Sub-14, Sub-16, Sub-18 y Sub-20</span>
+                    </div>
+                  )}
 
                   <div className="mt-4 space-y-1.5 text-xs text-neutral-400 pt-3 border-t border-neutral-800/80">
                     <div className="flex items-center gap-2">
