@@ -1,16 +1,10 @@
 ﻿"use client";
 
 import React from "react";
-import {
-  DaerisInstitucionalBadge,
-  DaerisFutbol7Badge,
-  DaerisMaster50Badge,
-  DaerisLibreParqueCaraboboBadge,
-  DaerisInfantilPrimeraBadge,
-  DaerisInfantilSegundaBadge,
-} from "@/components/ui/daeris-sub-badges";
+import Link from "next/link";
+import { DaerisBadgeRenderer } from "@/components/ui/daeris-sub-badge-renderer";
 import { DaerisSubId, daerisSubList, DaerisSubTournament } from "@/data/daeris-subtournaments";
-import { CheckCircle2, ChevronRight, Layers, MapPin, Users } from "lucide-react";
+import { CheckCircle2, ChevronRight, ExternalLink, Layers, MapPin, Users } from "lucide-react";
 
 interface DaerisSubtournamentsPanelProps {
   selectedSubId: DaerisSubId;
@@ -21,30 +15,10 @@ export function DaerisSubtournamentsPanel({
   selectedSubId,
   onSelectSub,
 }: DaerisSubtournamentsPanelProps) {
-  // Renderiza el badge SVG correspondiente
-  const renderBadge = (key: DaerisSubId, size = 52) => {
-    switch (key) {
-      case "infantil-1ra":
-        return <DaerisInfantilPrimeraBadge size={size} />;
-      case "infantil-2da":
-        return <DaerisInfantilSegundaBadge size={size} />;
-      case "institucional":
-        return <DaerisInstitucionalBadge size={size} />;
-      case "futbol7":
-        return <DaerisFutbol7Badge size={size} />;
-      case "master50":
-        return <DaerisMaster50Badge size={size} />;
-      case "libre-parquecarabobo":
-        return <DaerisLibreParqueCaraboboBadge size={size} />;
-      default:
-        return <DaerisInfantilPrimeraBadge size={size} />;
-    }
-  };
-
   return (
     <section className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       {/* Encabezado con identidad de la Liga Daeris */}
-      <div className="rounded-2xl border border-red-500/30 bg-gradient-to-r from-red-950/40 via-neutral-900/90 to-neutral-950 p-5 sm:p-6 mb-6">
+      <div className="rounded-2xl border border-red-500/30 bg-gradient-to-r from-red-950/40 via-neutral-900/90 to-neutral-950 p-5 sm:p-6 mb-6 shadow-xl">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-600/20 text-red-400 border border-red-500/30">
@@ -63,17 +37,18 @@ export function DaerisSubtournamentsPanel({
                 Ramas y Divisiones de Torneo Daeris
               </h3>
               <p className="text-xs sm:text-sm text-neutral-400">
-                Selecciona una de las 6 categorías para ver sus partidos, resultados y tabla de clasificación
+                Selecciona una de las 6 categorías para ver sus partidos, tabla oficial y goleadores
               </p>
             </div>
           </div>
 
-          <div className="text-xs text-neutral-500 font-medium">
-            Mostrando:{" "}
-            <span className="text-white font-bold">
-              {daerisSubList.find((s) => s.id === selectedSubId)?.name}
-            </span>
-          </div>
+          <Link
+            href="/torneos/daeris"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-neutral-700 bg-neutral-900/80 px-3.5 py-2 text-xs font-semibold text-neutral-300 hover:border-neutral-500 hover:text-white transition whitespace-nowrap self-start sm:self-auto"
+          >
+            Hub Oficial Daeris
+            <ChevronRight className="h-3.5 w-3.5" />
+          </Link>
         </div>
       </div>
 
@@ -83,55 +58,61 @@ export function DaerisSubtournamentsPanel({
           const isSelected = selectedSubId === sub.id;
 
           return (
-            <button
+            <div
               key={sub.id}
-              type="button"
               onClick={() => onSelectSub(sub)}
-              className={`relative flex items-center gap-4 rounded-xl border p-4 text-left transition-all duration-200 group cursor-pointer ${
+              className={`relative flex flex-col justify-between rounded-xl border p-4 text-left transition-all duration-200 group cursor-pointer ${
                 isSelected
                   ? "border-red-500/80 bg-neutral-900/90 shadow-lg shadow-red-900/20 ring-2 ring-red-500/40"
                   : "border-neutral-800/80 bg-neutral-900/40 hover:border-neutral-700 hover:bg-neutral-900/70"
               }`}
             >
-              {/* Insignia del torneo */}
-              <div className="shrink-0 transition-transform duration-200 group-hover:scale-105">
-                {renderBadge(sub.badgeKey, 54)}
-              </div>
+              <div className="flex items-center gap-4">
+                {/* Insignia del torneo */}
+                <div className="shrink-0 transition-transform duration-200 group-hover:scale-105">
+                  <DaerisBadgeRenderer badgeKey={sub.badgeKey} size={54} />
+                </div>
 
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between gap-1 mb-1">
-                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${sub.accent.pill}`}>
-                    {sub.categoryLabel}
-                  </span>
-                  {isSelected && (
-                    <span className="flex items-center gap-1 text-[11px] font-bold text-red-400">
-                      <CheckCircle2 className="h-3.5 w-3.5" />
-                      Activo
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-1 mb-1">
+                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${sub.accent.pill}`}>
+                      {sub.categoryLabel}
                     </span>
-                  )}
-                </div>
+                    {isSelected && (
+                      <span className="flex items-center gap-1 text-[11px] font-bold text-red-400">
+                        <CheckCircle2 className="h-3.5 w-3.5" />
+                        Activo
+                      </span>
+                    )}
+                  </div>
 
-                <h4 className="text-sm font-bold text-white group-hover:text-red-400 transition leading-snug line-clamp-1">
-                  {sub.name}
-                </h4>
+                  <h4 className="text-sm font-bold text-white group-hover:text-red-400 transition leading-snug line-clamp-1">
+                    {sub.name}
+                  </h4>
 
-                <div className="mt-1 flex items-center gap-1 text-[11px] text-neutral-400 truncate">
-                  <MapPin className="h-3 w-3 text-red-400 shrink-0" />
-                  <span className="truncate">{sub.venue}</span>
-                </div>
-
-                <div className="mt-2 flex items-center justify-between text-[11px] text-neutral-500 pt-1.5 border-t border-neutral-800/60">
-                  <span className="flex items-center gap-1">
-                    <Users className="h-3 w-3" />
-                    {sub.teamsCount} Equipos
-                  </span>
-                  <span className="text-neutral-400 font-medium flex items-center gap-0.5 group-hover:text-red-400 transition">
-                    Ver datos
-                    <ChevronRight className="h-3 w-3" />
-                  </span>
+                  <div className="mt-1 flex items-center gap-1 text-[11px] text-neutral-400 truncate">
+                    <MapPin className="h-3 w-3 text-red-400 shrink-0" />
+                    <span className="truncate">{sub.venue}</span>
+                  </div>
                 </div>
               </div>
-            </button>
+
+              {/* Barra inferior con botón para ingresar a la home dedicada */}
+              <div className="mt-3 flex items-center justify-between text-[11px] text-neutral-500 pt-2 border-t border-neutral-800/60">
+                <span className="flex items-center gap-1">
+                  <Users className="h-3 w-3" />
+                  {sub.teamsCount} Equipos
+                </span>
+                <Link
+                  href={`/torneos/daeris/${sub.slug}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="text-red-400 hover:text-red-300 font-semibold flex items-center gap-1 hover:underline"
+                >
+                  Página del Torneo
+                  <ExternalLink className="h-3 w-3" />
+                </Link>
+              </div>
+            </div>
           );
         })}
       </div>

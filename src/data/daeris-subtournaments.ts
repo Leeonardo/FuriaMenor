@@ -18,6 +18,7 @@ export type DaerisSubId =
 
 export interface DaerisSubTournament {
   id: DaerisSubId;
+  slug: string;
   name: string;
   shortName: string;
   categoryLabel: string;
@@ -44,6 +45,7 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
   // 1. Torneo Institucional
   institucional: {
     id: "institucional",
+    slug: "institucional",
     name: "Torneo Institucional",
     shortName: "Institucional",
     categoryLabel: "Empresas & Organismos",
@@ -69,6 +71,7 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
   // 2. Fútbol 7 Institucional
   futbol7: {
     id: "futbol7",
+    slug: "futbol-7-institucional",
     name: "Fútbol 7 Institucional",
     shortName: "Fútbol 7 Inst",
     categoryLabel: "Modalidad Fútbol 7",
@@ -94,6 +97,7 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
   // 3. Master 50
   master50: {
     id: "master50",
+    slug: "master-50",
     name: "Master 50",
     shortName: "Master +50",
     categoryLabel: "Veteranos (+50 Años)",
@@ -119,6 +123,7 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
   // 4. Torneo Libre Parque Carabobo
   "libre-parquecarabobo": {
     id: "libre-parquecarabobo",
+    slug: "libre-parque-carabobo",
     name: "Torneo Libre Parque Carabobo",
     shortName: "Libre P. Carabobo",
     categoryLabel: "Categoría Libre",
@@ -144,6 +149,7 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
   // 5. Torneo Infantil 1era División
   "infantil-1ra": {
     id: "infantil-1ra",
+    slug: "infantil-1ra-division",
     name: "Torneo Infantil 1era División",
     shortName: "Infantil 1ra Div",
     categoryLabel: "Sub-6 a Sub-18 · Élite",
@@ -169,6 +175,7 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
   // 6. Torneo Infantil 2da División
   "infantil-2da": {
     id: "infantil-2da",
+    slug: "infantil-2da-division",
     name: "Torneo Infantil 2da División",
     shortName: "Infantil 2da Div",
     categoryLabel: "Sub-6 a Sub-18 · Ascenso",
@@ -193,3 +200,18 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
 };
 
 export const daerisSubList = Object.values(daerisSubTournaments);
+
+/**
+ * Busca un torneo de Daeris por slug o id
+ */
+export function getDaerisSubTournament(slugOrId: string): DaerisSubTournament | undefined {
+  const normalized = slugOrId.toLowerCase().trim();
+
+  return daerisSubList.find(
+    (t) =>
+      t.slug === normalized ||
+      t.id === normalized ||
+      t.id.replace("-", "") === normalized.replace("-", "") ||
+      t.slug.replace(/-/g, "") === normalized.replace(/-/g, "")
+  );
+}
