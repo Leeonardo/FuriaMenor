@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -23,26 +23,29 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-neutral-800 bg-neutral-950/95 backdrop-blur-xl">
+      {/* Barra superior: identidad del portal */}
       <div className="border-b border-neutral-800/80">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2 text-xs text-neutral-400">
-            <span className="hidden sm:inline">Periódico Digital de Fútbol Menor • Caracas</span>
-            <span className="sm:hidden">Fútbol Menor Caracas</span>
+            <span className="hidden sm:inline">Portal Digital de Fútbol Menor · Piloto Futsal · Caracas, Venezuela</span>
+            <span className="sm:hidden">Portal · Futsal Menor · Caracas</span>
           </div>
           <div className="flex items-center gap-4 text-xs">
             <Link href="/admin" className="text-neutral-400 transition hover:text-white">
-              Acceso Redacción / Admin
+              Acceso Redacción
             </Link>
           </div>
         </div>
       </div>
+
+      {/* Nav principal */}
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-3">
             <Image src="/logo.png" alt="Furia Menor" width={44} height={44} className="object-contain" />
             <div>
               <p className="text-lg font-bold tracking-tight leading-tight">Furia Menor</p>
-              <p className="text-[10px] uppercase tracking-[0.3em] text-red-400">Fútbol Base</p>
+              <p className="text-[10px] uppercase tracking-[0.3em] text-red-400">Portal · Fútbol Menor</p>
             </div>
           </Link>
           <div className="hidden items-center gap-6 lg:flex">
@@ -70,9 +73,11 @@ export function Header() {
           </button>
         </div>
       </nav>
+
+      {/* Barra de categorías */}
       <div className="border-t border-neutral-800">
         <div className="mx-auto flex max-w-7xl items-center gap-2 overflow-x-auto px-4 py-2 sm:px-6 lg:px-8">
-          <span className="flex items-center gap-1 text-xs text-neutral-500">
+          <span className="flex items-center gap-1 text-xs text-neutral-500 whitespace-nowrap">
             <ChevronDown className="h-3 w-3" />
             Categorías
           </span>
@@ -91,6 +96,8 @@ export function Header() {
           ))}
         </div>
       </div>
+
+      {/* Menú mobile */}
       {mobileOpen && (
         <div className="border-t border-neutral-800 bg-neutral-950 lg:hidden">
           <div className="mx-auto flex max-w-7xl flex-col px-4 py-3 sm:px-6">

@@ -1,5 +1,5 @@
-import Link from "next/link";
-import { ArrowRight, Clock, MapPin, Trophy } from "lucide-react";
+﻿import Link from "next/link";
+import { ArrowRight, Clock, MapPin, Trophy, Newspaper } from "lucide-react";
 import { torneoDaerisMatches } from "@/data/daeris/calendario";
 
 export function TorneosLive() {
@@ -17,9 +17,11 @@ export function TorneosLive() {
     <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-red-400">Torneos & Ligas</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-red-400">Cobertura Futsal</p>
           <h2 className="mt-1 text-xl font-bold sm:text-2xl">Marcadores, Posiciones y Próximos Partidos</h2>
-          <p className="mt-1 text-sm text-neutral-400">Cobertura del Torneo Daeris • Caracas</p>
+          <p className="mt-1 text-sm text-neutral-400">
+            Seguimiento periodístico del Torneo Daeris · Futsal · Caracas
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <Link href="/calendario" className="rounded-lg border border-neutral-800 px-3 py-1.5 text-sm text-neutral-300 transition hover:border-neutral-700 hover:text-white">
@@ -30,7 +32,9 @@ export function TorneosLive() {
           </Link>
         </div>
       </div>
+
       <div className="grid gap-6 lg:grid-cols-12">
+        {/* Próximos partidos */}
         <div className="lg:col-span-7">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-lg font-semibold">Próximos Partidos</h3>
@@ -47,7 +51,7 @@ export function TorneosLive() {
                     <span className="rounded-full bg-red-500/10 px-2 py-0.5 text-red-400">{match.category}</span>
                     {match.division && <span className="rounded-full bg-neutral-800 px-2 py-0.5">{match.division}</span>}
                   </div>
-                  <span>{match.matchDate} • {match.matchTime}</span>
+                  <span>{match.matchDate} · {match.matchTime}</span>
                 </div>
                 <div className="flex items-center justify-between gap-3">
                   <p className="flex-1 text-sm font-medium">{match.homeTeam}</p>
@@ -62,6 +66,8 @@ export function TorneosLive() {
             ))}
           </div>
         </div>
+
+        {/* Últimos resultados */}
         <div className="lg:col-span-5">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-lg font-semibold">Últimos Resultados</h3>
@@ -102,19 +108,31 @@ export function TorneosLive() {
           </div>
         </div>
       </div>
-      <div className="mt-6 rounded-2xl border border-neutral-800 bg-gradient-to-r from-red-950/30 via-neutral-900 to-neutral-950 p-6 text-center sm:p-8">
-        <div className="flex flex-col items-center gap-3">
-          <Trophy className="h-8 w-8 text-red-400" />
-          <h3 className="text-xl font-bold">Torneo Daeris</h3>
-          <p className="max-w-2xl text-sm text-neutral-300">
-            Sede: Cancha Gimnasio Libertador del 23 de Enero • Categorías Sub-6 a Sub-18 • 1ra y 2da División • Cobertura completa en Furia Menor
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-2">
+
+      {/* Banner Torneo Daeris — aclaración de rol */}
+      <div className="mt-6 rounded-2xl border border-neutral-800 bg-gradient-to-r from-red-950/30 via-neutral-900 to-neutral-950 p-6 sm:p-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-600/20">
+            <Newspaper className="h-6 w-6 text-red-400" />
+          </div>
+          <div className="flex-1">
+            <p className="text-xs uppercase tracking-[0.2em] text-red-400">Cobertura Periodística</p>
+            <h3 className="mt-1 text-lg font-bold">Torneo Daeris — Futsal Menor</h3>
+            <p className="mt-1 text-sm text-neutral-300">
+              Furia Menor cubre periodísticamente el Torneo Daeris. Nos encargamos de traerte
+              noticias, crónicas, resultados y entrevistas — la organización del torneo es
+              independiente a este portal.
+            </p>
+            <p className="mt-1 text-xs text-neutral-500">
+              Sede: Cancha Gimnasio Libertador, 23 de Enero · Categorías Sub-6 a Sub-18 · 1ra y 2da División
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2 shrink-0">
             <Link href="/calendario" className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-500">
               Ver Calendario
             </Link>
             <Link href="/estadisticas" className="rounded-lg border border-neutral-700 px-4 py-2 text-sm text-neutral-300 transition hover:border-neutral-600 hover:text-white">
-              Goleadores & Vallas Invictas
+              Estadísticas
             </Link>
           </div>
         </div>

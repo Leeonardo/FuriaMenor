@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/header";
@@ -15,11 +15,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Furia Menor | Periódico Digital de Fútbol Menor en Caracas",
+  title: "Furia Menor | Portal Digital de Fútbol Menor en Venezuela",
   description:
-    "Cobertura integral de ligas, torneos, escuelas, academias y categorías infantiles/juveniles en Caracas. Noticias, resultados, tablas, entrevistas, galería y más. Proyección nacional.",
+    "Portal digital dedicado a la cobertura del fútbol menor venezolano. Noticias, resultados, entrevistas y crónicas del futsal y fútbol base en Caracas y Venezuela.",
   keywords: [
     "fútbol menor",
+    "futsal Venezuela",
+    "futsal Caracas",
     "fútbol base",
     "Caracas",
     "torneos infantiles",
@@ -27,8 +29,8 @@ export const metadata: Metadata = {
     "Sub-6",
     "Sub-12",
     "Sub-18",
-    "futsal",
     "Venezuela",
+    "portal deportivo",
   ],
   icons: {
     icon: "/favicon.ico",
