@@ -1,10 +1,10 @@
-import Link from "next/link";
-import { ArrowRight, Calendar, MapPin, Trophy } from "lucide-react";
-import { torneoDaerisMatches } from "@/data/daeris/calendario";
+﻿import Link from "next/link";
+import { Calendar, MapPin, Trophy } from "lucide-react";
+import { torneoDaerisMatches, modalityLabels } from "@/data/daeris/calendario";
 
 export const metadata = {
   title: "Torneos & Ligas | Furia Menor",
-  description: "Marcadores en vivo, próximos partidos, tablas de posiciones y cobertura de torneos en Caracas.",
+  description: "Marcadores en vivo, próximos partidos, tablas de posiciones y cobertura de torneos de fútbol menor y futsal en Caracas.",
 };
 
 export default function TorneosPage() {
@@ -20,7 +20,7 @@ export default function TorneosPage() {
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-xs uppercase tracking-[0.3em] text-red-400">Torneos & Ligas</p>
-          <h1 className="mt-1 text-2xl font-bold sm:text-3xl">Caracas • Cobertura Integral</h1>
+          <h1 className="mt-1 text-2xl font-bold sm:text-3xl">Caracas · Cobertura Futsal</h1>
           <p className="mt-1 text-neutral-400">Marcadores, posiciones, calendario y seguimiento por categoría</p>
         </div>
         <div className="flex items-center gap-2">
@@ -32,6 +32,7 @@ export default function TorneosPage() {
           </Link>
         </div>
       </div>
+
       <div className="mb-6 rounded-2xl border border-red-500/40 bg-gradient-to-r from-red-950/40 via-neutral-900 to-neutral-950 p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
@@ -39,13 +40,18 @@ export default function TorneosPage() {
               <Trophy className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold">Torneo Daeris</h2>
-              <p className="text-sm text-neutral-400">Cancha Gimnasio Libertador del 23 de Enero • Sub-6 a Sub-18 • 1ra y 2da División</p>
+              <div className="flex items-center gap-2">
+                <h2 className="text-lg font-semibold">Torneo Daeris</h2>
+                <span className="rounded bg-red-600/20 px-2 py-0.5 text-xs text-red-400">Futsal</span>
+              </div>
+              <p className="text-sm text-neutral-400">Cancha Gimnasio Libertador del 23 de Enero · Sub-6 a Sub-18 · 1ra y 2da División</p>
+              <p className="text-xs text-neutral-500 mt-0.5">Cobertura periodística oficial por Furia Menor</p>
             </div>
           </div>
           <span className="self-start rounded-full border border-red-500/40 bg-red-500/10 px-3 py-1 text-sm text-red-400 sm:self-auto">En Curso</span>
         </div>
       </div>
+
       {jornadas.length > 0 && (
         <div className="mb-4 flex flex-wrap items-center gap-2">
           {jornadas.map((j) => (
@@ -55,6 +61,7 @@ export default function TorneosPage() {
           ))}
         </div>
       )}
+
       <div className="grid gap-3 md:grid-cols-2">
         {upcoming.map((match) => (
           <div key={match.id} className="rounded-xl border border-neutral-800 bg-neutral-900/60 p-4">
@@ -62,9 +69,13 @@ export default function TorneosPage() {
               <div className="flex items-center gap-2">
                 <span className="rounded-full bg-red-500/10 px-2 py-0.5 text-red-400">{match.category}</span>
                 {match.division && <span className="rounded-full bg-neutral-800 px-2 py-0.5">{match.division}</span>}
-                <span className="rounded-full bg-neutral-800 px-2 py-0.5">{match.modalidad === "primera" ? "1ra División" : "2da División"}</span>
+                {match.modality && (
+                  <span className="rounded-full bg-neutral-800 px-2 py-0.5">
+                    {modalityLabels[match.modality] || match.modality}
+                  </span>
+                )}
               </div>
-              <span>{match.matchDate} • {match.matchTime}</span>
+              <span>{match.matchDate} · {match.matchTime}</span>
             </div>
             <div className="flex items-center justify-between gap-3">
               <p className="flex-1 text-sm font-medium">{match.homeTeam}</p>
@@ -78,10 +89,13 @@ export default function TorneosPage() {
           </div>
         ))}
       </div>
+
       <div className="mt-8 rounded-2xl border border-dashed border-neutral-700 p-8 text-center">
         <Calendar className="mx-auto mb-3 h-10 w-10 text-neutral-600" />
-        <p className="text-lg font-semibold">Más ligas en camino</p>
-        <p className="mt-1 text-neutral-400">Furia Menor expandirá cobertura a más torneos y municipios de Caracas y a nivel nacional</p>
+        <p className="text-lg font-semibold">Más ligas y torneos en camino</p>
+        <p className="mt-1 text-neutral-400">
+          Furia Menor expandirá su cobertura periodística a más torneos y academias de Caracas y el resto del país.
+        </p>
       </div>
     </div>
   );
