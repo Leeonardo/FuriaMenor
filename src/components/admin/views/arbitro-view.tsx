@@ -20,7 +20,10 @@ import {
   Sparkles,
   Award,
   FileText,
+  Eye,
+  ShieldCheck,
 } from "lucide-react";
+import { ScoresheetModal } from "@/components/transparency/scoresheet-modal";
 
 interface ArbitroViewProps {
   user: AppUser;
@@ -61,6 +64,8 @@ export function ArbitroView({
     currentMatch?.refereeNotes || ""
   );
   const [successBanner, setSuccessBanner] = useState<string | null>(null);
+  const [photoError, setPhotoError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Al cambiar de partido en el selector, sincronizamos el marcador
   const handleSelectMatch = (match: DBMatch) => {
@@ -68,9 +73,10 @@ export function ArbitroView({
     setHomeScore(match.homeScore ?? 0);
     setAwayScore(match.awayScore ?? 0);
     setMatchStatus(match.status);
-    setSheetPhoto(match.sheetPhotoUrl || "");
+    setSheetPhoto(match.sheetPhotoUrl || match.scoresheetUrl || "");
     setRefereeNotes(match.refereeNotes || "");
     setSuccessBanner(null);
+    setPhotoError(null);
   };
 
   // Simular captura de foto de planilla con cámara o galería
@@ -79,15 +85,32 @@ export function ArbitroView({
     if (file) {
       const fakeUrl = URL.createObjectURL(file);
       setSheetPhoto(fakeUrl);
+      setPhotoError(null);
     } else {
       setSheetPhoto("/images/planilla-ejemplo.jpg");
+      setPhotoError(null);
     }
+  };
+
+  const handleUseSamplePhoto = () => {
+    setSheetPhoto("/images/planilla-ejemplo.jpg");
+    setPhotoError(null);
   };
 
   // Guardar y Finalizar Partido (dispara recálculo automático de la tabla)
   const handleSaveAndFinalize = (isFinal: boolean) => {
     if (!currentMatch) return;
 
+    // Validación estricta de Transparencia Total:
+    // Para finalizar un encuentro es OBLIGATORIO subir la foto de la planilla firmada
+    if (isFinal && !sheetPhoto) {
+      setPhotoError(
+        "¡Planilla Física Obligatoria! Según el reglamento de Transparencia Total de Furia Menor, el árbitro principal DEBE adjuntar o capturar la foto de la planilla firmada ('scoresheet_url') para asentar el marcador oficial y dar por finalizado el encuentro."
+      );
+      return;
+    }
+
+    setPhotoError(null);
     const newStatus: DBMatch["status"] = isFinal ? "finalizado" : "en_vivo";
     setMatchStatus(newStatus);
 
@@ -102,7 +125,7 @@ export function ArbitroView({
 
     setSuccessBanner(
       isFinal
-        ? `¡Partido Finalizado Exitosamente! Marcador ${homeScore} - ${awayScore} asentado y tabla de posiciones de ${currentMatch.categoryName} recalculada automáticamente.`
+        ? `¡Partido Finalizado Exitosamente! Marcador ${homeScore} - ${awayScore} asentado con foto de planilla original ('scoresheet_url'). Tabla de posiciones de ${currentMatch.categoryName} recalculada automáticamente.`
         : `Marcador en vivo actualizado: ${homeScore} - ${awayScore}. Estado: En Juego.`
     );
 
@@ -291,27 +314,48 @@ export function ArbitroView({
           </div>
         </div>
 
-        {/* 3. CAPTURA Y SUBIDA DE LA PLANILLA FIRMADA */}
-        <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-4 space-y-3">
-          <div className="flex items-center justify-between">
+        {/* 3. CAPTURA Y SUBIDA DE LA PLANILLA FIRMADA (PRUEBA DE TRANSPARENCIA) */}
+        <div
+          className={`rounded-2xl border p-4 space-y-3 transition ${
+            photoError
+              ? "border-red-500 bg-red-950/20 ring-2 ring-red-500/40"
+              : sheetPhoto
+              ? "border-emerald-500/40 bg-emerald-950/10"
+              : "border-neutral-800 bg-neutral-950"
+          }`}
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <Camera className="h-4 w-4 text-amber-400" />
               <label className="text-xs font-bold text-white">
                 Foto de Planilla Oficial Firmada
+                <span className="text-red-400 ml-1 font-black">* (Obligatoria para Finalizar)</span>
               </label>
             </div>
-            {sheetPhoto && (
-              <span className="text-[10px] text-emerald-400 font-bold flex items-center gap-1">
+            {sheetPhoto ? (
+              <span className="text-[10px] text-emerald-400 font-bold flex items-center gap-1 self-start sm:self-auto">
                 <CheckCircle2 className="h-3 w-3" />
-                Planilla Adjunta
+                Planilla Adjunta (scoresheet_url)
+              </span>
+            ) : (
+              <span className="text-[10px] text-amber-400 font-bold flex items-center gap-1 self-start sm:self-auto">
+                <AlertTriangle className="h-3 w-3" />
+                Pendiente por subir
               </span>
             )}
           </div>
 
+          {photoError && (
+            <div className="rounded-xl border border-red-500/50 bg-red-950/60 p-3 text-xs text-red-200 flex items-start gap-2 shadow-lg animate-in fade-in">
+              <AlertTriangle className="h-4 w-4 text-red-400 shrink-0 mt-0.5" />
+              <p className="leading-relaxed font-semibold">{photoError}</p>
+            </div>
+          )}
+
           <div className="flex flex-col sm:flex-row items-center gap-3">
             <label className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-700 bg-neutral-900/60 p-3 text-xs text-neutral-300 hover:border-amber-400 hover:text-white transition cursor-pointer w-full">
               <Upload className="h-4 w-4 text-amber-400" />
-              <span>Tomar Foto / Subir desde Galería</span>
+              <span>Tomar Foto en Cancha / Subir Archivo</span>
               <input
                 type="file"
                 accept="image/*"
@@ -321,19 +365,50 @@ export function ArbitroView({
               />
             </label>
 
-            {sheetPhoto && (
-              <div className="flex items-center gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-2 shrink-0">
-                <span className="text-xs font-mono text-neutral-400">planilla.jpg</span>
+            <button
+              type="button"
+              onClick={handleUseSamplePhoto}
+              className="w-full sm:w-auto rounded-xl border border-neutral-700 bg-neutral-900 px-3 py-2.5 text-[11px] font-bold text-amber-300 hover:bg-neutral-800 transition shrink-0"
+              title="Cargar acta oficial de prueba escaneada"
+            >
+              📄 Cargar Planilla Demo
+            </button>
+          </div>
+
+          {sheetPhoto && (
+            <div className="flex items-center justify-between gap-3 rounded-xl border border-emerald-500/30 bg-emerald-950/30 p-2.5">
+              <div className="flex items-center gap-2.5 overflow-hidden">
+                <img
+                  src={sheetPhoto}
+                  alt="Miniatura de planilla"
+                  className="h-10 w-10 rounded-lg object-cover border border-neutral-700 shrink-0"
+                />
+                <div className="truncate">
+                  <p className="text-xs font-bold text-white truncate">Planilla_Acta_Oficial.jpg</p>
+                  <p className="text-[10px] text-emerald-400 font-mono">scoresheet_url registrada</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(true)}
+                  className="inline-flex items-center gap-1 rounded-lg bg-emerald-600/20 border border-emerald-500/40 px-2.5 py-1 text-xs font-bold text-emerald-300 hover:bg-emerald-600/30 transition"
+                >
+                  <Eye className="h-3.5 w-3.5" />
+                  <span>Inspeccionar</span>
+                </button>
                 <button
                   type="button"
                   onClick={() => setSheetPhoto("")}
-                  className="text-red-400 hover:text-red-300 text-xs font-bold"
+                  className="text-red-400 hover:text-red-300 text-xs font-bold px-1"
+                  title="Eliminar foto"
                 >
                   ✕
                 </button>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         {/* Observaciones del Árbitro */}
@@ -371,6 +446,25 @@ export function ArbitroView({
           </button>
         </div>
       </div>
+
+      {/* MODAL DE VISTA PREVIA DE LA PLANILLA ORIGINAL */}
+      <ScoresheetModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        match={{
+          homeTeam: currentMatch.homeClubName,
+          awayTeam: currentMatch.awayClubName,
+          homeScore,
+          awayScore,
+          categoryName: currentMatch.categoryName,
+          venue: currentMatch.venue,
+          matchDate: currentMatch.matchDate,
+          refereeName: user.fullName,
+          scoresheetUrl: sheetPhoto,
+          sheetPhotoUrl: sheetPhoto,
+          refereeNotes,
+        }}
+      />
     </div>
   );
 }

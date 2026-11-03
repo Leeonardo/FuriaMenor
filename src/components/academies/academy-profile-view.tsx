@@ -28,7 +28,10 @@ import {
   Sparkles,
   Camera,
   Star,
+  Lock,
+  ShieldCheck,
 } from "lucide-react";
+import { isCategoryRosterFrozen } from "@/lib/db-store";
 
 // Inline brand SVGs for Instagram, Facebook and WhatsApp
 function InstagramIcon({ className = "h-4 w-4" }: { className?: string }) {
@@ -525,6 +528,59 @@ export function AcademyProfileView({ academy }: AcademyProfileViewProps) {
             )}
           </div>
         )}
+
+        {/* SELLO DE TRANSPARENCIA Y ROSTER CONGELADO / DOMINIO PÚBLICO */}
+        {(() => {
+          const frozenInfo = isCategoryRosterFrozen(activeCategory);
+          return (
+            <div className="rounded-2xl border border-neutral-800 bg-neutral-950/80 p-3.5 sm:p-4 text-xs flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md">
+              <div className="flex items-center gap-3 text-center sm:text-left">
+                <div
+                  className={`h-9 w-9 rounded-xl flex items-center justify-center shrink-0 border ${
+                    frozenInfo.isFrozen
+                      ? "bg-amber-500/20 text-amber-400 border-amber-500/30"
+                      : "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+                  }`}
+                >
+                  {frozenInfo.isFrozen ? (
+                    <Lock className="h-4 w-4" />
+                  ) : (
+                    <ShieldCheck className="h-4 w-4" />
+                  )}
+                </div>
+                <div>
+                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                    <span className="font-black text-white uppercase tracking-wider text-[11px]">
+                      {frozenInfo.isFrozen
+                        ? `Roster Oficial Congelado · ${activeCategory}`
+                        : `Roster en Fase de Fichaje · ${activeCategory}`}
+                    </span>
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-[10px] font-bold border ${
+                        frozenInfo.isFrozen
+                          ? "bg-amber-500/10 text-amber-300 border-amber-500/30"
+                          : "bg-emerald-500/10 text-emerald-300 border-emerald-500/30"
+                      }`}
+                    >
+                      {frozenInfo.isFrozen ? "Dominio Público Oficial" : "Inscripciones Abiertas"}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-neutral-400 mt-0.5">
+                    {frozenInfo.isFrozen
+                      ? `El período oficial de fichajes cerró el ${frozenInfo.deadlineFormatted}. Nómina fidedigna y auditada ante la comisión técnica de Furia Menor.`
+                      : `Plazo límite de inscripción hasta el ${frozenInfo.deadlineFormatted} (${frozenInfo.daysRemaining} días restantes).`}
+                  </p>
+                </div>
+              </div>
+
+              <div className="shrink-0 flex items-center gap-2">
+                <span className="text-[10px] font-bold text-neutral-300 bg-neutral-900 px-3 py-1.5 rounded-xl border border-neutral-800">
+                  {currentRoster?.players.length || 0} Atletas Fichados
+                </span>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Tabla / Grid Responsive de Atletas */}
         {currentRoster && currentRoster.players.length > 0 ? (

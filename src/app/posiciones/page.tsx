@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { Trophy, Filter, ArrowLeft, ShieldCheck } from "lucide-react";
-import { TournamentOfficialTable } from "@/components/tournaments/tournament-official-table";
+import { Trophy, Filter, ArrowLeft, ShieldCheck, RefreshCw } from "lucide-react";
+import { TournamentOfficialTable, OfficialTableRow } from "@/components/tournaments/tournament-official-table";
 import { daerisSubList, DaerisSubId } from "@/data/daeris-subtournaments";
 import {
   createGenericStandings,
@@ -11,20 +11,62 @@ import {
   MinorCategory,
   createCategoryStandings,
 } from "@/data/generic-tournament-data";
+import {
+  getStoredMatches,
+  calculateStandingsForCategory,
+  DB_CLUBS,
+  DB_CATEGORIES,
+  DBMatch,
+} from "@/lib/db-store";
 
 export default function PosicionesPage() {
   const [selectedTournament, setSelectedTournament] = useState<"daeris" | "prueba">("daeris");
   const [selectedDaerisSub, setSelectedDaerisSub] = useState<DaerisSubId>("infantil-1ra");
   const [selectedCategory, setSelectedCategory] = useState<MinorCategory>("Sub-12");
+  const [storedMatches, setStoredMatches] = useState<DBMatch[]>([]);
+
+  useEffect(() => {
+    setStoredMatches(getStoredMatches());
+  }, []);
 
   const currentSub = daerisSubList.find((s) => s.id === selectedDaerisSub) || daerisSubList[0];
 
-  let standingsRows = currentSub.standings;
-  if (selectedTournament === "prueba") {
-    standingsRows = createGenericStandings("Equipo");
-  } else if (currentSub.hasCategories && currentSub.categoryData) {
-    standingsRows = currentSub.categoryData[selectedCategory]?.standings || currentSub.standings;
-  }
+  const standingsRows: OfficialTableRow[] = useMemo(() => {
+    if (selectedTournament === "prueba") {
+      return createGenericStandings("Equipo");
+    }
+
+    // Comprobar si hay partidos finalizados en la base de datos para esta categoría
+    const targetCatObj = DB_CATEGORIES.find((c) => c.name === selectedCategory);
+    const catId = targetCatObj?.id || `cat-${selectedCategory.toLowerCase()}`;
+
+    if (storedMatches.length > 0) {
+      const liveStandings = calculateStandingsForCategory(catId, storedMatches, DB_CLUBS);
+      const totalPlayed = liveStandings.reduce((sum, r) => sum + r.played, 0);
+
+      if (totalPlayed > 0) {
+        return liveStandings.map((row, idx) => ({
+          pos: idx + 1,
+          team: row.clubName,
+          jj: row.played,
+          jg: row.won,
+          je: row.drawn,
+          jp: row.lost,
+          ga: row.goalsFor,
+          ge: row.goalsAgainst,
+          dif: row.goalDifference,
+          pts: row.points,
+          status: idx < (currentSub.qualificationCutoff || 8) ? "clasificado" : "normal",
+        }));
+      }
+    }
+
+    if (currentSub.hasCategories && currentSub.categoryData) {
+      return currentSub.categoryData[selectedCategory]?.standings || currentSub.standings;
+    }
+
+    return currentSub.standings;
+  }, [selectedTournament, selectedCategory, storedMatches, currentSub]);
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100">

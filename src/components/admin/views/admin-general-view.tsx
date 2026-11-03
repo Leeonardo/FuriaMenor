@@ -12,7 +12,10 @@ import {
 import {
   calculateStandingsForCategory,
   DB_CATEGORIES,
+  isCategoryRosterFrozen,
+  saveStoredCategories,
 } from "@/lib/db-store";
+import { ScoresheetModal } from "@/components/transparency/scoresheet-modal";
 import {
   ShieldAlert,
   Trophy,
@@ -29,6 +32,11 @@ import {
   Award,
   ArrowRight,
   TrendingUp,
+  Lock,
+  Unlock,
+  Eye,
+  ShieldCheck,
+  Clock,
 } from "lucide-react";
 
 interface AdminGeneralViewProps {
@@ -55,6 +63,24 @@ export function AdminGeneralView({
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingMatch, setEditingMatch] = useState<DBMatch | null>(null);
+  const [scoresheetMatch, setScoresheetMatch] = useState<DBMatch | null>(null);
+  const [categoriesState, setCategoriesState] = useState<DBCategory[]>(categories || DB_CATEGORIES);
+
+  const handleToggleCategoryDeadline = (catId: string) => {
+    setCategoriesState((prev) => {
+      const updated = prev.map((cat) => {
+        if (cat.id === catId) {
+          const isFrozen = isCategoryRosterFrozen(cat, prev).isFrozen;
+          // Si está congelada la abrimos al 30 de noviembre; si está abierta la congelamos al 31 de octubre
+          const newDeadline = isFrozen ? "2026-11-30" : "2026-10-31";
+          return { ...cat, registrationDeadline: newDeadline };
+        }
+        return cat;
+      });
+      saveStoredCategories(updated);
+      return updated;
+    });
+  };
 
   // Formulario de edición de partido
   const [homeClubId, setHomeClubId] = useState("");
@@ -419,7 +445,18 @@ export function AdminGeneralView({
                 )}
               </div>
 
-              <div className="shrink-0 flex items-center justify-center w-full md:w-auto gap-2 pt-2 md:pt-0 border-t md:border-t-0 border-neutral-800/80">
+              <div className="shrink-0 flex flex-wrap items-center justify-center w-full md:w-auto gap-2 pt-2 md:pt-0 border-t md:border-t-0 border-neutral-800/80">
+                {(m.sheetPhotoUrl || m.scoresheetUrl) && (
+                  <button
+                    onClick={() => setScoresheetMatch(m)}
+                    className="w-full md:w-auto rounded-xl border border-emerald-500/40 bg-emerald-600/20 px-3.5 py-2 text-xs font-bold text-emerald-300 hover:bg-emerald-600/30 transition flex items-center justify-center gap-1.5 shadow-sm"
+                    title="Ver planilla física original firmada"
+                  >
+                    <Eye className="h-3.5 w-3.5 text-emerald-400" />
+                    <span>Ver Planilla Original</span>
+                  </button>
+                )}
+
                 <button
                   onClick={() => handleEditMatch(m)}
                   className="w-full md:w-auto rounded-xl border border-neutral-700 bg-neutral-800 px-4 py-2 text-xs font-bold text-white hover:bg-red-600 transition flex items-center justify-center gap-1.5"
@@ -433,7 +470,97 @@ export function AdminGeneralView({
         </div>
       </section>
 
-      {/* 4. MODAL DE EDICIÓN / PROGRAMACIÓN DE PARTIDO */}
+      {/* 4. CONTROL DE FECHAS DE INSCRIPCIÓN Y ROSTERS CONGELADOS (TRANSPARENCIA TOTAL) */}
+      <section className="rounded-3xl border border-neutral-800 bg-neutral-900/60 p-6 sm:p-7 shadow-xl space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-800 pb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="h-8 w-8 rounded-xl bg-red-600/20 text-red-400 border border-red-500/30 flex items-center justify-center">
+              <ShieldCheck className="h-4 w-4" />
+            </div>
+            <div>
+              <h3 className="text-sm sm:text-base font-extrabold text-white uppercase tracking-wider">
+                Control de Fechas de Inscripción & Rosters Dinámicos Congelados
+              </h3>
+              <p className="text-xs text-neutral-400">
+                Al vencer el plazo ("registration_deadline"), el roster se bloquea para delegados y pasa a dominio público
+              </p>
+            </div>
+          </div>
+          <span className="text-xs text-neutral-400 bg-neutral-950 px-3 py-1 rounded-xl border border-neutral-800 self-start sm:self-auto">
+            Configuración Global de Temporada
+          </span>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {categoriesState.map((cat) => {
+            const frozenInfo = isCategoryRosterFrozen(cat, categoriesState);
+            return (
+              <div
+                key={cat.id}
+                className={`rounded-2xl border p-4 space-y-3 transition flex flex-col justify-between ${
+                  frozenInfo.isFrozen
+                    ? "border-amber-500/40 bg-amber-950/20 shadow-md"
+                    : "border-neutral-800 bg-neutral-950/80 hover:border-neutral-700"
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-1.5">
+                    <span className="text-sm font-black text-white">{cat.name}</span>
+                    {frozenInfo.isFrozen ? (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/20 border border-amber-500/40 px-2 py-0.5 text-[10px] font-bold text-amber-300">
+                        <Lock className="h-3 w-3" />
+                        Congelado
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 px-2 py-0.5 text-[10px] font-bold text-emerald-400">
+                        <CheckCircle2 className="h-3 w-3" />
+                        Abierto
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-neutral-400">
+                    {cat.discipline} • {cat.division}
+                  </p>
+                  <p className="text-[11px] text-neutral-300 font-mono mt-1">
+                    Cierre: <strong>{frozenInfo.deadlineFormatted}</strong>
+                  </p>
+                  <p className="text-[10px] text-neutral-500 mt-0.5">
+                    {frozenInfo.isFrozen
+                      ? "Plantilla auditada de dominio público"
+                      : `${frozenInfo.daysRemaining} días restantes para fichajes`}
+                  </p>
+                </div>
+
+                <div className="pt-2 border-t border-neutral-800/60">
+                  <button
+                    type="button"
+                    onClick={() => handleToggleCategoryDeadline(cat.id)}
+                    className={`w-full rounded-xl py-2 px-3 text-xs font-bold transition flex items-center justify-center gap-1.5 ${
+                      frozenInfo.isFrozen
+                        ? "bg-neutral-800 text-neutral-300 hover:bg-neutral-700 hover:text-white"
+                        : "bg-amber-600/20 border border-amber-500/40 text-amber-300 hover:bg-amber-600/30"
+                    }`}
+                  >
+                    {frozenInfo.isFrozen ? (
+                      <>
+                        <Unlock className="h-3.5 w-3.5 text-emerald-400" />
+                        <span>Descongelar Roster</span>
+                      </>
+                    ) : (
+                      <>
+                        <Lock className="h-3.5 w-3.5 text-amber-400" />
+                        <span>Congelar Ahora</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* 5. MODAL DE EDICIÓN / PROGRAMACIÓN DE PARTIDO */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm animate-in fade-in">
           <div className="w-full max-w-lg rounded-3xl border border-neutral-800 bg-neutral-900 p-6 shadow-2xl space-y-4">
@@ -612,6 +739,28 @@ export function AdminGeneralView({
           </div>
         </div>
       )}
+      {/* MODAL DE VISUALIZACIÓN DE PLANILLA ORIGINAL FIRMADA */}
+      <ScoresheetModal
+        isOpen={!!scoresheetMatch}
+        onClose={() => setScoresheetMatch(null)}
+        match={
+          scoresheetMatch
+            ? {
+                homeTeam: scoresheetMatch.homeClubName,
+                awayTeam: scoresheetMatch.awayClubName,
+                homeScore: scoresheetMatch.homeScore,
+                awayScore: scoresheetMatch.awayScore,
+                categoryName: scoresheetMatch.categoryName,
+                venue: scoresheetMatch.venue,
+                matchDate: scoresheetMatch.matchDate,
+                refereeName: scoresheetMatch.refereeName,
+                scoresheetUrl: scoresheetMatch.scoresheetUrl || scoresheetMatch.sheetPhotoUrl,
+                sheetPhotoUrl: scoresheetMatch.sheetPhotoUrl || scoresheetMatch.scoresheetUrl,
+                refereeNotes: scoresheetMatch.refereeNotes,
+              }
+            : null
+        }
+      />
     </div>
   );
 }

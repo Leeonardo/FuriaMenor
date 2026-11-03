@@ -141,6 +141,7 @@ export default function AdminPage() {
             awayScore,
             status,
             sheetPhotoUrl: sheetPhotoUrl || m.sheetPhotoUrl,
+            scoresheetUrl: sheetPhotoUrl || m.scoresheetUrl || m.sheetPhotoUrl,
             refereeNotes: notes !== undefined ? notes : m.refereeNotes,
             updatedAt: new Date().toISOString(),
           };

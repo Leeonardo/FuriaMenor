@@ -1,4 +1,4 @@
-import {
+import type {
   UserRole,
   AppUser,
   DBClub,
@@ -11,6 +11,20 @@ import {
   PlayerTournamentRecord,
   PlayerMatchLog,
 } from '@/types/auth-roles';
+
+export type {
+  UserRole,
+  AppUser,
+  DBClub,
+  DBCategory,
+  DBPlayer,
+  DBMatch,
+  DBStandingsRow,
+  AgeValidationResult,
+  OfficialTournamentOption,
+  PlayerTournamentRecord,
+  PlayerMatchLog,
+};
 import { academiesData } from '@/data/academies-data';
 
 // ==============================================================================
@@ -62,14 +76,14 @@ export const DEMO_USERS: Record<UserRole, AppUser> = {
 // 2. CATEGORÍAS FORMATIVAS OFICIALES (TEMPORADA 2026)
 // ==============================================================================
 export const DB_CATEGORIES: DBCategory[] = [
-  { id: 'cat-sub-6',  name: 'Sub-6',  discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2020, maxBirthYear: 2021, matchDurationMinutes: 30 },
-  { id: 'cat-sub-8',  name: 'Sub-8',  discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2018, maxBirthYear: 2019, matchDurationMinutes: 35 },
-  { id: 'cat-sub-10', name: 'Sub-10', discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2016, maxBirthYear: 2017, matchDurationMinutes: 40 },
-  { id: 'cat-sub-12', name: 'Sub-12', discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2014, maxBirthYear: 2015, matchDurationMinutes: 40 },
-  { id: 'cat-sub-14', name: 'Sub-14', discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2012, maxBirthYear: 2013, matchDurationMinutes: 45 },
-  { id: 'cat-sub-16', name: 'Sub-16', discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2010, maxBirthYear: 2011, matchDurationMinutes: 50 },
-  { id: 'cat-sub-18', name: 'Sub-18', discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2008, maxBirthYear: 2009, matchDurationMinutes: 50 },
-  { id: 'cat-sub-20', name: 'Sub-20', discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2006, maxBirthYear: 2007, matchDurationMinutes: 50 },
+  { id: 'cat-sub-6',  name: 'Sub-6',  discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2020, maxBirthYear: 2021, matchDurationMinutes: 30, registrationDeadline: '2026-11-20' },
+  { id: 'cat-sub-8',  name: 'Sub-8',  discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2018, maxBirthYear: 2019, matchDurationMinutes: 35, registrationDeadline: '2026-11-15' },
+  { id: 'cat-sub-10', name: 'Sub-10', discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2016, maxBirthYear: 2017, matchDurationMinutes: 40, registrationDeadline: '2026-10-31' },
+  { id: 'cat-sub-12', name: 'Sub-12', discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2014, maxBirthYear: 2015, matchDurationMinutes: 40, registrationDeadline: '2026-10-25' },
+  { id: 'cat-sub-14', name: 'Sub-14', discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2012, maxBirthYear: 2013, matchDurationMinutes: 45, registrationDeadline: '2026-11-30' },
+  { id: 'cat-sub-16', name: 'Sub-16', discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2010, maxBirthYear: 2011, matchDurationMinutes: 50, registrationDeadline: '2026-10-20' },
+  { id: 'cat-sub-18', name: 'Sub-18', discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2008, maxBirthYear: 2009, matchDurationMinutes: 50, registrationDeadline: '2026-11-25' },
+  { id: 'cat-sub-20', name: 'Sub-20', discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2006, maxBirthYear: 2007, matchDurationMinutes: 50, registrationDeadline: '2026-11-30' },
 ];
 
 // ==============================================================================
@@ -361,6 +375,7 @@ export function getInitialMatches(): DBMatch[] {
       homeScore: 4,
       awayScore: 2,
       sheetPhotoUrl: '/images/planilla-ejemplo.jpg',
+      scoresheetUrl: '/images/planilla-ejemplo.jpg',
       refereeNotes: 'Partido sin incidencias. Se entregó copia del acta a ambos delegados.',
       updatedAt: new Date().toISOString(),
     },
@@ -383,6 +398,7 @@ export function getInitialMatches(): DBMatch[] {
       homeScore: 3,
       awayScore: 3,
       sheetPhotoUrl: '/images/planilla-ejemplo.jpg',
+      scoresheetUrl: '/images/planilla-ejemplo.jpg',
       refereeNotes: 'Encuentro empatado con alta intensidad. Tarjeta amarilla por juego brusco.',
       updatedAt: new Date().toISOString(),
     },
@@ -588,6 +604,118 @@ export function saveStoredMatches(matches: DBMatch[]): void {
   try {
     localStorage.setItem(`${STORAGE_PREFIX}matches`, JSON.stringify(matches));
   } catch {}
+}
+
+export function getStoredCategories(): DBCategory[] {
+  if (typeof window === 'undefined') return DB_CATEGORIES;
+  try {
+    const raw = localStorage.getItem(`${STORAGE_PREFIX}categories`);
+    return raw ? JSON.parse(raw) : DB_CATEGORIES;
+  } catch {
+    return DB_CATEGORIES;
+  }
+}
+
+export function saveStoredCategories(categories: DBCategory[]): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(`${STORAGE_PREFIX}categories`, JSON.stringify(categories));
+  } catch {}
+}
+
+// ==============================================================================
+// 8.1 CONTROL DE TRANSPARENCIA Y ROSTERS DINÁMICOS CONGELADOS
+// ==============================================================================
+export interface RosterFrozenStatus {
+  isFrozen: boolean;
+  deadlineDate: Date;
+  deadlineStr: string;
+  deadlineFormatted: string;
+  daysRemaining: number;
+  categoryName: string;
+}
+
+export function isCategoryRosterFrozen(
+  category: DBCategory | string,
+  categoriesList?: DBCategory[]
+): RosterFrozenStatus {
+  const cat =
+    typeof category === 'string'
+      ? (categoriesList || DB_CATEGORIES).find((c) => c.id === category || c.name === category)
+      : category;
+
+  if (!cat || !cat.registrationDeadline) {
+    return {
+      isFrozen: false,
+      deadlineDate: new Date('2026-12-31T23:59:59'),
+      deadlineStr: '2026-12-31',
+      deadlineFormatted: '31/12/2026',
+      daysRemaining: 999,
+      categoryName: typeof category === 'string' ? category : 'Categoría',
+    };
+  }
+
+  // Fecha límite a final del día YYYY-MM-DD
+  const deadlineDate = new Date(`${cat.registrationDeadline}T23:59:59`);
+  // En nuestro contexto del sistema la fecha operativa es noviembre 2026
+  const now = new Date();
+  const isFrozen = now.getTime() > deadlineDate.getTime();
+  const diffTime = deadlineDate.getTime() - now.getTime();
+  const daysRemaining = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  // Formato legible DD/MM/AAAA
+  const parts = cat.registrationDeadline.split('-');
+  const deadlineFormatted = parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : cat.registrationDeadline;
+
+  return {
+    isFrozen,
+    deadlineDate,
+    deadlineStr: cat.registrationDeadline,
+    deadlineFormatted,
+    daysRemaining,
+    categoryName: cat.name,
+  };
+}
+
+export function canDelegateModifyPlayer(
+  role: UserRole,
+  categoryId: string,
+  categoriesList?: DBCategory[]
+): { allowed: boolean; reason?: string; isFrozen: boolean; deadlineFormatted: string } {
+  const frozenStatus = isCategoryRosterFrozen(categoryId, categoriesList);
+
+  if (role === 'admin_general') {
+    // Admin nivel dios siempre tiene permisos de corrección
+    return {
+      allowed: true,
+      isFrozen: frozenStatus.isFrozen,
+      deadlineFormatted: frozenStatus.deadlineFormatted,
+    };
+  }
+
+  if (role !== 'delegado') {
+    return {
+      allowed: false,
+      reason: 'Permiso denegado: Solo delegados del club o administradores pueden gestionar atletas.',
+      isFrozen: frozenStatus.isFrozen,
+      deadlineFormatted: frozenStatus.deadlineFormatted,
+    };
+  }
+
+  if (frozenStatus.isFrozen) {
+    return {
+      allowed: false,
+      reason: `Roster Congelado: El período de fichajes para ${frozenStatus.categoryName} cerró oficialmente el ${frozenStatus.deadlineFormatted}. Por reglamento de Transparencia Total, no se permiten nuevas inscripciones, modificaciones ni desincorporaciones para delegados.`,
+      isFrozen: true,
+      deadlineFormatted: frozenStatus.deadlineFormatted,
+    };
+  }
+
+  return {
+    allowed: true,
+    isFrozen: false,
+    deadlineFormatted: frozenStatus.deadlineFormatted,
+  };
 }
 
 // ==============================================================================

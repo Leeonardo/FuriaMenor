@@ -12,6 +12,8 @@ import {
   validatePlayerAge,
   DB_CATEGORIES,
   OFFICIAL_TOURNAMENTS,
+  isCategoryRosterFrozen,
+  canDelegateModifyPlayer,
 } from "@/lib/db-store";
 import { PlayerStatsModal } from "./player-stats-modal";
 import {
@@ -32,6 +34,8 @@ import {
   Flame,
   Trophy,
   BarChart3,
+  Lock,
+  ShieldAlert,
 } from "lucide-react";
 
 interface DelegadoViewProps {
@@ -55,6 +59,11 @@ export function DelegadoView({
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPlayerId, setEditingPlayerId] = useState<string | null>(null);
+  const [frozenAlert, setFrozenAlert] = useState<string | null>(null);
+
+  // Comprobar estado de congelamiento de la categoría seleccionada
+  const activeFrozenStatus = selectedCategory !== "all" ? isCategoryRosterFrozen(selectedCategory) : null;
+  const isSelectedCategoryFrozen = activeFrozenStatus?.isFrozen ?? false;
 
   // Expediente individual del jugador
   const [selectedPlayerForStats, setSelectedPlayerForStats] = useState<DBPlayer | null>(null);
@@ -77,6 +86,9 @@ export function DelegadoView({
   const ageValidation: AgeValidationResult = useMemo(() => {
     return validatePlayerAge(birthDate, categoryId);
   }, [birthDate, categoryId]);
+
+  // Comprobar si la categoría seleccionada en el formulario está congelada
+  const formCatFrozenStatus = isCategoryRosterFrozen(categoryId);
 
   // Filtrar jugadores del club
   const clubPlayers = useMemo(() => {
@@ -111,12 +123,21 @@ export function DelegadoView({
 
   // Abrir modal para crear
   const handleOpenCreateModal = () => {
+    if (selectedCategory !== "all" && isSelectedCategoryFrozen) {
+      setFrozenAlert(
+        `Roster Congelado: El período de inscripciones para ${activeFrozenStatus?.categoryName} cerró oficialmente el ${activeFrozenStatus?.deadlineFormatted}. Por política de Transparencia Total, el roster está blindado y publicado para dominio público.`
+      );
+      return;
+    }
+    setFrozenAlert(null);
     setEditingPlayerId(null);
     setFirstName("");
     setLastName("");
     setIdNumber("");
-    setBirthDate("2014-05-10");
-    setCategoryId("cat-sub-12");
+    const targetCat = selectedCategory !== "all" ? selectedCategory : "cat-sub-12";
+    setCategoryId(targetCat);
+    const catObj = DB_CATEGORIES.find((c) => c.id === targetCat);
+    setBirthDate(`${catObj?.minBirthYear || 2014}-05-10`);
     setJerseyNumber(10);
     setPosition("Ala");
     setStatus("activo");
@@ -126,6 +147,14 @@ export function DelegadoView({
 
   // Abrir modal para editar
   const handleOpenEditModal = (player: DBPlayer) => {
+    const frozen = isCategoryRosterFrozen(player.categoryId);
+    if (frozen.isFrozen) {
+      setFrozenAlert(
+        `Roster Congelado: El período de modificaciones para la categoría ${player.categoryName} cerró oficialmente el ${frozen.deadlineFormatted}. El expediente se encuentra auditado y publicado; no puede ser alterado por el delegado.`
+      );
+      return;
+    }
+    setFrozenAlert(null);
     setEditingPlayerId(player.id);
     setFirstName(player.firstName);
     setLastName(player.lastName);
@@ -144,9 +173,29 @@ export function DelegadoView({
     setIsModalOpen(true);
   };
 
+  // Eliminar atleta con validación de congelamiento
+  const handleDeletePlayerWithCheck = (player: DBPlayer) => {
+    const frozen = isCategoryRosterFrozen(player.categoryId);
+    if (frozen.isFrozen) {
+      setFrozenAlert(
+        `Roster Congelado: No se pueden desincorporar atletas de la categoría ${player.categoryName} porque el período cerró el ${frozen.deadlineFormatted}. Toda la nómina es de dominio público.`
+      );
+      return;
+    }
+    if (confirm(`¿Estás seguro de desincorporar a ${player.firstName} ${player.lastName} del plantel de ${player.categoryName}?`)) {
+      onDeletePlayer(player.id);
+    }
+  };
+
   // Guardar fichaje
   const handleSubmitPlayer = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const frozen = isCategoryRosterFrozen(categoryId);
+    if (frozen.isFrozen) {
+      alert(`Operación Denegada: El período de fichajes para ${frozen.categoryName} cerró el ${frozen.deadlineFormatted}. Roster congelado bajo el reglamento de Transparencia Total.`);
+      return;
+    }
 
     if (!ageValidation.isValid) {
       alert(`Error en el fichaje: ${ageValidation.message}`);
@@ -255,13 +304,24 @@ export function DelegadoView({
           </div>
 
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 w-full sm:w-auto">
-            <button
-              onClick={handleOpenCreateModal}
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-red-600/30 hover:bg-red-500 transition w-full sm:w-auto"
-            >
-              <UserPlus className="h-4 w-4" />
-              <span>Fichar Nuevo Atleta</span>
-            </button>
+            {selectedCategory !== "all" && isSelectedCategoryFrozen ? (
+              <button
+                onClick={handleOpenCreateModal}
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-amber-500/40 bg-amber-950/40 px-5 py-2.5 text-xs font-bold text-amber-300 shadow-md hover:bg-amber-950/60 transition w-full sm:w-auto"
+                title="Roster cerrado para esta categoría"
+              >
+                <Lock className="h-4 w-4 text-amber-400" />
+                <span>Roster Congelado ({activeFrozenStatus?.categoryName})</span>
+              </button>
+            ) : (
+              <button
+                onClick={handleOpenCreateModal}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-red-600/30 hover:bg-red-500 transition w-full sm:w-auto"
+              >
+                <UserPlus className="h-4 w-4" />
+                <span>Fichar Nuevo Atleta</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -292,6 +352,29 @@ export function DelegadoView({
         </div>
       </div>
 
+      {/* BANNER DE ALERTA DE CONGELAMIENTO SI OCURRE INTENTO DE EDICIÓN */}
+      {frozenAlert && (
+        <div className="rounded-2xl border border-amber-500/50 bg-amber-950/50 p-4 text-xs text-amber-200 flex items-start justify-between gap-3 shadow-xl animate-in fade-in">
+          <div className="flex items-start gap-2.5">
+            <ShieldAlert className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
+            <div>
+              <p className="font-black text-amber-100 uppercase tracking-wide text-[11px]">
+                Reglamento de Transparencia Total Activo
+              </p>
+              <p className="mt-0.5 text-xs text-amber-200/90 leading-relaxed font-medium">
+                {frozenAlert}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setFrozenAlert(null)}
+            className="text-amber-400 hover:text-white font-bold text-sm px-2 py-0.5 rounded-lg bg-neutral-900 border border-neutral-800 shrink-0"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
       {/* 2. BARRA DE FILTROS & BÚSQUEDA */}
       <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-5 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -317,19 +400,27 @@ export function DelegadoView({
             >
               Todas las Categorías
             </button>
-            {DB_CATEGORIES.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                className={`rounded-xl px-3 py-1.5 text-xs font-bold transition whitespace-nowrap ${
-                  selectedCategory === cat.id
-                    ? "bg-red-600 text-white shadow-md shadow-red-600/30"
-                    : "border border-neutral-800 bg-neutral-950 text-neutral-400 hover:text-white"
-                }`}
-              >
-                {cat.name}
-              </button>
-            ))}
+            {DB_CATEGORIES.map((cat) => {
+              const isFrozen = isCategoryRosterFrozen(cat).isFrozen;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className={`rounded-xl px-3 py-1.5 text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 ${
+                    selectedCategory === cat.id
+                      ? "bg-red-600 text-white shadow-md shadow-red-600/30"
+                      : "border border-neutral-800 bg-neutral-950 text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  <span>{cat.name}</span>
+                  {isFrozen && (
+                    <span title="Roster Oficial Congelado">
+                      <Lock className="h-3 w-3 text-amber-400" />
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
 
           {/* Búsqueda por Cédula o Nombre */}
@@ -344,6 +435,44 @@ export function DelegadoView({
             />
           </div>
         </div>
+
+        {/* INDICADOR DE FECHA LÍMITE & ESTADO DE TRANSPARENCIA PARA LA CATEGORÍA */}
+        {selectedCategory !== "all" && activeFrozenStatus && (
+          <div className="pt-2">
+            {activeFrozenStatus.isFrozen ? (
+              <div className="rounded-xl border border-amber-500/30 bg-amber-950/20 p-3 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md">
+                <div className="flex items-center gap-2.5">
+                  <div className="h-7 w-7 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center shrink-0">
+                    <Lock className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <span className="font-bold text-amber-300">
+                      Roster Oficial Congelado · {activeFrozenStatus.categoryName} (Cierre oficial: {activeFrozenStatus.deadlineFormatted})
+                    </span>
+                    <p className="text-[11px] text-neutral-400 mt-0.5">
+                      El período de inscripción para delegados finalizó. Las plantillas han pasado a dominio público.
+                    </p>
+                  </div>
+                </div>
+                <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/80 border border-emerald-800/80 px-2.5 py-1 rounded-full shrink-0 self-start sm:self-auto">
+                  ✓ Dominio Público Activo
+                </span>
+              </div>
+            ) : (
+              <div className="rounded-xl border border-emerald-500/30 bg-emerald-950/20 p-3 text-xs flex items-center justify-between gap-2 shadow-md">
+                <div className="flex items-center gap-2 text-emerald-300">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                  <span>
+                    Inscripciones Abiertas para <strong className="text-white">{activeFrozenStatus.categoryName}</strong>. Fecha límite oficial: <strong className="text-white">{activeFrozenStatus.deadlineFormatted}</strong> ({activeFrozenStatus.daysRemaining} días restantes).
+                  </span>
+                </div>
+                <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950 px-2.5 py-0.5 rounded-full border border-emerald-800 shrink-0">
+                  Fichajes Habilitados
+                </span>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* 3. LISTADO DE ATLETAS DEL CLUB: VISTA MÓVIL (TARJETAS) Y ESCRITORIO (TABLA) */}
@@ -445,11 +574,7 @@ export function DelegadoView({
                 </button>
 
                 <button
-                  onClick={() => {
-                    if (confirm(`¿Eliminar a ${player.firstName} ${player.lastName}?`)) {
-                      onDeletePlayer(player.id);
-                    }
-                  }}
+                  onClick={() => handleDeletePlayerWithCheck(player)}
                   className="rounded-xl border border-neutral-800 bg-neutral-950 px-3 py-2 text-neutral-500 hover:text-red-400 hover:border-red-500/40 transition"
                   title="Eliminar registro"
                 >
@@ -569,11 +694,7 @@ export function DelegadoView({
                       </button>
 
                       <button
-                        onClick={() => {
-                          if (confirm(`¿Eliminar a ${player.firstName} ${player.lastName}?`)) {
-                            onDeletePlayer(player.id);
-                          }
-                        }}
+                        onClick={() => handleDeletePlayerWithCheck(player)}
                         className="rounded-xl border border-neutral-800 p-1.5 text-neutral-500 hover:text-red-400 hover:border-red-500/40 transition"
                         title="Eliminar registro"
                       >
@@ -719,6 +840,21 @@ export function DelegadoView({
                 </div>
               </div>
 
+              {/* ALERTA DE ROSTER CONGELADO EN EL MODAL */}
+              {formCatFrozenStatus.isFrozen && (
+                <div className="rounded-2xl p-3.5 border border-amber-500/50 bg-amber-950/40 text-amber-200 flex items-start gap-2.5 shadow-md">
+                  <Lock className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-black text-xs text-amber-300">
+                      Roster Congelado Oficialmente ({formCatFrozenStatus.categoryName})
+                    </p>
+                    <p className="text-[11px] mt-0.5 leading-relaxed text-neutral-300">
+                      El período de inscripción para esta categoría cerró el <strong className="text-white">{formCatFrozenStatus.deadlineFormatted}</strong>. Por política de Transparencia Total de Furia Menor, no se pueden registrar ni modificar atletas en esta división.
+                    </p>
+                  </div>
+                </div>
+              )}
+
               {/* SECCIÓN MULTI-TORNEO: SELECCIÓN EN CUÁLES TORNEOS PARTICIPARÁ */}
               <div className="space-y-1.5 pt-1">
                 <div className="flex items-center justify-between">
@@ -822,10 +958,17 @@ export function DelegadoView({
                 </button>
                 <button
                   type="submit"
-                  disabled={!ageValidation.isValid}
-                  className="rounded-xl bg-red-600 px-5 py-2 font-black text-white hover:bg-red-500 disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-red-600/30 transition"
+                  disabled={!ageValidation.isValid || formCatFrozenStatus.isFrozen}
+                  className="rounded-xl bg-red-600 px-5 py-2 font-black text-white hover:bg-red-500 disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-red-600/30 transition flex items-center gap-1.5"
                 >
-                  {editingPlayerId ? "Guardar Cambios" : "Completar Fichaje"}
+                  {formCatFrozenStatus.isFrozen && <Lock className="h-4 w-4" />}
+                  <span>
+                    {formCatFrozenStatus.isFrozen
+                      ? "Roster Congelado"
+                      : editingPlayerId
+                      ? "Guardar Cambios"
+                      : "Completar Fichaje"}
+                  </span>
                 </button>
               </div>
             </form>

@@ -39,6 +39,7 @@ export interface DBCategory {
   minBirthYear: number; // Mayor edad permitida (ej. 2014 para Sub-12 en 2026)
   maxBirthYear: number; // Menor edad permitida (ej. 2015 para Sub-12 en 2026)
   matchDurationMinutes: number;
+  registrationDeadline: string; // Fecha límite de inscripción YYYY-MM-DD ("registration_deadline")
 }
 
 export interface PlayerTournamentRecord {
@@ -120,6 +121,7 @@ export interface DBMatch {
   homeScore: number | null;
   awayScore: number | null;
   sheetPhotoUrl?: string; // Foto de la planilla física firmada
+  scoresheetUrl?: string; // Alias directo para 'scoresheet_url'
   refereeNotes?: string;
   updatedAt: string;
 }

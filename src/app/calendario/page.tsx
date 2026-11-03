@@ -2,16 +2,70 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Calendar, Filter, MapPin, UserCheck, ArrowLeft } from "lucide-react";
-import { useState } from "react";
+import { Calendar, Filter, MapPin, UserCheck, ArrowLeft, FileText, Eye, ShieldCheck } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
 import { CATEGORIES, MODALITIES, modalityLabels, type Category, type Modality } from "@/data/daeris";
-import { torneoDaerisMatches, type MatchStatus } from "@/data/daeris/calendario";
+import { torneoDaerisMatches, type MatchStatus, type Match } from "@/data/daeris/calendario";
+import { getStoredMatches, DBMatch } from "@/lib/db-store";
+import { ScoresheetModal } from "@/components/transparency/scoresheet-modal";
+
+interface ExtendedMatch extends Omit<Match, "category"> {
+  category: string;
+  scoresheetUrl?: string | null;
+  sheetPhotoUrl?: string | null;
+  refereeNotes?: string;
+  refereeName?: string;
+}
 
 export default function CalendarioPage() {
-  const [category, setCategory] = useState<Category | "all">("all");
+  const [category, setCategory] = useState<string>("all");
   const [modality, setModality] = useState<Modality | "all">("all");
+  const [storedDbMatches, setStoredDbMatches] = useState<DBMatch[]>([]);
+  const [selectedScoresheetMatch, setSelectedScoresheetMatch] = useState<any>(null);
 
-  const matches = torneoDaerisMatches.filter((m) => {
+  useEffect(() => {
+    setStoredDbMatches(getStoredMatches());
+  }, []);
+
+  // Combinar partidos estáticos con los partidos dinámicos del sistema de arbitraje y base de datos
+  const combinedMatches: ExtendedMatch[] = useMemo(() => {
+    const dynamicConverted: ExtendedMatch[] = storedDbMatches.map((m) => {
+      const isFinished = m.status === "finalizado";
+      const isLive = m.status === "en_vivo";
+      const status: MatchStatus = isFinished ? "finished" : isLive ? "live" : "scheduled";
+
+      return {
+        id: m.id,
+        category: (m.categoryName as Category) || "Sub-12",
+        modality: "primera",
+        division: m.tournamentName,
+        homeTeam: m.homeClubName,
+        awayTeam: m.awayClubName,
+        homeScore: m.homeScore,
+        awayScore: m.awayScore,
+        matchDate: m.matchDate,
+        matchTime: m.matchTime,
+        venue: m.venue,
+        status,
+        matchday: 4,
+        jornada: m.jornada,
+        referees: {
+          principal: m.refereeName || "Prof. José Colina",
+          asistente: "Árbitro Asistente",
+          mesa: "Mesa Técnica",
+        },
+        refereeName: m.refereeName,
+        scoresheetUrl: m.scoresheetUrl || m.sheetPhotoUrl || "/images/planilla-ejemplo.jpg",
+        sheetPhotoUrl: m.sheetPhotoUrl || m.scoresheetUrl || "/images/planilla-ejemplo.jpg",
+        refereeNotes: m.refereeNotes,
+      };
+    });
+
+    // Colocar primero los partidos finalizados y en vivo
+    return [...dynamicConverted, ...torneoDaerisMatches];
+  }, [storedDbMatches]);
+
+  const matches = combinedMatches.filter((m) => {
     const matchCategory = category === "all" || m.category === category;
     const matchModality = modality === "all" || m.modality === modality;
     return matchCategory && matchModality;
@@ -126,9 +180,20 @@ export default function CalendarioPage() {
                 </div>
                 <div className="text-center px-4">
                   {match.status === "finished" ? (
-                    <p className="text-xl font-black text-red-400 sm:text-2xl">
-                      {match.homeScore} - {match.awayScore}
-                    </p>
+                    <div className="flex flex-col items-center gap-1.5">
+                      <p className="text-xl font-black text-red-400 sm:text-2xl">
+                        {match.homeScore} - {match.awayScore}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedScoresheetMatch(match)}
+                        className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-950/80 hover:bg-emerald-900 px-3.5 py-1 text-[11px] font-bold text-emerald-300 shadow-md shadow-emerald-950/50 transition active:scale-95"
+                        title="Ver fotografía de la planilla física firmada por el árbitro"
+                      >
+                        <FileText className="h-3.5 w-3.5 text-emerald-400" />
+                        <span>Ver Planilla Original</span>
+                      </button>
+                    </div>
                   ) : match.status === "live" ? (
                     <div className="flex flex-col items-center gap-1">
                       <p className="text-xl font-black text-red-400 sm:text-2xl">
@@ -178,6 +243,13 @@ export default function CalendarioPage() {
           ))}
         </div>
       </main>
+
+      {/* MODAL DE TRANSPARENCIA: VISUALIZACIÓN DE PLANILLA ORIGINAL FIRMADA */}
+      <ScoresheetModal
+        isOpen={!!selectedScoresheetMatch}
+        onClose={() => setSelectedScoresheetMatch(null)}
+        match={selectedScoresheetMatch}
+      />
     </div>
   );
 }

@@ -22,10 +22,31 @@ export async function POST(request: NextRequest) {
       referees,
       goals,
       cards,
+      scoresheet_url,
+      scoresheetUrl,
+      sheetPhotoUrl,
+      refereeNotes,
     } = body;
 
     if (!matchId) {
       return NextResponse.json({ error: "Falta el ID del partido" }, { status: 400 });
+    }
+
+    const scoresheet = scoresheet_url || scoresheetUrl || sheetPhotoUrl;
+
+    // Validación de Transparencia Total:
+    // Si el partido se va a asentar como finalizado, es OBLIGATORIO subir la foto de la planilla firmada
+    if (status === "finalizado" || status === "finished") {
+      if (!scoresheet) {
+        return NextResponse.json(
+          {
+            error:
+              "Planilla Obligatoria: Es requisito indispensable subir o capturar la foto de la planilla física firmada ('scoresheet_url') para dar por finalizado el encuentro y asentar el resultado oficial.",
+            missingScoresheet: true,
+          },
+          { status: 400 }
+        );
+      }
     }
 
     // Respuesta con el partido actualizado listo para recalcular
@@ -47,6 +68,10 @@ export async function POST(request: NextRequest) {
       },
       goals: goals || [],
       cards: cards || [],
+      scoresheet_url: scoresheet || null,
+      scoresheetUrl: scoresheet || null,
+      sheetPhotoUrl: scoresheet || null,
+      refereeNotes: refereeNotes || "",
       updatedAt: new Date().toISOString(),
     };
 
