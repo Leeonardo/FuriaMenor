@@ -12,7 +12,6 @@ const navItems = [
   { label: "Posiciones", href: "/posiciones" },
   { label: "Estadísticas", href: "/estadisticas" },
   { label: "Academias", href: "/academias" },
-  { label: "Galería", href: "/galeria" },
 ];
 
 const categories = ["Sub-6", "Sub-8", "Sub-10", "Sub-12", "Sub-14", "Sub-16", "Sub-18", "Sub-20"];

@@ -87,7 +87,6 @@ export function Footer() {
               <li><Link href="/posiciones" className="transition hover:text-white hover:text-red-400">Tablas de Posiciones</Link></li>
               <li><Link href="/estadisticas" className="transition hover:text-white hover:text-red-400">Goleadores & Vallas</Link></li>
               <li><Link href="/academias" className="transition hover:text-white hover:text-red-400">Academias & Clubes</Link></li>
-              <li><Link href="/galeria" className="transition hover:text-white hover:text-red-400">Galería Fotográfica</Link></li>
             </ul>
           </div>
 

@@ -1,28 +1,26 @@
 ﻿import Link from "next/link";
 import { ArrowRight, Goal, Shield, Trophy } from "lucide-react";
 import { TournamentData } from "@/data/tournaments-data";
+import { TournamentOfficialTable } from "@/components/tournaments/tournament-official-table";
 
 interface StatsPreviewProps {
   tournament: TournamentData;
 }
 
 export function StatsPreview({ tournament }: StatsPreviewProps) {
-  // Top 5 posiciones del torneo activo
-  const topStandings = tournament.standings.slice(0, 5);
-
   return (
     <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Encabezado de la sección */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-xs uppercase tracking-[0.25em] text-red-400 font-semibold">
-            Rendimiento & Clasificación
+            Rendimiento & Clasificación Oficial
           </p>
-          <h2 className="mt-1 text-2xl font-bold text-white sm:text-3xl">
+          <h2 className="mt-1 text-2xl font-extrabold text-white sm:text-3xl">
             Estadísticas de {tournament.name}
           </h2>
           <p className="mt-1 text-sm text-neutral-400">
-            Seguimiento de tabla de posiciones, líderes de goleo y arquerías menos vencidas
+            Tabla de posiciones oficial reglamentaria, goleador del torneo y valla menos vencida
           </p>
         </div>
 
@@ -31,171 +29,134 @@ export function StatsPreview({ tournament }: StatsPreviewProps) {
             href="/posiciones"
             className="rounded-lg border border-neutral-800 bg-neutral-900/60 px-3 py-1.5 text-xs font-medium text-neutral-300 transition hover:border-neutral-700 hover:text-white"
           >
-            Todas las Tablas
+            Ver en Posiciones
           </Link>
           <Link
             href="/estadisticas"
-            className={`rounded-lg px-3 py-1.5 text-xs font-semibold text-white transition ${
-              tournament.id === "daeris" ? "bg-red-600 hover:bg-red-500" : "bg-sky-600 hover:bg-sky-500"
-            }`}
+            className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-red-500"
           >
-            Líderes de Goleo
+            Ver Goleadores
           </Link>
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-12">
-        {/* Columna Izquierda: Estadísticas Colectivas (Tabla de Clasificación) */}
-        <div className="rounded-2xl border border-neutral-800 bg-neutral-900/50 p-5 lg:col-span-7 backdrop-blur-sm">
-          <div className="mb-4 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-400/10 text-amber-400">
-                <Trophy className="h-4 w-4" />
-              </div>
-              <div>
-                <h3 className="text-base font-semibold text-white">Tabla de Posiciones</h3>
-                <p className="text-xs text-neutral-400">
-                  {tournament.name} · Categoría Principal
-                </p>
-              </div>
-            </div>
-            <span className="rounded-full bg-neutral-800 px-2.5 py-0.5 text-[11px] font-medium text-neutral-400">
-              Top 5
+      <div className="grid gap-8 lg:grid-cols-12 lg:items-start">
+        {/* Columna Izquierda: Tabla Oficial Exacta al Diseño de la Imagen */}
+        <div className="lg:col-span-8">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-bold text-neutral-400 uppercase tracking-wider flex items-center gap-1.5">
+              <Trophy className="h-4 w-4 text-amber-400" />
+              Planilla Oficial de Clasificación
+            </span>
+            <span className="text-xs text-neutral-500">
+              {tournament.shortName} · 11 Equipos
             </span>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead>
-                <tr className="border-b border-neutral-800 text-neutral-400 font-medium">
-                  <th className="pb-3 pl-2 w-8">#</th>
-                  <th className="pb-3">Equipo</th>
-                  <th className="pb-3 text-center">JJ</th>
-                  <th className="pb-3 text-center">JG</th>
-                  <th className="pb-3 text-center">DIF</th>
-                  <th className="pb-3 pr-2 text-right">PTS</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-neutral-800/50">
-                {topStandings.map((team) => (
-                  <tr
-                    key={team.team}
-                    className="transition hover:bg-neutral-800/30 group"
-                  >
-                    <td className="py-3 pl-2 font-bold text-neutral-500 group-hover:text-red-400">
-                      {team.pos}
-                    </td>
-                    <td className="py-3 font-semibold text-white flex items-center gap-2">
-                      <span
-                        className={`h-1.5 w-1.5 rounded-full ${
-                          team.pos <= 4 ? "bg-emerald-400" : "bg-neutral-600"
-                        }`}
-                      />
-                      <span className="truncate max-w-[170px] sm:max-w-none">{team.team}</span>
-                    </td>
-                    <td className="py-3 text-center text-neutral-400">{team.jj}</td>
-                    <td className="py-3 text-center text-neutral-400">{team.jg}</td>
-                    <td className="py-3 text-center font-medium text-neutral-300">
-                      {team.dif > 0 ? `+${team.dif}` : team.dif}
-                    </td>
-                    <td className={`py-3 pr-2 text-right font-extrabold text-sm ${tournament.accentColor.text}`}>
-                      {team.pts}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="mt-4 pt-3 border-t border-neutral-800/80 flex items-center justify-between text-xs">
-            <span className="text-neutral-500 flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-emerald-400" />
-              Zona de Clasificación
-            </span>
-            <Link
-              href="/posiciones"
-              className={`inline-flex items-center gap-1 font-semibold hover:underline transition ${tournament.accentColor.text}`}
-            >
-              Ver tabla completa
-              <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
+          <TournamentOfficialTable
+            title={`TABLA DE POSICIONES · ${tournament.name}`}
+            groupName={tournament.groupName || "GRUPO A"}
+            qualificationRule={tournament.qualificationRule || "CLASIFICAN LOS 8 PRIMEROS DE CADA GRUPO"}
+            qualificationCutoff={tournament.qualificationCutoff || 8}
+            rows={tournament.standings}
+          />
         </div>
 
-        {/* Columna Derecha: Estadísticas Individuales (Goleadores y Vallas) */}
-        <div className="flex flex-col gap-4 lg:col-span-5">
-          {/* Tarjeta de Goleadores */}
-          <div className="rounded-2xl border border-neutral-800 bg-neutral-900/50 p-5 backdrop-blur-sm flex-1">
-            <div className="mb-3 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-500/10 text-red-400">
-                  <Goal className="h-4 w-4" />
+        {/* Columna Derecha: Goleador del Torneo y Valla Menos Vencida */}
+        <div className="flex flex-col gap-5 lg:col-span-4">
+          {/* 1. Goleador del Torneo */}
+          <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-5 shadow-xl backdrop-blur-sm">
+            <div className="mb-4 flex items-center justify-between border-b border-neutral-800 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-500/10 text-red-400 border border-red-500/20">
+                  <Goal className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-white">Líderes de Goleo</h3>
-                  <p className="text-[11px] text-neutral-400">{tournament.name}</p>
+                  <h3 className="text-sm font-bold text-white">Goleador del Torneo</h3>
+                  <p className="text-[11px] text-neutral-400">Tabla de Máximos Artilleros</p>
                 </div>
               </div>
-              <Link
-                href="/estadisticas"
-                className="text-xs text-red-400 hover:text-red-300 transition"
-              >
-                Ver todos
-              </Link>
+              <span className="rounded-full bg-red-500/10 px-2 py-0.5 text-[10px] font-bold text-red-400">
+                Líderes
+              </span>
             </div>
 
-            <div className="space-y-2.5">
-              {tournament.topScorers.slice(0, 3).map((scorer, idx) => (
+            <div className="space-y-2">
+              {tournament.topScorers.map((scorer, idx) => (
                 <div
                   key={scorer.player}
-                  className="flex items-center justify-between rounded-xl bg-neutral-950/50 border border-neutral-800/60 p-2.5"
+                  className="flex items-center justify-between rounded-xl bg-neutral-950/70 border border-neutral-800/80 p-2.5 hover:border-neutral-700 transition"
                 >
-                  <div className="flex items-center gap-2.5">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-neutral-800 text-xs font-bold text-neutral-400">
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={`flex h-6 w-6 items-center justify-center rounded-lg text-xs font-black ${
+                        idx === 0
+                          ? "bg-amber-400 text-black"
+                          : idx === 1
+                          ? "bg-neutral-300 text-black"
+                          : idx === 2
+                          ? "bg-amber-700 text-white"
+                          : "bg-neutral-800 text-neutral-400"
+                      }`}
+                    >
                       {idx + 1}
                     </span>
                     <div>
                       <p className="text-xs font-bold text-white">{scorer.player}</p>
-                      <p className="text-[11px] text-neutral-400">{scorer.team} · {scorer.category}</p>
+                      <p className="text-[11px] text-neutral-400">{scorer.team}</p>
                     </div>
                   </div>
+
                   <div className="text-right">
-                    <span className="text-sm font-extrabold text-red-400">{scorer.goals}</span>
-                    <span className="text-[10px] text-neutral-500 ml-1">goles</span>
+                    <span className="text-base font-black text-red-400">{scorer.goals}</span>
+                    <span className="text-[10px] text-neutral-500 ml-1 font-semibold">Goles</span>
                   </div>
                 </div>
               ))}
             </div>
-          </div>
 
-          {/* Tarjeta de Vallas Invictas */}
-          <div className="rounded-2xl border border-neutral-800 bg-neutral-900/50 p-5 backdrop-blur-sm flex-1">
-            <div className="mb-3 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-400">
-                  <Shield className="h-4 w-4" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-semibold text-white">Valla Menos Vencida</h3>
-                  <p className="text-[11px] text-neutral-400">Arquería {tournament.shortName}</p>
-                </div>
-              </div>
+            <div className="mt-4 pt-3 border-t border-neutral-800/80 text-center">
               <Link
                 href="/estadisticas"
-                className="text-xs text-emerald-400 hover:text-emerald-300 transition"
+                className="inline-flex items-center gap-1 text-xs font-bold text-red-400 hover:text-red-300 transition"
               >
-                Ver todos
+                Ver tabla completa de goleadores
+                <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
+          </div>
 
-            <div className="space-y-2.5">
-              {tournament.leastConceded.slice(0, 2).map((keeper, idx) => (
+          {/* 2. Valla Menos Vencida */}
+          <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-5 shadow-xl backdrop-blur-sm">
+            <div className="mb-4 flex items-center justify-between border-b border-neutral-800 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  <Shield className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white">Valla Menos Vencida</h3>
+                  <p className="text-[11px] text-neutral-400">Arquerías del Torneo</p>
+                </div>
+              </div>
+              <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-400">
+                Porteros
+              </span>
+            </div>
+
+            <div className="space-y-2">
+              {tournament.leastConceded.map((keeper, idx) => (
                 <div
                   key={keeper.player}
-                  className="flex items-center justify-between rounded-xl bg-neutral-950/50 border border-neutral-800/60 p-2.5"
+                  className="flex items-center justify-between rounded-xl bg-neutral-950/70 border border-neutral-800/80 p-2.5 hover:border-neutral-700 transition"
                 >
-                  <div className="flex items-center gap-2.5">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-neutral-800 text-xs font-bold text-neutral-400">
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={`flex h-6 w-6 items-center justify-center rounded-lg text-xs font-black ${
+                        idx === 0
+                          ? "bg-emerald-400 text-black"
+                          : "bg-neutral-800 text-neutral-400"
+                      }`}
+                    >
                       {idx + 1}
                     </span>
                     <div>
@@ -203,12 +164,27 @@ export function StatsPreview({ tournament }: StatsPreviewProps) {
                       <p className="text-[11px] text-neutral-400">{keeper.team}</p>
                     </div>
                   </div>
+
                   <div className="text-right">
-                    <span className="text-sm font-extrabold text-emerald-400">{keeper.cleanSheets}</span>
-                    <span className="text-[10px] text-neutral-500 ml-1">invictas ({keeper.goalsConceded} GC)</span>
+                    <div className="text-xs font-bold text-emerald-400">
+                      {keeper.cleanSheets} <span className="text-[10px] text-neutral-400 font-normal">invictas</span>
+                    </div>
+                    <div className="text-[10px] text-neutral-500">
+                      {keeper.goalsConceded} GC ({keeper.matchesPlayed} PJ)
+                    </div>
                   </div>
                 </div>
               ))}
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-neutral-800/80 text-center">
+              <Link
+                href="/estadisticas"
+                className="inline-flex items-center gap-1 text-xs font-bold text-emerald-400 hover:text-emerald-300 transition"
+              >
+                Ver tabla completa de porteros
+                <ArrowRight className="h-3 w-3" />
+              </Link>
             </div>
           </div>
         </div>

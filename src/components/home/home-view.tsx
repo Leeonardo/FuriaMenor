@@ -9,7 +9,6 @@ import { HeroSports } from "@/components/home/hero-sports";
 import { TorneosLive } from "@/components/home/torneos-live";
 import { StatsPreview } from "@/components/home/stats-preview";
 import { AcademiesPreview } from "@/components/home/academies-preview";
-import { MultimediaGallery } from "@/components/home/multimedia-gallery";
 import Link from "next/link";
 import { Calendar, Mail } from "lucide-react";
 
@@ -36,6 +35,9 @@ export function HomeView() {
       venue: sub.venue,
       venueShort: sub.venue,
       totalTeams: sub.teamsCount,
+      groupName: sub.groupName,
+      qualificationRule: sub.qualificationRule,
+      qualificationCutoff: sub.qualificationCutoff,
       highlightedMatch: sub.matches[0] || daerisBase.highlightedMatch,
       matches: sub.matches,
       standings: sub.standings,
@@ -73,16 +75,13 @@ export function HomeView() {
       {/* 4. Marcadores y Próximos Partidos del torneo seleccionado */}
       <TorneosLive tournament={currentTournament} />
 
-      {/* 5. Estadísticas Colectivas e Individuales del torneo */}
+      {/* 5. Estadísticas Oficiales: Tabla idéntica al modelo reglamentario, Goleador y Valla Menos Vencida */}
       <StatsPreview tournament={currentTournament} />
 
-      {/* 6. Vitrina de Academias & Clubes de Caracas */}
+      {/* 6. Vitrina de Academias & Clubes Participantes */}
       <AcademiesPreview />
 
-      {/* 7. Galería Multimedia de la Cancha */}
-      <MultimediaGallery />
-
-      {/* 8. Banner de Cierre Furia Menor */}
+      {/* 7. Banner de Cierre Furia Menor */}
       <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-3xl border border-neutral-800 bg-gradient-to-r from-red-950/40 via-neutral-900 to-neutral-950 p-8 text-center sm:p-12 shadow-2xl">
           <div className="pointer-events-none absolute -bottom-24 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-red-600/10 blur-3xl" />

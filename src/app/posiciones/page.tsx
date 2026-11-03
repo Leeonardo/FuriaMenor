@@ -1,306 +1,116 @@
-"use client";
+﻿"use client";
 
-import Image from "next/image";
-import Link from "next/link";
-import { Filter, Trophy } from "lucide-react";
 import { useState } from "react";
-import { CATEGORIES, MODALITIES, calculateStandings, getTeamsFor, modalityLabels, sampleMatches, type Category, type Modality } from "@/data/daeris";
-import { standingsSub12Elite } from "@/data/daeris/posiciones";
-import { standingsSub12SegundaGrupoA, standingsSub12SegundaGrupoB } from "@/data/daeris/posiciones-sub12-segunda";
+import Link from "next/link";
+import { Trophy, Filter, ArrowLeft } from "lucide-react";
+import { TournamentOfficialTable } from "@/components/tournaments/tournament-official-table";
+import { daerisSubList, DaerisSubId } from "@/data/daeris-subtournaments";
+import { createGenericStandings } from "@/data/generic-tournament-data";
 
 export default function PosicionesPage() {
-  const [category, setCategory] = useState<Category>("Sub-12");
-  const [modality, setModality] = useState<Modality>("primera");
+  const [selectedTournament, setSelectedTournament] = useState<"daeris" | "prueba">("daeris");
+  const [selectedDaerisSub, setSelectedDaerisSub] = useState<DaerisSubId>("infantil-1ra");
 
-  const teams = getTeamsFor(category, modality);
-  const matches = sampleMatches.filter((m) => m.category === category && m.modality === modality);
-  const standings = calculateStandings(matches, teams);
-  const showElite = category === "Sub-12" && modality === "primera";
-  const showSegunda = category === "Sub-12" && modality === "segunda";
-  const eliteStandings = showElite ? standingsSub12Elite : [];
-  const segundaA = showSegunda ? standingsSub12SegundaGrupoA : [];
-  const segundaB = showSegunda ? standingsSub12SegundaGrupoB : [];
+  const currentSub = daerisSubList.find((s) => s.id === selectedDaerisSub) || daerisSubList[0];
+  const standingsRows = selectedTournament === "daeris" ? currentSub.standings : createGenericStandings("Equipo");
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100">
-      <header className="border-b border-neutral-800 bg-neutral-950/90 backdrop-blur-xl">
-        <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-3">
-            <Image src="/logo.png" alt="Furia Menor" width={40} height={40} className="object-contain" />
-            <div>
-              <p className="text-sm font-semibold">Furia Menor</p>
-              <p className="text-xs text-neutral-400">Torneo Daeris</p>
-            </div>
-          </Link>
-          <div className="flex items-center gap-4 text-sm">
-            <Link href="/calendario" className="text-neutral-300 hover:text-white">Calendario</Link>
-            <Link href="/posiciones" className="text-red-400">Posiciones</Link>
-            <Link href="/estadisticas" className="text-neutral-300 hover:text-white">Goleadores & Arquería</Link>
-          </div>
-        </nav>
-      </header>
-
       <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        {/* Encabezado */}
         <div className="mb-8">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 text-xs text-neutral-400 hover:text-white transition mb-3"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Volver al Inicio
+          </Link>
           <div className="flex items-center gap-2 text-red-400">
             <Trophy className="h-5 w-5" />
-            <span className="text-sm">Torneo Daeris</span>
+            <span className="text-xs uppercase tracking-[0.25em] font-bold">
+              Tablas de Posiciones Oficiales
+            </span>
           </div>
-          <h1 className="mt-2 text-3xl font-bold sm:text-4xl">Tabla de Posiciones</h1>
-          <p className="mt-2 text-neutral-400">Puntos, PJ, PG, PE, PP, GF, GC, DG</p>
+          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl text-white">
+            Planillas de Clasificación
+          </h1>
+          <p className="mt-1 text-sm text-neutral-400">
+            JJ: Juegos Jugados · JG: Ganados · JE: Empatados · JP: Perdidos · GA: Goles a Favor · GE: Goles en Contra · DIF: Diferencia · PTS: Puntos
+          </p>
         </div>
 
-        <div className="mb-8 flex flex-wrap items-center gap-3 rounded-2xl border border-neutral-800 bg-neutral-900/60 p-4">
+        {/* Filtros de Torneo */}
+        <div className="mb-8 flex flex-wrap items-center gap-4 rounded-2xl border border-neutral-800 bg-neutral-900/60 p-4">
           <div className="flex items-center gap-2 text-neutral-400">
-            <Filter className="h-4 w-4" />
-            <span className="text-sm">Filtros</span>
+            <Filter className="h-4 w-4 text-red-400" />
+            <span className="text-xs font-bold uppercase tracking-wider text-neutral-300">
+              Torneo:
+            </span>
           </div>
-          <select value={category} onChange={(e) => setCategory(e.target.value as Category)} className="rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm">
-            {CATEGORIES.map((c) => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
-          <select value={modality} onChange={(e) => setModality(e.target.value as Modality)} className="rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm">
-            {MODALITIES.map((m) => (
-              <option key={m} value={m}>{modalityLabels[m]}</option>
-            ))}
-          </select>
+
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setSelectedTournament("daeris")}
+              className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
+                selectedTournament === "daeris"
+                  ? "bg-red-600 text-white shadow-md shadow-red-600/30"
+                  : "bg-neutral-800 text-neutral-400 hover:text-white"
+              }`}
+            >
+              Torneo Daeris (6 Divisiones)
+            </button>
+            <button
+              onClick={() => setSelectedTournament("prueba")}
+              className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
+                selectedTournament === "prueba"
+                  ? "bg-sky-600 text-white shadow-md shadow-sky-600/30"
+                  : "bg-neutral-800 text-neutral-400 hover:text-white"
+              }`}
+            >
+              Torneo de Prueba
+            </button>
+          </div>
+
+          {/* Sub-selector de las 6 divisiones de Daeris */}
+          {selectedTournament === "daeris" && (
+            <div className="w-full pt-3 border-t border-neutral-800 flex flex-wrap items-center gap-2">
+              <span className="text-xs text-neutral-500 font-medium mr-1">División:</span>
+              {daerisSubList.map((sub) => (
+                <button
+                  key={sub.id}
+                  onClick={() => setSelectedDaerisSub(sub.id)}
+                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                    selectedDaerisSub === sub.id
+                      ? "bg-neutral-100 text-neutral-950 font-bold shadow-sm"
+                      : "bg-neutral-800/80 text-neutral-400 hover:bg-neutral-800 hover:text-white"
+                  }`}
+                >
+                  {sub.shortName}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
-        {showElite && eliteStandings.length > 0 && (
-          <div className="mb-6">
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-lg font-semibold">Sub-12 • 1ra División - Grupo A</h2>
-              <div className="flex items-center gap-4 text-xs text-neutral-400">
-                <span className="flex items-center gap-1">
-                  <span className="h-2 w-2 rounded-full bg-emerald-400"></span>
-                  Clasificados (Puestos 1 al 8)
-                </span>
-                <span className="flex items-center gap-1">
-                  <span className="h-2 w-2 rounded-full bg-red-400"></span>
-                  Eliminados
-                </span>
-              </div>
-            </div>
-            <div className="overflow-x-auto rounded-2xl border border-neutral-800 bg-neutral-900/60">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-neutral-800 text-neutral-400">
-                    <th className="p-4 text-left">POS</th>
-                    <th className="p-4 text-left">EQUIPOS</th>
-                    <th className="p-4 text-center">JJ</th>
-                    <th className="p-4 text-center">JG</th>
-                    <th className="p-4 text-center">JE</th>
-                    <th className="p-4 text-center">JP</th>
-                    <th className="p-4 text-center">GA</th>
-                    <th className="p-4 text-center">GE</th>
-                    <th className="p-4 text-center">DIF</th>
-                    <th className="p-4 text-center">PTS</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {eliteStandings.map((row) => (
-                    <tr
-                      key={row.team}
-                      className={`border-b border-neutral-800/60 hover:bg-neutral-800/30 ${
-                        row.status === "clasificado"
-                          ? "bg-emerald-500/5"
-                          : row.status === "eliminado"
-                            ? "bg-red-500/5"
-                            : ""
-                      }`}
-                    >
-                      <td className="p-4">{row.pos}</td>
-                      <td className="p-4 font-medium">{row.team}</td>
-                      <td className="p-4 text-center">{row.jj}</td>
-                      <td className="p-4 text-center">{row.jg}</td>
-                      <td className="p-4 text-center">{row.je}</td>
-                      <td className="p-4 text-center">{row.jp}</td>
-                      <td className="p-4 text-center">{row.ga}</td>
-                      <td className="p-4 text-center">{row.ge}</td>
-                      <td className="p-4 text-center">{row.dif}</td>
-                      <td className="p-4 text-center font-bold text-red-400">{row.pts}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <p className="mt-2 text-xs text-neutral-500">* Nota: Clasifican los 8 primeros de cada grupo.</p>
-          </div>
-        )}
-
-        {showSegunda && (
-          <div className="space-y-6">
-            <div>
-              <div className="mb-3 flex items-center justify-between">
-                <h2 className="text-lg font-semibold">Sub-12 • 2da División - Grupo A</h2>
-                <div className="flex items-center gap-4 text-xs text-neutral-400">
-                  <span className="flex items-center gap-1">
-                    <span className="h-2 w-2 rounded-full bg-emerald-400"></span>
-                    Clasificados (Puestos 1 al 8)
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <span className="h-2 w-2 rounded-full bg-red-400"></span>
-                    Eliminados (Puesto 9)
-                  </span>
-                </div>
-              </div>
-              <div className="overflow-x-auto rounded-2xl border border-neutral-800 bg-neutral-900/60">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-neutral-800 text-neutral-400">
-                      <th className="p-4 text-left">POS</th>
-                      <th className="p-4 text-left">EQUIPOS</th>
-                      <th className="p-4 text-center">JJ</th>
-                      <th className="p-4 text-center">JG</th>
-                      <th className="p-4 text-center">JE</th>
-                      <th className="p-4 text-center">JP</th>
-                      <th className="p-4 text-center">GA</th>
-                      <th className="p-4 text-center">GE</th>
-                      <th className="p-4 text-center">DIF</th>
-                      <th className="p-4 text-center">PTS</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {segundaA.map((row) => (
-                      <tr
-                        key={row.team}
-                        className={`border-b border-neutral-800/60 hover:bg-neutral-800/30 ${
-                          row.status === "clasificado"
-                            ? "bg-emerald-500/5"
-                            : row.status === "eliminado"
-                              ? "bg-red-500/5"
-                              : ""
-                        }`}
-                      >
-                        <td className="p-4">{row.pos}</td>
-                        <td className="p-4 font-medium">{row.team}</td>
-                        <td className="p-4 text-center">{row.jj}</td>
-                        <td className="p-4 text-center">{row.jg}</td>
-                        <td className="p-4 text-center">{row.je}</td>
-                        <td className="p-4 text-center">{row.jp}</td>
-                        <td className="p-4 text-center">{row.ga}</td>
-                        <td className="p-4 text-center">{row.ge}</td>
-                        <td className="p-4 text-center">{row.dif}</td>
-                        <td className="p-4 text-center font-bold text-red-400">{row.pts}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <div>
-              <div className="mb-3 flex items-center justify-between">
-                <h2 className="text-lg font-semibold">Sub-12 • 2da División - Grupo B</h2>
-                <div className="flex items-center gap-4 text-xs text-neutral-400">
-                  <span className="flex items-center gap-1">
-                    <span className="h-2 w-2 rounded-full bg-emerald-400"></span>
-                    Clasificados (Puestos 1 al 8)
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <span className="h-2 w-2 rounded-full bg-red-400"></span>
-                    Eliminados (Puesto 9)
-                  </span>
-                </div>
-              </div>
-              <div className="overflow-x-auto rounded-2xl border border-neutral-800 bg-neutral-900/60">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-neutral-800 text-neutral-400">
-                      <th className="p-4 text-left">POS</th>
-                      <th className="p-4 text-left">EQUIPOS</th>
-                      <th className="p-4 text-center">JJ</th>
-                      <th className="p-4 text-center">JG</th>
-                      <th className="p-4 text-center">JE</th>
-                      <th className="p-4 text-center">JP</th>
-                      <th className="p-4 text-center">GA</th>
-                      <th className="p-4 text-center">GE</th>
-                      <th className="p-4 text-center">DIF</th>
-                      <th className="p-4 text-center">PTS</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {segundaB.map((row) => (
-                      <tr
-                        key={row.team}
-                        className={`border-b border-neutral-800/60 hover:bg-neutral-800/30 ${
-                          row.status === "clasificado"
-                            ? "bg-emerald-500/5"
-                            : row.status === "eliminado"
-                              ? "bg-red-500/5"
-                              : ""
-                        }`}
-                      >
-                        <td className="p-4">{row.pos}</td>
-                        <td className="p-4 font-medium">{row.team}</td>
-                        <td className="p-4 text-center">{row.jj}</td>
-                        <td className="p-4 text-center">{row.jg}</td>
-                        <td className="p-4 text-center">{row.je}</td>
-                        <td className="p-4 text-center">{row.jp}</td>
-                        <td className="p-4 text-center">{row.ga}</td>
-                        <td className="p-4 text-center">{row.ge}</td>
-                        <td className="p-4 text-center">{row.dif}</td>
-                        <td className="p-4 text-center font-bold text-red-400">{row.pts}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <p className="text-xs text-neutral-500">* Nota: Clasifican los 8 primeros de cada grupo.</p>
-          </div>
-        )}
-
-        {!showElite && !showSegunda && (
-          <>
-            {standings.length === 0 ? (
-              <div className="rounded-2xl border border-neutral-800 bg-gradient-to-br from-neutral-900/60 to-neutral-950 p-8 text-center sm:p-10">
-                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-neutral-800/60">
-                  <Trophy className="h-8 w-8 text-neutral-500" />
-                </div>
-                <h3 className="mb-2 text-lg font-semibold">Sin posiciones</h3>
-                <p className="text-sm text-neutral-400 sm:text-base">
-                  La tabla de posiciones se actualizará automáticamente al finalizar los primeros encuentros de esta modalidad.
-                </p>
-              </div>
-            ) : (
-              <div className="overflow-x-auto rounded-2xl border border-neutral-800 bg-neutral-900/60">
-                <table className="w-full min-w-[640px] text-sm">
-                  <thead>
-                    <tr className="border-b border-neutral-800 text-neutral-400">
-                      <th className="sticky left-0 bg-neutral-900/95 p-4 text-left">#</th>
-                      <th className="sticky left-12 bg-neutral-900/95 p-4 text-left">Equipo</th>
-                      <th className="p-4 text-center">PJ</th>
-                      <th className="p-4 text-center">PG</th>
-                      <th className="p-4 text-center">PE</th>
-                      <th className="p-4 text-center">PP</th>
-                      <th className="p-4 text-center">GF</th>
-                      <th className="p-4 text-center">GC</th>
-                      <th className="p-4 text-center">DG</th>
-                      <th className="sticky right-0 bg-neutral-900/95 p-4 text-center">PTS</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {standings.map((row, idx) => (
-                      <tr key={row.team} className="border-b border-neutral-800/60 hover:bg-neutral-800/30">
-                        <td className="sticky left-0 bg-neutral-900/60 p-4">{idx + 1}</td>
-                        <td className="sticky left-12 bg-neutral-900/60 p-4 font-medium">{row.team}</td>
-                        <td className="p-4 text-center">{row.played}</td>
-                        <td className="p-4 text-center">{row.won}</td>
-                        <td className="p-4 text-center">{row.drawn}</td>
-                        <td className="p-4 text-center">{row.lost}</td>
-                        <td className="p-4 text-center">{row.gf}</td>
-                        <td className="p-4 text-center">{row.gc}</td>
-                        <td className="p-4 text-center">{row.gd}</td>
-                        <td className="sticky right-0 bg-neutral-900/60 p-4 text-center font-bold text-red-400">{row.points}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </>
-        )}
+        {/* Tabla Oficial idéntica a la imagen de referencia */}
+        <div className="max-w-4xl mx-auto">
+          <TournamentOfficialTable
+            title={
+              selectedTournament === "daeris"
+                ? `TABLA DE POSICIONES · ${currentSub.name}`
+                : "TABLA DE POSICIONES · TORNEO DE PRUEBA"
+            }
+            groupName={selectedTournament === "daeris" ? currentSub.groupName : "GRUPO PRUEBA A"}
+            qualificationRule={
+              selectedTournament === "daeris"
+                ? currentSub.qualificationRule
+                : "CLASIFICAN LOS 8 PRIMEROS DE CADA GRUPO"
+            }
+            qualificationCutoff={selectedTournament === "daeris" ? currentSub.qualificationCutoff : 8}
+            rows={standingsRows}
+          />
+        </div>
       </main>
     </div>
   );
