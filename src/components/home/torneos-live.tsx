@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { ArrowRight, Clock, MapPin, Trophy, Calendar } from "lucide-react";
 import { TournamentData } from "@/data/tournaments-data";
 import { DaerisBadge, PruebaBadge } from "@/components/ui/tournament-badges";
@@ -20,8 +20,8 @@ export function TorneosLive({ tournament }: TorneosLiveProps) {
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
+      <div className="mb-6 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left justify-between gap-4">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3.5">
           <div className="shrink-0">
             {tournament.id === "daeris" ? (
               <DaerisBadge size={52} />
@@ -42,17 +42,17 @@ export function TorneosLive({ tournament }: TorneosLiveProps) {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
           <Link
             href="/calendario"
-            className="rounded-lg border border-neutral-800 bg-neutral-900/60 px-3 py-1.5 text-xs sm:text-sm text-neutral-300 transition hover:border-neutral-700 hover:text-white"
+            className="rounded-xl border border-neutral-800 bg-neutral-900/60 px-3.5 py-1.5 text-xs sm:text-sm text-neutral-300 transition hover:border-neutral-700 hover:text-white"
           >
             Calendario Completo
           </Link>
           <Link
             href="/posiciones"
-            className={`rounded-lg px-3 py-1.5 text-xs sm:text-sm font-semibold text-white transition ${
-              tournament.id === "daeris" ? "bg-red-600 hover:bg-red-500" : "bg-sky-600 hover:bg-sky-500"
+            className={`rounded-xl px-3.5 py-1.5 text-xs sm:text-sm font-semibold text-white transition ${
+              tournament.id === "daeris" ? "bg-red-600 hover:bg-red-500 shadow-sm shadow-red-600/30" : "bg-sky-600 hover:bg-sky-500 shadow-sm"
             }`}
           >
             Tablas de Posiciones

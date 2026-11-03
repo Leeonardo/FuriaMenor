@@ -228,9 +228,9 @@ export function DelegadoView({
       <div className="rounded-3xl border border-neutral-800 bg-neutral-900/80 p-6 sm:p-8 backdrop-blur-md shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 right-0 h-40 w-40 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="h-16 w-16 rounded-2xl bg-neutral-950 border border-neutral-800 flex items-center justify-center text-red-500 font-black text-2xl shadow-inner shrink-0">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left justify-between gap-6">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+            <div className="h-16 w-16 rounded-2xl bg-neutral-950 border border-neutral-800 flex items-center justify-center text-red-500 font-black text-2xl shadow-inner shrink-0 mx-auto sm:mx-0">
               {club.logoUrl ? (
                 <img src={club.logoUrl} alt={club.name} className="h-12 w-12 rounded-full object-contain" />
               ) : (
@@ -239,7 +239,7 @@ export function DelegadoView({
             </div>
 
             <div className="space-y-1">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center sm:justify-start gap-2">
                 <span className="rounded-full bg-red-500/10 border border-red-500/20 px-2.5 py-0.5 text-[10px] font-black text-red-400 uppercase tracking-wider">
                   Módulo de Delegado de Club
                 </span>
@@ -254,10 +254,10 @@ export function DelegadoView({
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 w-full sm:w-auto">
             <button
               onClick={handleOpenCreateModal}
-              className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-red-600/30 hover:bg-red-500 transition"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-red-600/30 hover:bg-red-500 transition w-full sm:w-auto"
             >
               <UserPlus className="h-4 w-4" />
               <span>Fichar Nuevo Atleta</span>
@@ -266,7 +266,7 @@ export function DelegadoView({
         </div>
 
         {/* Métricas del Club */}
-        <div className="mt-6 pt-5 border-t border-neutral-800/80 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+        <div className="mt-6 pt-5 border-t border-neutral-800/80 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs text-center">
           <div className="rounded-xl border border-neutral-800 bg-neutral-950/60 p-3">
             <span className="text-[10px] uppercase font-bold text-neutral-400">Atletas Federados</span>
             <p className="text-xl font-black text-white mt-0.5">{clubPlayers.length}</p>
@@ -346,8 +346,123 @@ export function DelegadoView({
         </div>
       </div>
 
-      {/* 3. TABLA DE ATLETAS DEL CLUB CON MULTI-TORNEO Y EXPEDIENTE */}
-      <div className="overflow-x-auto rounded-3xl border border-neutral-800 bg-neutral-950 shadow-xl">
+      {/* 3. LISTADO DE ATLETAS DEL CLUB: VISTA MÓVIL (TARJETAS) Y ESCRITORIO (TABLA) */}
+      
+      {/* VISTA MÓVIL (md:hidden): Tarjetas centradas, táctiles y ordenadas */}
+      <div className="md:hidden space-y-3">
+        {filteredPlayers.length === 0 ? (
+          <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-8 text-center text-neutral-500 text-xs">
+            No hay atletas registrados en esta categoría para {club.name}.
+          </div>
+        ) : (
+          filteredPlayers.map((player) => (
+            <div
+              key={player.id}
+              className="rounded-2xl border border-neutral-800 bg-neutral-900/80 p-4 space-y-3 shadow-lg"
+            >
+              {/* Cabecera del atleta en tarjeta */}
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-600/20 text-red-400 font-black text-sm border border-red-500/30 shrink-0">
+                    #{player.jerseyNumber}
+                  </span>
+                  <div>
+                    <h4 className="font-black text-white text-sm">
+                      {player.firstName} {player.lastName}
+                    </h4>
+                    <p className="text-[11px] font-mono text-neutral-400">
+                      {player.idType}-{player.idNumber} • Nac. {player.birthYear}
+                    </p>
+                  </div>
+                </div>
+
+                <span
+                  className={`rounded-full px-2.5 py-0.5 text-[9px] font-bold uppercase shrink-0 ${
+                    player.status === "activo"
+                      ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
+                      : player.status === "suspendido"
+                      ? "bg-rose-500/10 text-rose-400 border border-rose-500/30"
+                      : "bg-neutral-800 text-neutral-400"
+                  }`}
+                >
+                  {player.status}
+                </span>
+              </div>
+
+              {/* Categoría y Posición */}
+              <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-neutral-800/80 text-xs">
+                <span className="rounded-lg bg-neutral-950 border border-neutral-800 px-2 py-0.5 text-[10px] font-bold text-neutral-300">
+                  {player.categoryName}
+                </span>
+                <span className="rounded-lg bg-neutral-950 border border-neutral-800 px-2 py-0.5 text-[10px] font-semibold text-neutral-300">
+                  {player.position}
+                </span>
+                <span className="text-[10px] font-mono text-neutral-500">
+                  {player.carnetNumber}
+                </span>
+              </div>
+
+              {/* Torneos Inscritos (Multi-Torneo) */}
+              <div className="pt-2 border-t border-neutral-800/80 space-y-1">
+                <span className="text-[10px] uppercase font-bold text-neutral-400 block">
+                  Torneos Inscritos:
+                </span>
+                <div className="flex flex-wrap gap-1">
+                  {player.enrolledTournaments && player.enrolledTournaments.length > 0 ? (
+                    player.enrolledTournaments.map((tId) => {
+                      const tObj = OFFICIAL_TOURNAMENTS.find((t) => t.id === tId);
+                      return (
+                        <span
+                          key={tId}
+                          className="rounded bg-neutral-950 border border-neutral-800 px-2 py-0.5 text-[9px] font-bold text-red-400"
+                        >
+                          {tObj?.shortName || tId}
+                        </span>
+                      );
+                    })
+                  ) : (
+                    <span className="text-[10px] text-neutral-500">1era Div Menor</span>
+                  )}
+                </div>
+              </div>
+
+              {/* Acciones principales móviles */}
+              <div className="flex items-center gap-2 pt-2 border-t border-neutral-800/80">
+                <button
+                  onClick={() => setSelectedPlayerForStats(player)}
+                  className="flex-1 rounded-xl border border-red-500/40 bg-red-600/15 py-2 text-red-400 hover:bg-red-600 hover:text-white transition flex items-center justify-center gap-1.5 text-xs font-bold shadow-sm"
+                >
+                  <BarChart3 className="h-3.5 w-3.5" />
+                  <span>Expediente</span>
+                </button>
+
+                <button
+                  onClick={() => handleOpenEditModal(player)}
+                  className="rounded-xl border border-neutral-700 bg-neutral-950 px-3 py-2 text-neutral-300 hover:text-white transition text-xs font-bold flex items-center gap-1"
+                >
+                  <Edit className="h-3.5 w-3.5" />
+                  <span>Editar</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    if (confirm(`¿Eliminar a ${player.firstName} ${player.lastName}?`)) {
+                      onDeletePlayer(player.id);
+                    }
+                  }}
+                  className="rounded-xl border border-neutral-800 bg-neutral-950 px-3 py-2 text-neutral-500 hover:text-red-400 hover:border-red-500/40 transition"
+                  title="Eliminar registro"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* VISTA ESCRITORIO (hidden md:block): Tabla Completa de Atletas */}
+      <div className="hidden md:block overflow-x-auto rounded-3xl border border-neutral-800 bg-neutral-950 shadow-xl">
         <table className="w-full text-left text-xs sm:text-sm">
           <thead className="border-b border-neutral-800 bg-neutral-900/80 text-[10px] uppercase tracking-wider text-neutral-400">
             <tr>

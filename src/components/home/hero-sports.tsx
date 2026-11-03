@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { ArrowRight, Calendar, Goal, MapPin, Shield, Trophy } from "lucide-react";
 import { TournamentData } from "@/data/tournaments-data";
 import { DaerisBadge, PruebaBadge } from "@/components/ui/tournament-badges";
@@ -24,7 +24,7 @@ export function HeroSports({ tournament }: HeroSportsProps) {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-12 lg:items-center">
           {/* Lado izquierdo: Introducción y accesos principales */}
-          <div className="lg:col-span-7">
+          <div className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left">
             <div className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold ${tournament.accentColor.pill}`}>
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-current opacity-75"></span>
@@ -43,7 +43,7 @@ export function HeroSports({ tournament }: HeroSportsProps) {
               <strong className="text-white">{tournament.name}</strong>.
             </p>
 
-            <div className="mt-6 flex flex-wrap items-center gap-3">
+            <div className="mt-6 flex flex-wrap items-center justify-center lg:justify-start gap-3">
               <Link
                 href="/calendario"
                 className={`inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold text-white shadow-lg transition ${

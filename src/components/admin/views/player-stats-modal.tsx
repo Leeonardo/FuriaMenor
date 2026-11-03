@@ -145,13 +145,13 @@ export function PlayerStatsModal({
       <div className="w-full max-w-3xl rounded-3xl border border-neutral-800 bg-neutral-900 shadow-2xl overflow-hidden my-6">
         {/* 1. CABECERA DEL EXPEDIENTE DEL ATLETA */}
         <div className="bg-gradient-to-r from-neutral-900 via-neutral-900 to-neutral-950 p-5 sm:p-6 border-b border-neutral-800 relative">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="h-14 w-14 rounded-2xl bg-neutral-950 border border-neutral-700 flex items-center justify-center text-xl font-black text-white shadow-inner shrink-0">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left justify-between gap-4">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+              <div className="h-14 w-14 rounded-2xl bg-neutral-950 border border-neutral-700 flex items-center justify-center text-xl font-black text-white shadow-inner shrink-0 mx-auto sm:mx-0">
                 {player.jerseyNumber}
               </div>
               <div>
-                <div className="flex flex-wrap items-center gap-2">
+                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
                   <span className="rounded-full bg-red-600/20 text-red-400 border border-red-500/30 px-2.5 py-0.5 text-[10px] font-black uppercase">
                     {player.categoryName}
                   </span>
@@ -173,36 +173,38 @@ export function PlayerStatsModal({
 
             <button
               onClick={onClose}
-              className="text-neutral-400 hover:text-white text-xs font-bold self-start sm:self-auto bg-neutral-800/80 hover:bg-neutral-800 px-3 py-1.5 rounded-xl border border-neutral-700 transition"
+              className="text-neutral-400 hover:text-white text-xs font-bold self-center sm:self-auto bg-neutral-800/80 hover:bg-neutral-800 px-3 py-1.5 rounded-xl border border-neutral-700 transition"
             >
               ✕ Cerrar
             </button>
           </div>
 
           {/* PESTAÑAS DE NAVEGACIÓN */}
-          <div className="flex items-center gap-2 mt-5 pt-3 border-t border-neutral-800/80">
+          <div className="flex items-center gap-1.5 mt-5 pt-3 border-t border-neutral-800/80 overflow-x-auto pb-1 scrollbar-none">
             <button
               onClick={() => setActiveTab("tournaments")}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition ${
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap shrink-0 ${
                 activeTab === "tournaments"
                   ? "bg-red-600 text-white shadow-md shadow-red-600/30"
                   : "bg-neutral-950 text-neutral-400 hover:text-white border border-neutral-800"
               }`}
             >
               <Trophy className="h-3.5 w-3.5" />
-              <span>Control Individual por Torneo ({player.enrolledTournaments.length})</span>
+              <span className="sm:hidden">Por Torneo</span>
+              <span className="hidden sm:inline">Control Individual por Torneo ({player.enrolledTournaments.length})</span>
             </button>
 
             <button
               onClick={() => setActiveTab("period")}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition ${
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap shrink-0 ${
                 activeTab === "period"
                   ? "bg-red-600 text-white shadow-md shadow-red-600/30"
                   : "bg-neutral-950 text-neutral-400 hover:text-white border border-neutral-800"
               }`}
             >
               <Calendar className="h-3.5 w-3.5" />
-              <span>Control por Períodos a Medida</span>
+              <span className="sm:hidden">Por Períodos</span>
+              <span className="hidden sm:inline">Control por Períodos a Medida</span>
             </button>
 
             <button
@@ -214,7 +216,8 @@ export function PlayerStatsModal({
               }`}
             >
               <Plus className="h-3.5 w-3.5" />
-              <span>Registrar Actuación</span>
+              <span className="sm:hidden">Registrar</span>
+              <span className="hidden sm:inline">Registrar Actuación</span>
             </button>
           </div>
         </div>

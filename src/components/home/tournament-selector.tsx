@@ -18,8 +18,8 @@ export function TournamentSelector({ selectedId, onSelect }: TournamentSelectorP
   return (
     <section className="mx-auto max-w-7xl px-4 pt-8 pb-4 sm:px-6 lg:px-8">
       {/* Encabezado del selector */}
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <div>
+      <div className="mb-5 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left justify-between gap-3">
+        <div className="flex flex-col items-center sm:items-start">
           <div className="flex items-center gap-2">
             <span className="flex h-2 w-2 rounded-full bg-red-500 animate-pulse" />
             <p className="text-xs uppercase tracking-[0.25em] text-red-400 font-bold">
@@ -34,7 +34,7 @@ export function TournamentSelector({ selectedId, onSelect }: TournamentSelectorP
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <Link
             href="/torneos"
             className="rounded-full border border-neutral-800 bg-neutral-900/60 px-3.5 py-1 text-xs text-neutral-300 hover:border-neutral-700 hover:text-white transition flex items-center gap-1.5"

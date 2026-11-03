@@ -13,8 +13,8 @@ export default function TorneosPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       {/* Encabezado */}
-      <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-        <div>
+      <div className="mb-8 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left justify-between gap-4">
+        <div className="flex flex-col items-center sm:items-start">
           <div className="flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-red-400 font-bold">
             <Trophy className="h-4 w-4" />
             Competiciones Oficiales
@@ -27,7 +27,7 @@ export default function TorneosPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
           <Link
             href="/calendario"
             className="rounded-xl border border-neutral-800 bg-neutral-900/60 px-4 py-2 text-xs sm:text-sm font-semibold text-neutral-300 transition hover:border-neutral-700 hover:text-white"
@@ -36,7 +36,7 @@ export default function TorneosPage() {
           </Link>
           <Link
             href="/posiciones"
-            className="rounded-xl bg-red-600 px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-md transition hover:bg-red-500"
+            className="rounded-xl bg-red-600 px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-md transition hover:bg-red-500 shadow-red-600/30"
           >
             Tablas de Posiciones
           </Link>

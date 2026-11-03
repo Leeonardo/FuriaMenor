@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { ArrowRight, Goal, Shield, Trophy } from "lucide-react";
 import { TournamentData } from "@/data/tournaments-data";
 import { TournamentOfficialTable } from "@/components/tournaments/tournament-official-table";
@@ -11,7 +11,7 @@ export function StatsPreview({ tournament }: StatsPreviewProps) {
   return (
     <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Encabezado de la sección */}
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+      <div className="mb-6 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left justify-between gap-4">
         <div>
           <p className="text-xs uppercase tracking-[0.25em] text-red-400 font-semibold">
             Rendimiento & Clasificación Oficial
@@ -24,16 +24,16 @@ export function StatsPreview({ tournament }: StatsPreviewProps) {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
           <Link
             href="/posiciones"
-            className="rounded-lg border border-neutral-800 bg-neutral-900/60 px-3 py-1.5 text-xs font-medium text-neutral-300 transition hover:border-neutral-700 hover:text-white"
+            className="rounded-xl border border-neutral-800 bg-neutral-900/60 px-3.5 py-1.5 text-xs font-semibold text-neutral-300 transition hover:border-neutral-700 hover:text-white"
           >
             Ver en Posiciones
           </Link>
           <Link
             href="/estadisticas"
-            className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-red-500"
+            className="rounded-xl bg-red-600 px-3.5 py-1.5 text-xs font-semibold text-white transition hover:bg-red-500 shadow-sm shadow-red-600/30"
           >
             Ver Goleadores
           </Link>

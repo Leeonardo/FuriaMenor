@@ -30,15 +30,15 @@ export default function PosicionesPage() {
     <div className="min-h-screen bg-neutral-950 text-neutral-100">
       <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         {/* Encabezado */}
-        <div className="mb-8">
+        <div className="mb-8 flex flex-col items-center sm:items-start text-center sm:text-left">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-xs text-neutral-400 hover:text-white transition mb-3"
+            className="inline-flex items-center gap-1.5 text-xs text-neutral-400 hover:text-white transition mb-3 self-center sm:self-auto"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             Volver al Inicio
           </Link>
-          <div className="flex items-center gap-2 text-red-400">
+          <div className="flex items-center gap-2 text-red-400 justify-center sm:justify-start">
             <Trophy className="h-5 w-5" />
             <span className="text-xs uppercase tracking-[0.25em] font-bold">
               Tablas de Posiciones Oficiales
@@ -47,14 +47,14 @@ export default function PosicionesPage() {
           <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl text-white">
             Planillas de Clasificación
           </h1>
-          <p className="mt-1 text-sm text-neutral-400">
+          <p className="mt-1 text-sm text-neutral-400 max-w-3xl">
             JJ: Juegos Jugados · JG: Ganados · JE: Empatados · JP: Perdidos · GA: Goles a Favor · GE: Goles en Contra · DIF: Diferencia · PTS: Puntos
           </p>
         </div>
 
         {/* Filtros de Torneo */}
         <div className="mb-8 flex flex-col gap-4 rounded-2xl border border-neutral-800 bg-neutral-900/60 p-4 sm:p-5">
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-3 sm:gap-4">
             <div className="flex items-center gap-2 text-neutral-400">
               <Filter className="h-4 w-4 text-red-400" />
               <span className="text-xs font-bold uppercase tracking-wider text-neutral-300">
@@ -62,7 +62,7 @@ export default function PosicionesPage() {
               </span>
             </div>
 
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap justify-center sm:justify-start gap-2">
               <button
                 onClick={() => setSelectedTournament("daeris")}
                 className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
@@ -88,8 +88,8 @@ export default function PosicionesPage() {
 
           {/* Sub-selector de las 6 divisiones de Daeris */}
           {selectedTournament === "daeris" && (
-            <div className="w-full pt-3 border-t border-neutral-800 flex flex-wrap items-center gap-2">
-              <span className="text-xs text-neutral-500 font-medium mr-1">División:</span>
+            <div className="w-full pt-3 border-t border-neutral-800 flex flex-wrap items-center justify-center sm:justify-start gap-2">
+              <span className="text-xs text-neutral-500 font-medium mr-1 w-full sm:w-auto text-center sm:text-left">División:</span>
               {daerisSubList.map((sub) => (
                 <button
                   key={sub.id}
@@ -109,16 +109,18 @@ export default function PosicionesPage() {
           {/* Selector de Categorías si la división seleccionada tiene categorías (Sub-8 a Sub-20) */}
           {selectedTournament === "daeris" && currentSub.hasCategories && (
             <div className="w-full pt-3 border-t border-neutral-800">
-              <div className="flex items-center gap-2 mb-2">
-                <ShieldCheck className="h-3.5 w-3.5 text-red-400" />
-                <span className="text-xs font-bold uppercase tracking-wider text-neutral-300">
-                  Categoría Menor Segmentada:
-                </span>
-                <span className="text-[11px] font-bold text-red-400 ml-auto">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-1 mb-2">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="h-3.5 w-3.5 text-red-400" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-neutral-300">
+                    Categoría Menor Segmentada:
+                  </span>
+                </div>
+                <span className="text-[11px] font-bold text-red-400 sm:ml-auto">
                   {selectedCategory}
                 </span>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap justify-center sm:justify-start gap-2">
                 {MINOR_CATEGORIES.map((cat) => (
                   <button
                     key={cat}

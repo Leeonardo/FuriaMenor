@@ -159,57 +159,66 @@ export default function AdminPage() {
       {/* 1. BARRA SUPERIOR DE SELECTOR DE ROLES (AUTOGESTIONABLE) */}
       <div className="border-b border-neutral-800 bg-neutral-900/90 backdrop-blur-xl px-4 py-2.5 sm:px-6 lg:px-8 sticky top-0 z-50">
         <div className="mx-auto flex max-w-7xl flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center gap-2.5 group">
-              <Image src="/logo.png" alt="Furia Menor" width={32} height={32} className="object-contain" />
-              <div className="min-w-0">
-                <p className="text-sm font-extrabold text-white leading-tight group-hover:text-red-400 transition">
-                  Furia Menor
-                </p>
-                <p className="text-[9px] uppercase tracking-wider text-red-400 font-bold">
-                  Sistema Autogestionable por Roles
-                </p>
-              </div>
-            </Link>
+          <div className="flex flex-col sm:flex-row items-center sm:items-center gap-3 w-full sm:w-auto">
+            <div className="flex items-center justify-between w-full sm:w-auto">
+              <Link href="/" className="flex items-center gap-2.5 group">
+                <Image src="/logo.png" alt="Furia Menor" width={32} height={32} className="object-contain" />
+                <div className="min-w-0">
+                  <p className="text-sm font-extrabold text-white leading-tight group-hover:text-red-400 transition">
+                    Furia Menor
+                  </p>
+                  <p className="text-[9px] uppercase tracking-wider text-red-400 font-bold">
+                    Sistema Autogestionable por Roles
+                  </p>
+                </div>
+              </Link>
+
+              <Link
+                href="/"
+                className="sm:hidden rounded-lg border border-neutral-800 bg-neutral-950 px-2.5 py-1 text-xs text-neutral-400 hover:text-white transition"
+              >
+                Volver
+              </Link>
+            </div>
 
             <span className="hidden md:inline text-neutral-600">|</span>
 
-            {/* Selector de Rol */}
-            <div className="flex items-center gap-1 bg-neutral-950 p-1 rounded-xl border border-neutral-800 text-xs">
+            {/* Selector de Rol Centrado y Ordenado en Móvil */}
+            <div className="grid grid-cols-3 w-full sm:w-auto gap-1 bg-neutral-950 p-1 rounded-xl border border-neutral-800 text-xs">
               <button
                 onClick={() => handleSwitchRole("admin_general")}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition ${
+                className={`flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-lg font-bold transition text-center ${
                   activeRole === "admin_general"
                     ? "bg-red-600 text-white shadow-md shadow-red-600/30"
                     : "text-neutral-400 hover:text-white"
                 }`}
               >
-                <ShieldAlert className="h-3.5 w-3.5" />
-                <span>👑 Admin General</span>
+                <ShieldAlert className="h-3.5 w-3.5 shrink-0" />
+                <span className="truncate">Admin</span>
               </button>
 
               <button
                 onClick={() => handleSwitchRole("delegado")}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition ${
+                className={`flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-lg font-bold transition text-center ${
                   activeRole === "delegado"
                     ? "bg-red-600 text-white shadow-md shadow-red-600/30"
                     : "text-neutral-400 hover:text-white"
                 }`}
               >
-                <Users className="h-3.5 w-3.5" />
-                <span>📋 Delegado</span>
+                <Users className="h-3.5 w-3.5 shrink-0" />
+                <span className="truncate">Delegado</span>
               </button>
 
               <button
                 onClick={() => handleSwitchRole("arbitro")}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition ${
+                className={`flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-lg font-bold transition text-center ${
                   activeRole === "arbitro"
                     ? "bg-red-600 text-white shadow-md shadow-red-600/30"
                     : "text-neutral-400 hover:text-white"
                 }`}
               >
-                <Smartphone className="h-3.5 w-3.5" />
-                <span>📱 Árbitro</span>
+                <Smartphone className="h-3.5 w-3.5 shrink-0" />
+                <span className="truncate">Árbitro</span>
               </button>
             </div>
           </div>

@@ -11,9 +11,9 @@ export function AcademiesPreview() {
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+      <div className="mb-6 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left justify-between gap-4">
         <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-red-400">Academias & Clubes</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-red-400 font-bold">Academias & Clubes</p>
           <h2 className="mt-1 text-xl font-bold sm:text-2xl text-white uppercase tracking-tight">
             Vitrina de Escuelas de Fútbol Menor
           </h2>
@@ -23,7 +23,7 @@ export function AcademiesPreview() {
         </div>
         <Link
           href="/academias"
-          className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-red-400 transition hover:text-red-300"
+          className="flex items-center justify-center gap-1.5 text-xs sm:text-sm font-bold text-red-400 transition hover:text-red-300 rounded-xl border border-red-500/30 bg-red-600/10 px-3.5 py-1.5 hover:bg-red-600/20"
         >
           <span>Ver directorio completo</span>
           <ArrowRight className="h-4 w-4" />

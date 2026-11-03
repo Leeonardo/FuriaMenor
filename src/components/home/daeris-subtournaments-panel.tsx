@@ -19,13 +19,13 @@ export function DaerisSubtournamentsPanel({
     <section className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       {/* Encabezado con identidad de la Liga Daeris */}
       <div className="rounded-2xl border border-red-500/30 bg-gradient-to-r from-red-950/40 via-neutral-900/90 to-neutral-950 p-5 sm:p-6 mb-6 shadow-xl">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-600/20 text-red-400 border border-red-500/30">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left justify-between gap-4">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-600/20 text-red-400 border border-red-500/30 shrink-0">
               <Layers className="h-5 w-5" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center sm:justify-start gap-2">
                 <span className="text-xs uppercase tracking-[0.25em] text-red-400 font-bold">
                   Circuito Torneo Daeris
                 </span>
@@ -33,7 +33,7 @@ export function DaerisSubtournamentsPanel({
                   6 Competiciones
                 </span>
               </div>
-              <h3 className="text-lg sm:text-xl font-extrabold text-white">
+              <h3 className="text-lg sm:text-xl font-extrabold text-white mt-0.5">
                 Ramas y Divisiones de Torneo Daeris
               </h3>
               <p className="text-xs sm:text-sm text-neutral-400">
@@ -44,7 +44,7 @@ export function DaerisSubtournamentsPanel({
 
           <Link
             href="/torneos/daeris"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-neutral-700 bg-neutral-900/80 px-3.5 py-2 text-xs font-semibold text-neutral-300 hover:border-neutral-500 hover:text-white transition whitespace-nowrap self-start sm:self-auto"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-neutral-700 bg-neutral-900/80 px-3.5 py-2 text-xs font-semibold text-neutral-300 hover:border-neutral-500 hover:text-white transition whitespace-nowrap self-center sm:self-auto"
           >
             Hub Oficial Daeris
             <ChevronRight className="h-3.5 w-3.5" />

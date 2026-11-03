@@ -61,9 +61,9 @@ export function AcademiesDirectory() {
     <div className="space-y-8">
       {/* 1. SECCIÓN DE FILTROS INTERACTIVOS */}
       <section className="rounded-3xl border border-neutral-800 bg-neutral-900/70 p-5 sm:p-7 shadow-2xl backdrop-blur-md space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-800 pb-4">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-red-600/20 text-red-400 border border-red-500/30">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left justify-between gap-3 border-b border-neutral-800 pb-4">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-red-600/20 text-red-400 border border-red-500/30 shrink-0">
               <Filter className="h-4 w-4" />
             </div>
             <div>
@@ -79,7 +79,7 @@ export function AcademiesDirectory() {
           {hasActiveFilters && (
             <button
               onClick={clearFilters}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-red-400 hover:text-red-300 transition self-start sm:self-auto"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-red-400 hover:text-red-300 transition self-center sm:self-auto"
             >
               <RotateCcw className="h-3.5 w-3.5" />
               Limpiar todos los filtros

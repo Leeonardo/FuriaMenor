@@ -121,13 +121,13 @@ export function AcademyProfileView({ academy }: AcademyProfileViewProps) {
 
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
           {/* Escudo + Datos Principales */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-            <div className="relative shrink-0 drop-shadow-2xl">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6">
+            <div className="relative shrink-0 drop-shadow-2xl mx-auto sm:mx-0">
               <AcademyBadge slug={academy.slug} size={110} logoUrl={academy.logoUrl} />
             </div>
 
             <div className="space-y-2">
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
                 <span className="rounded-full bg-red-600/20 border border-red-500/30 px-3 py-0.5 text-xs font-black text-red-400 uppercase tracking-wider">
                   {academy.municipality}
                 </span>
@@ -158,7 +158,7 @@ export function AcademyProfileView({ academy }: AcademyProfileViewProps) {
 
               {/* Rating Google Maps si está disponible */}
               {academy.rating && (
-                <div className="flex flex-wrap items-center gap-3 pt-1">
+                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 pt-1">
                   <div className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-xs font-bold text-amber-400">
                     <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
                     <span>{academy.rating.score.toFixed(1)}</span>
@@ -182,7 +182,7 @@ export function AcademyProfileView({ academy }: AcademyProfileViewProps) {
               )}
 
               {/* Colores oficiales */}
-              <div className="pt-2 flex items-center gap-2 text-xs text-neutral-300">
+              <div className="pt-2 flex items-center justify-center sm:justify-start gap-2 text-xs text-neutral-300">
                 <span className="font-bold text-neutral-400 uppercase tracking-wider text-[10px]">
                   Colores:
                 </span>
@@ -215,9 +215,9 @@ export function AcademyProfileView({ academy }: AcademyProfileViewProps) {
           </div>
 
           {/* Redes Sociales y Contacto Directo */}
-          <div className="flex flex-col gap-3 sm:flex-row lg:flex-col lg:items-end justify-center shrink-0 border-t border-neutral-800/80 pt-5 lg:border-t-0 lg:pt-0">
+          <div className="flex flex-col items-center sm:items-start lg:items-end gap-3 justify-center shrink-0 border-t border-neutral-800/80 pt-5 lg:border-t-0 lg:pt-0 w-full lg:w-auto">
             {/* Canales Digitales */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-center sm:justify-start lg:justify-end gap-2 w-full">
               {academy.socials.instagram && (
                 <a
                   href={`https://instagram.com/${academy.socials.instagram.replace("@", "")}`}
@@ -288,7 +288,7 @@ export function AcademyProfileView({ academy }: AcademyProfileViewProps) {
 
         {/* Reseña institucional */}
         <div className="mt-6 pt-5 border-t border-neutral-800/80">
-          <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed max-w-4xl">
+          <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed max-w-4xl text-center sm:text-left">
             {academy.bio}
           </p>
         </div>

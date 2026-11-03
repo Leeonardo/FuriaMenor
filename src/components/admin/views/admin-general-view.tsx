@@ -198,9 +198,9 @@ export function AdminGeneralView({
       <div className="rounded-3xl border border-neutral-800 bg-neutral-900/80 p-6 sm:p-8 backdrop-blur-md shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 right-0 h-48 w-48 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left justify-between gap-6">
           <div className="space-y-2">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-center sm:justify-start gap-2">
               <span className="rounded-full bg-red-500/20 border border-red-500/30 px-3 py-0.5 text-xs font-black text-red-400 uppercase tracking-widest flex items-center gap-1.5">
                 <ShieldAlert className="h-3.5 w-3.5" />
                 <span>Nivel Dios • Control Total Furia Menor</span>
@@ -218,10 +218,10 @@ export function AdminGeneralView({
             </p>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center justify-center sm:justify-start gap-3 w-full sm:w-auto shrink-0">
             <button
               onClick={handleNewMatch}
-              className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-xs font-black text-white shadow-xl shadow-red-600/30 hover:bg-red-500 transition"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-xs font-black text-white shadow-xl shadow-red-600/30 hover:bg-red-500 transition w-full sm:w-auto"
             >
               <Plus className="h-4 w-4" />
               <span>Programar Encuentro</span>
@@ -230,7 +230,7 @@ export function AdminGeneralView({
         </div>
 
         {/* KPIs del Sistema */}
-        <div className="mt-6 pt-5 border-t border-neutral-800/80 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+        <div className="mt-6 pt-5 border-t border-neutral-800/80 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs text-center">
           <div className="rounded-xl border border-neutral-800 bg-neutral-950/60 p-3">
             <span className="text-[10px] uppercase font-bold text-neutral-400">Clubes Federados</span>
             <p className="text-2xl font-black text-white mt-0.5">{clubs.length}</p>
@@ -377,10 +377,10 @@ export function AdminGeneralView({
           {filteredMatches.map((m) => (
             <div
               key={m.id}
-              className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-4 hover:border-neutral-700 transition flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-lg"
+              className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-4 hover:border-neutral-700 transition flex flex-col md:flex-row items-center md:items-start text-center md:text-left justify-between gap-4 shadow-lg"
             >
-              <div className="space-y-1">
-                <div className="flex flex-wrap items-center gap-2 text-xs">
+              <div className="space-y-1.5 w-full md:w-auto">
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 text-xs">
                   <span className="rounded-full bg-red-600/20 text-red-400 px-2 py-0.5 text-[10px] font-bold">
                     {m.categoryName}
                   </span>
@@ -396,7 +396,7 @@ export function AdminGeneralView({
                   <span className="text-neutral-500 font-mono text-[11px]">{m.jornada}</span>
                 </div>
 
-                <div className="flex items-center gap-3 my-1">
+                <div className="flex items-center justify-center md:justify-start gap-3 my-1">
                   <span className="text-base font-bold text-white">{m.homeClubName}</span>
                   <span className="rounded-lg bg-neutral-950 px-3 py-0.5 font-mono font-black text-red-400 text-sm border border-neutral-800">
                     {m.homeScore !== null && m.awayScore !== null
@@ -406,23 +406,23 @@ export function AdminGeneralView({
                   <span className="text-base font-bold text-white">{m.awayClubName}</span>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-4 text-xs text-neutral-400">
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-xs text-neutral-400">
                   <span>📅 {m.matchDate} · {m.matchTime}</span>
                   <span>📍 {m.venue}</span>
                   {m.refereeName && <span className="text-amber-400">👨‍⚖️ {m.refereeName}</span>}
                 </div>
                 {m.refereeNotes && (
-                  <p className="text-xs text-amber-300/90 bg-neutral-950/80 rounded-xl px-3 py-1.5 border border-amber-500/20 italic">
+                  <p className="text-xs text-amber-300/90 bg-neutral-950/80 rounded-xl px-3 py-1.5 border border-amber-500/20 italic text-left">
                     <strong className="text-amber-400 not-italic font-bold">Acta / Incidencias: </strong>
                     {m.refereeNotes}
                   </p>
                 )}
               </div>
 
-              <div className="shrink-0 flex items-center gap-2">
+              <div className="shrink-0 flex items-center justify-center w-full md:w-auto gap-2 pt-2 md:pt-0 border-t md:border-t-0 border-neutral-800/80">
                 <button
                   onClick={() => handleEditMatch(m)}
-                  className="rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 text-xs font-bold text-white hover:bg-red-600 transition flex items-center gap-1.5"
+                  className="w-full md:w-auto rounded-xl border border-neutral-700 bg-neutral-800 px-4 py-2 text-xs font-bold text-white hover:bg-red-600 transition flex items-center justify-center gap-1.5"
                 >
                   <Edit className="h-3.5 w-3.5" />
                   <span>Modificar Acta</span>

@@ -1,4 +1,4 @@
-﻿import Image from "next/image";
+import Image from "next/image";
 import Link from "next/link";
 import { Mail, Phone } from "lucide-react";
 
@@ -33,9 +33,9 @@ export function Footer() {
   return (
     <footer className="mt-16 border-t border-neutral-800 bg-neutral-950">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid gap-8 md:grid-cols-4">
+        <div className="grid gap-8 md:grid-cols-4 text-center md:text-left">
           {/* Identidad */}
-          <div className="md:col-span-2">
+          <div className="md:col-span-2 flex flex-col items-center md:items-start">
             <div className="flex items-center gap-3">
               <Image src="/logo.png" alt="Furia Menor" width={48} height={48} className="object-contain" />
               <div>
@@ -43,13 +43,13 @@ export function Footer() {
                 <p className="text-xs uppercase tracking-wider text-red-400 font-medium">Portal de Resultados & Estadísticas</p>
               </div>
             </div>
-            <p className="mt-4 max-w-md text-sm text-neutral-400 leading-relaxed">
+            <p className="mt-4 max-w-md text-sm text-neutral-400 leading-relaxed text-center md:text-left">
               Portal deportivo especializado en el registro y difusión de resultados,
               calendarios, clasificaciones y rendimiento individual y colectivo del futsal
               y fútbol menor en Caracas y Venezuela.
             </p>
             {/* Redes sociales */}
-            <div className="mt-5 flex items-center gap-3">
+            <div className="mt-5 flex items-center justify-center md:justify-start gap-3">
               <Link
                 href="https://instagram.com/furiamenor"
                 target="_blank"
@@ -79,7 +79,7 @@ export function Footer() {
           </div>
 
           {/* Secciones del portal */}
-          <div>
+          <div className="flex flex-col items-center md:items-start">
             <h3 className="text-xs font-semibold uppercase tracking-widest text-neutral-300">Competiciones</h3>
             <ul className="mt-4 space-y-2.5 text-sm text-neutral-400">
               <li><Link href="/torneos" className="transition hover:text-white hover:text-red-400">Torneos & Ligas</Link></li>
@@ -91,14 +91,14 @@ export function Footer() {
           </div>
 
           {/* Contacto & Alianzas */}
-          <div>
+          <div className="flex flex-col items-center md:items-start">
             <h3 className="text-xs font-semibold uppercase tracking-widest text-neutral-300">Contacto & Alianzas</h3>
             <ul className="mt-4 space-y-2.5 text-sm text-neutral-400">
-              <li className="flex items-center gap-2">
+              <li className="flex items-center justify-center md:justify-start gap-2">
                 <Mail className="h-4 w-4 text-red-400" />
                 <span>contacto@furiamenor.com</span>
               </li>
-              <li className="flex items-center gap-2">
+              <li className="flex items-center justify-center md:justify-start gap-2">
                 <Phone className="h-4 w-4 text-red-400" />
                 <span>+58 (000) 000-0000</span>
               </li>
@@ -108,7 +108,7 @@ export function Footer() {
         </div>
 
         {/* Pie de página */}
-        <div className="mt-10 border-t border-neutral-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-neutral-500">
+        <div className="mt-10 border-t border-neutral-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-neutral-500 text-center sm:text-left">
           <p>© {new Date().getFullYear()} Furia Menor. Todos los derechos reservados. · Caracas, Venezuela</p>
           <p className="text-neutral-500">Portal deportivo independiente · Seguimiento oficial de resultados y estadísticas</p>
         </div>

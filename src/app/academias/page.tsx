@@ -18,7 +18,7 @@ export default function AcademiasPage() {
         
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="space-y-3">
+            <div className="space-y-3 flex flex-col items-center md:items-start text-center md:text-left">
               <div className="inline-flex items-center gap-2 rounded-full border border-red-500/30 bg-red-600/10 px-3 py-1 text-xs font-black tracking-widest text-red-400 uppercase">
                 <ShieldCheck className="h-3.5 w-3.5" />
                 <span>Registro Oficial de Clubes</span>
