@@ -11,7 +11,9 @@ import {
 import {
   validatePlayerAge,
   DB_CATEGORIES,
+  OFFICIAL_TOURNAMENTS,
 } from "@/lib/db-store";
+import { PlayerStatsModal } from "./player-stats-modal";
 import {
   UserPlus,
   Shield,
@@ -28,6 +30,8 @@ import {
   Layers,
   ArrowRight,
   Flame,
+  Trophy,
+  BarChart3,
 } from "lucide-react";
 
 interface DelegadoViewProps {
@@ -52,6 +56,9 @@ export function DelegadoView({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPlayerId, setEditingPlayerId] = useState<string | null>(null);
 
+  // Expediente individual del jugador
+  const [selectedPlayerForStats, setSelectedPlayerForStats] = useState<DBPlayer | null>(null);
+
   // Formulario de Fichaje
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -62,6 +69,9 @@ export function DelegadoView({
   const [jerseyNumber, setJerseyNumber] = useState(10);
   const [position, setPosition] = useState<DBPlayer["position"]>("Ala");
   const [status, setStatus] = useState<DBPlayer["status"]>("activo");
+  const [enrolledTournaments, setEnrolledTournaments] = useState<string[]>([
+    "infantil-1ra-division",
+  ]);
 
   // Validación de edad en tiempo real mientras el delegado escribe
   const ageValidation: AgeValidationResult = useMemo(() => {
@@ -87,6 +97,18 @@ export function DelegadoView({
     });
   }, [clubPlayers, selectedCategory, searchQuery]);
 
+  // Alternar selección de torneos (multi-torneo)
+  const handleToggleTournament = (tId: string) => {
+    setEnrolledTournaments((prev) => {
+      if (prev.includes(tId)) {
+        if (prev.length === 1) return prev; // Mantener al menos un torneo
+        return prev.filter((id) => id !== tId);
+      } else {
+        return [...prev, tId];
+      }
+    });
+  };
+
   // Abrir modal para crear
   const handleOpenCreateModal = () => {
     setEditingPlayerId(null);
@@ -98,6 +120,7 @@ export function DelegadoView({
     setJerseyNumber(10);
     setPosition("Ala");
     setStatus("activo");
+    setEnrolledTournaments(["infantil-1ra-division"]);
     setIsModalOpen(true);
   };
 
@@ -113,6 +136,11 @@ export function DelegadoView({
     setJerseyNumber(player.jerseyNumber);
     setPosition(player.position);
     setStatus(player.status);
+    setEnrolledTournaments(
+      player.enrolledTournaments && player.enrolledTournaments.length > 0
+        ? player.enrolledTournaments
+        : ["infantil-1ra-division"]
+    );
     setIsModalOpen(true);
   };
 
@@ -130,7 +158,9 @@ export function DelegadoView({
     const birthYear = new Date(birthDate).getFullYear();
 
     if (editingPlayerId) {
+      const existing = clubPlayers.find((p) => p.id === editingPlayerId);
       const updated: DBPlayer = {
+        ...existing,
         id: editingPlayerId,
         clubId: club.id,
         clubName: club.name,
@@ -146,7 +176,8 @@ export function DelegadoView({
         position,
         carnetNumber: `FM-26-${club.slug.toUpperCase().slice(0, 3)}-${categoryName.replace("-", "")}-${jerseyNumber}`,
         status,
-        createdAt: new Date().toISOString(),
+        enrolledTournaments,
+        createdAt: existing?.createdAt || new Date().toISOString(),
       };
       onUpdatePlayer(updated);
     } else {
@@ -166,6 +197,23 @@ export function DelegadoView({
         position,
         carnetNumber: `FM-26-${club.slug.toUpperCase().slice(0, 3)}-${categoryName.replace("-", "")}-${jerseyNumber}`,
         status,
+        enrolledTournaments,
+        tournamentRecords: enrolledTournaments.map((tId) => {
+          const tObj = OFFICIAL_TOURNAMENTS.find((t) => t.id === tId);
+          return {
+            tournamentId: tId,
+            tournamentName: tObj?.name || tId,
+            categoryName,
+            enrolledAt: new Date().toISOString().split("T")[0],
+            status: "habilitado",
+            matchesPlayed: 0,
+            goals: 0,
+            yellowCards: 0,
+            redCards: 0,
+            minutesPlayed: 0,
+          };
+        }),
+        matchLogs: [],
         createdAt: new Date().toISOString(),
       };
       onAddPlayer(newPlayer);
@@ -182,7 +230,7 @@ export function DelegadoView({
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div className="flex items-center gap-4">
-            <div className="h-16 w-16 rounded-2xl bg-neutral-950 border border-neutral-800 flex items-center justify-center text-red-500 font-black text-2xl shadow-inner">
+            <div className="h-16 w-16 rounded-2xl bg-neutral-950 border border-neutral-800 flex items-center justify-center text-red-500 font-black text-2xl shadow-inner shrink-0">
               {club.logoUrl ? (
                 <img src={club.logoUrl} alt={club.name} className="h-12 w-12 rounded-full object-contain" />
               ) : (
@@ -201,7 +249,7 @@ export function DelegadoView({
               </div>
               <h2 className="text-2xl font-black text-white">{club.name}</h2>
               <p className="text-xs text-neutral-400">
-                Delegado acreditado: <strong className="text-white">{user.fullName}</strong> • C.I. {user.cedula}
+                Delegado oficial: <strong className="text-white">{user.fullName}</strong> • C.I. {user.cedula}
               </p>
             </div>
           </div>
@@ -298,7 +346,7 @@ export function DelegadoView({
         </div>
       </div>
 
-      {/* 3. TABLA DE ATLETAS DEL CLUB */}
+      {/* 3. TABLA DE ATLETAS DEL CLUB CON MULTI-TORNEO Y EXPEDIENTE */}
       <div className="overflow-x-auto rounded-3xl border border-neutral-800 bg-neutral-950 shadow-xl">
         <table className="w-full text-left text-xs sm:text-sm">
           <thead className="border-b border-neutral-800 bg-neutral-900/80 text-[10px] uppercase tracking-wider text-neutral-400">
@@ -309,9 +357,9 @@ export function DelegadoView({
               <th className="py-3 px-3">Categoría</th>
               <th className="py-3 px-3">Posición</th>
               <th className="py-3 px-3 text-center">Año Nac.</th>
-              <th className="py-3 px-3">N° Carnet</th>
+              <th className="py-3 px-3">Torneos Inscritos</th>
               <th className="py-3 px-3 text-center">Estatus</th>
-              <th className="py-3 px-3 text-right">Acciones</th>
+              <th className="py-3 px-3 text-right">Acciones y Control</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-neutral-900">
@@ -348,9 +396,29 @@ export function DelegadoView({
                   <td className="py-3 px-3 text-center text-neutral-300 font-medium">
                     {player.birthYear}
                   </td>
-                  <td className="py-3 px-3 font-mono text-amber-400 text-xs">
-                    {player.carnetNumber}
+
+                  {/* Badges de Torneos de Participación (Multi-Torneo) */}
+                  <td className="py-3 px-3">
+                    <div className="flex flex-wrap gap-1 max-w-[190px]">
+                      {player.enrolledTournaments && player.enrolledTournaments.length > 0 ? (
+                        player.enrolledTournaments.map((tId) => {
+                          const tObj = OFFICIAL_TOURNAMENTS.find((t) => t.id === tId);
+                          return (
+                            <span
+                              key={tId}
+                              className="rounded bg-neutral-900 border border-neutral-800 px-2 py-0.5 text-[9px] font-bold text-red-400"
+                              title={tObj?.name || tId}
+                            >
+                              {tObj?.shortName || tId}
+                            </span>
+                          );
+                        })
+                      ) : (
+                        <span className="text-[10px] text-neutral-500">1era Div Menor</span>
+                      )}
+                    </div>
                   </td>
+
                   <td className="py-3 px-3 text-center">
                     <span
                       className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${
@@ -364,22 +432,34 @@ export function DelegadoView({
                       {player.status}
                     </span>
                   </td>
+
+                  {/* Acciones: Expediente, Editar, Eliminar */}
                   <td className="py-3 px-3 text-right">
                     <div className="flex items-center justify-end gap-1.5">
                       <button
+                        onClick={() => setSelectedPlayerForStats(player)}
+                        className="rounded-xl border border-red-500/30 bg-red-600/15 px-2.5 py-1.5 text-red-400 hover:bg-red-600 hover:text-white transition flex items-center gap-1.5 text-xs font-bold shadow-sm"
+                        title="Control individual por torneo y por período"
+                      >
+                        <BarChart3 className="h-3.5 w-3.5" />
+                        <span className="hidden sm:inline">Expediente</span>
+                      </button>
+
+                      <button
                         onClick={() => handleOpenEditModal(player)}
-                        className="rounded-lg border border-neutral-800 p-1.5 text-neutral-400 hover:text-white hover:border-neutral-600 transition"
+                        className="rounded-xl border border-neutral-800 p-1.5 text-neutral-400 hover:text-white hover:border-neutral-600 transition"
                         title="Editar ficha del atleta"
                       >
                         <Edit className="h-3.5 w-3.5" />
                       </button>
+
                       <button
                         onClick={() => {
                           if (confirm(`¿Eliminar a ${player.firstName} ${player.lastName}?`)) {
                             onDeletePlayer(player.id);
                           }
                         }}
-                        className="rounded-lg border border-neutral-800 p-1.5 text-neutral-500 hover:text-red-400 hover:border-red-500/40 transition"
+                        className="rounded-xl border border-neutral-800 p-1.5 text-neutral-500 hover:text-red-400 hover:border-red-500/40 transition"
                         title="Eliminar registro"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
@@ -393,11 +473,11 @@ export function DelegadoView({
         </table>
       </div>
 
-      {/* 4. MODAL DE FICHAJE CON VALIDACIÓN DE EDAD EN VIVO */}
+      {/* 4. MODAL DE FICHAJE CON SELECCIÓN MULTI-TORNEO & VALIDACIÓN DE EDAD */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm animate-in fade-in">
-          <div className="w-full max-w-lg rounded-3xl border border-neutral-800 bg-neutral-900 p-6 sm:p-7 shadow-2xl space-y-5">
-            <div className="flex items-center justify-between border-b border-neutral-800 pb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm animate-in fade-in overflow-y-auto">
+          <div className="w-full max-w-lg rounded-3xl border border-neutral-800 bg-neutral-900 p-6 sm:p-7 shadow-2xl space-y-4 my-6">
+            <div className="flex items-center justify-between border-b border-neutral-800 pb-3">
               <div className="flex items-center gap-2.5">
                 <div className="h-8 w-8 rounded-xl bg-red-600/20 text-red-400 flex items-center justify-center border border-red-500/30">
                   <UserPlus className="h-4 w-4" />
@@ -419,7 +499,7 @@ export function DelegadoView({
               </button>
             </div>
 
-            <form onSubmit={handleSubmitPlayer} className="space-y-4 text-xs">
+            <form onSubmit={handleSubmitPlayer} className="space-y-3.5 text-xs">
               {/* Nombres y Apellidos */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -503,7 +583,7 @@ export function DelegadoView({
 
               {/* CARD DE VALIDACIÓN DE EDAD AUTOMÁTICA */}
               <div
-                className={`rounded-2xl p-3.5 border flex items-start gap-2.5 transition ${
+                className={`rounded-2xl p-3 border flex items-start gap-2.5 transition ${
                   ageValidation.isValid
                     ? "bg-emerald-950/30 border-emerald-500/40 text-emerald-300"
                     : "bg-rose-950/30 border-rose-500/40 text-rose-300"
@@ -521,6 +601,53 @@ export function DelegadoView({
                   <p className="text-[10px] mt-0.5 leading-relaxed opacity-90">
                     {ageValidation.message}
                   </p>
+                </div>
+              </div>
+
+              {/* SECCIÓN MULTI-TORNEO: SELECCIÓN EN CUÁLES TORNEOS PARTICIPARÁ */}
+              <div className="space-y-1.5 pt-1">
+                <div className="flex items-center justify-between">
+                  <label className="block text-[11px] font-bold text-neutral-300">
+                    Torneos en los que Participará (Selección Múltiple):
+                  </label>
+                  <span className="text-[10px] text-amber-400 font-bold">
+                    {enrolledTournaments.length} seleccionado(s)
+                  </span>
+                </div>
+                <p className="text-[10px] text-neutral-400 leading-snug">
+                  El atleta puede competir en múltiples torneos simultáneamente. Marca todas las competiciones donde participará:
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-3 rounded-2xl bg-neutral-950 border border-neutral-800 max-h-44 overflow-y-auto">
+                  {OFFICIAL_TOURNAMENTS.map((t) => {
+                    const isEnrolled = enrolledTournaments.includes(t.id);
+                    return (
+                      <button
+                        key={t.id}
+                        type="button"
+                        onClick={() => handleToggleTournament(t.id)}
+                        className={`flex items-center justify-between p-2.5 rounded-xl border text-left transition ${
+                          isEnrolled
+                            ? "border-red-500 bg-red-600/15 text-white"
+                            : "border-neutral-800 bg-neutral-900/60 text-neutral-400 hover:border-neutral-700"
+                        }`}
+                      >
+                        <div className="min-w-0 pr-2">
+                          <p className="font-bold text-[11px] truncate">{t.name}</p>
+                          <p className="text-[9px] text-neutral-400">{t.division} • {t.season}</p>
+                        </div>
+                        <span
+                          className={`h-4 w-4 rounded-md border flex items-center justify-center shrink-0 text-[10px] font-bold ${
+                            isEnrolled
+                              ? "border-red-500 bg-red-600 text-white"
+                              : "border-neutral-700 bg-neutral-950"
+                          }`}
+                        >
+                          {isEnrolled && "✓"}
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -549,6 +676,9 @@ export function DelegadoView({
                     <option value="Cierre">Cierre</option>
                     <option value="Ala">Ala</option>
                     <option value="Pívot">Pívot</option>
+                    <option value="Defensa">Defensa</option>
+                    <option value="Medio">Medio</option>
+                    <option value="Delantero">Delantero</option>
                   </select>
                 </div>
                 <div>
@@ -586,6 +716,19 @@ export function DelegadoView({
             </form>
           </div>
         </div>
+      )}
+
+      {/* 5. MODAL DE EXPEDIENTE INTEGRAL Y CONTROL HISTÓRICO DEL JUGADOR */}
+      {selectedPlayerForStats && (
+        <PlayerStatsModal
+          player={selectedPlayerForStats}
+          isOpen={!!selectedPlayerForStats}
+          onClose={() => setSelectedPlayerForStats(null)}
+          onUpdatePlayer={(updatedPlayer) => {
+            onUpdatePlayer(updatedPlayer);
+            setSelectedPlayerForStats(updatedPlayer);
+          }}
+        />
       )}
     </div>
   );

@@ -41,6 +41,41 @@ export interface DBCategory {
   matchDurationMinutes: number;
 }
 
+export interface PlayerTournamentRecord {
+  tournamentId: string;
+  tournamentName: string;
+  categoryName: string;
+  enrolledAt: string;
+  status: 'habilitado' | 'suspendido' | 'en_tramite';
+  matchesPlayed: number;
+  goals: number;
+  yellowCards: number;
+  redCards: number;
+  minutesPlayed: number;
+}
+
+export interface PlayerMatchLog {
+  id: string;
+  matchId: string;
+  date: string; // YYYY-MM-DD
+  tournamentId: string;
+  tournamentName: string;
+  rivalClubName: string;
+  result: string; // ej. "4 - 2 (Victoria)"
+  minutes: number;
+  goals: number;
+  yellowCards: number;
+  redCards: number;
+}
+
+export interface OfficialTournamentOption {
+  id: string;
+  name: string;
+  shortName: string;
+  division: string;
+  season: string;
+}
+
 export interface DBPlayer {
   id: string;
   clubId: string;
@@ -59,6 +94,11 @@ export interface DBPlayer {
   carnetNumber: string;
   status: PlayerStatus;
   createdAt: string;
+
+  // Nuevos campos multi-torneo y control individual
+  enrolledTournaments: string[]; // IDs de torneos donde participa
+  tournamentRecords?: PlayerTournamentRecord[]; // Rendimiento individual por torneo
+  matchLogs?: PlayerMatchLog[]; // Bitácora por partido y fecha para filtros de tiempo
 }
 
 export interface DBMatch {

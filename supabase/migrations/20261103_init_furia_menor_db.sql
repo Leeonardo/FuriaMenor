@@ -371,3 +371,104 @@ INSERT INTO clubs (slug, name, official_name, municipality, zone_detail, discipl
 ('fratelsa-sport', 'Fratelsa Sport', 'Fratelsa Sport Club Futsal', 'Chacao', 'Chacao · Altamira Sur', ARRAY['Fútbol Sala', 'Fútbol Campo'], 'Carlos Fratelsa', 'Prof. Gianfranco Rossi', '+58 414-3330103', NULL, 'Excelencia formativa y proyección nacional'),
 ('fenix-fs', 'Fénix FS', 'Fénix Futsal Caracas', 'Libertador', 'San Juan · Cancha Central El Silencio', ARRAY['Fútbol Sala'], 'Javier Fénix', 'Prof. Marcos Valero', '+58 414-2220102', NULL, 'Del barrio al podio con disciplina y técnica')
 ON CONFLICT (slug) DO NOTHING;
+
+-- ==============================================================================
+-- 6. MÓDULO MULTI-TORNEO Y EXPEDIENTE HISTÓRICO POR ATLETA
+-- ==============================================================================
+
+-- 6.1 TABLA: PLAYER_TOURNAMENTS (Inscripción multi-torneo simultánea de atletas)
+CREATE TABLE IF NOT EXISTS player_tournaments (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    player_id UUID NOT NULL REFERENCES players(id) ON DELETE CASCADE,
+    tournament_slug VARCHAR(100) NOT NULL, -- ej. 'infantil-1ra-division', 'copa-elite-caracas'
+    tournament_name VARCHAR(150) NOT NULL,
+    category_name VARCHAR(50) NOT NULL,
+    enrolled_at DATE DEFAULT CURRENT_DATE,
+    status VARCHAR(30) DEFAULT 'habilitado', -- 'habilitado', 'suspendido', 'inactivo'
+    matches_played INT DEFAULT 0,
+    goals INT DEFAULT 0,
+    yellow_cards INT DEFAULT 0,
+    red_cards INT DEFAULT 0,
+    minutes_played INT DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()),
+    CONSTRAINT uq_player_tournament UNIQUE (player_id, tournament_slug)
+);
+
+-- 6.2 TABLA: PLAYER_MATCH_STATS (Bitácora cronológica de actuaciones y expedientes)
+CREATE TABLE IF NOT EXISTS player_match_stats (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    player_id UUID NOT NULL REFERENCES players(id) ON DELETE CASCADE,
+    match_id UUID REFERENCES matches(id) ON DELETE SET NULL,
+    tournament_slug VARCHAR(100) NOT NULL,
+    tournament_name VARCHAR(150) NOT NULL,
+    match_date DATE NOT NULL,
+    rival_club_name VARCHAR(150) NOT NULL,
+    result_summary VARCHAR(50), -- ej. 'Victoria 4-2', 'Derrota 1-3'
+    minutes_played INT DEFAULT 0,
+    goals INT DEFAULT 0,
+    yellow_cards INT DEFAULT 0,
+    red_cards INT DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW())
+);
+
+-- 6.3 POLÍTICAS RLS PARA EXPEDIENTES DE ATLETAS
+ALTER TABLE player_tournaments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE player_match_stats ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public Read Player Tournaments" ON player_tournaments FOR SELECT USING (true);
+CREATE POLICY "Public Read Player Match Stats" ON player_match_stats FOR SELECT USING (true);
+
+CREATE POLICY "Delegado Manage Player Tournaments" ON player_tournaments FOR ALL USING (
+    EXISTS (
+        SELECT 1 FROM players p
+        JOIN users u ON u.club_id = p.club_id
+        WHERE p.id = player_tournaments.player_id
+          AND u.auth_id = auth.uid()
+          AND u.role = 'delegado'
+    )
+);
+
+CREATE POLICY "Delegado Manage Player Match Stats" ON player_match_stats FOR ALL USING (
+    EXISTS (
+        SELECT 1 FROM players p
+        JOIN users u ON u.club_id = p.club_id
+        WHERE p.id = player_match_stats.player_id
+          AND u.auth_id = auth.uid()
+          AND u.role = 'delegado'
+    )
+);
+
+-- 6.4 FUNCIÓN RPC: CONSULTAR RENDIMIENTO POR RANGO DE FECHAS / TORNEO A MEDIDA
+CREATE OR REPLACE FUNCTION fn_get_player_stats_by_period(
+    p_player_id UUID,
+    p_tournament_slug VARCHAR DEFAULT NULL,
+    p_start_date DATE DEFAULT NULL,
+    p_end_date DATE DEFAULT NULL
+)
+RETURNS TABLE (
+    total_matches BIGINT,
+    total_goals BIGINT,
+    total_yellow_cards BIGINT,
+    total_red_cards BIGINT,
+    total_minutes BIGINT,
+    goals_per_match NUMERIC
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        COUNT(*)::BIGINT AS total_matches,
+        COALESCE(SUM(goals), 0)::BIGINT AS total_goals,
+        COALESCE(SUM(yellow_cards), 0)::BIGINT AS total_yellow_cards,
+        COALESCE(SUM(red_cards), 0)::BIGINT AS total_red_cards,
+        COALESCE(SUM(minutes_played), 0)::BIGINT AS total_minutes,
+        CASE 
+            WHEN COUNT(*) > 0 THEN ROUND((COALESCE(SUM(goals), 0)::NUMERIC / COUNT(*)::NUMERIC), 2)
+            ELSE 0
+        END AS goals_per_match
+    FROM player_match_stats
+    WHERE player_id = p_player_id
+      AND (p_tournament_slug IS NULL OR tournament_slug = p_tournament_slug)
+      AND (p_start_date IS NULL OR match_date >= p_start_date)
+      AND (p_end_date IS NULL OR match_date <= p_end_date);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;

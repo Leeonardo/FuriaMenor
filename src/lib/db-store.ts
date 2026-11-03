@@ -7,8 +7,24 @@ import {
   DBMatch,
   DBStandingsRow,
   AgeValidationResult,
+  OfficialTournamentOption,
+  PlayerTournamentRecord,
+  PlayerMatchLog,
 } from '@/types/auth-roles';
 import { academiesData } from '@/data/academies-data';
+
+// ==============================================================================
+// 0. LISTADO OFICIAL DE TORNEOS VIGENTES
+// ==============================================================================
+export const OFFICIAL_TOURNAMENTS: OfficialTournamentOption[] = [
+  { id: 'infantil-1ra-division', name: 'Torneo Infantil 1era División', shortName: '1era Div Menor', division: '1era División', season: '2026' },
+  { id: 'infantil-2da-division', name: 'Torneo Infantil 2da División', shortName: '2da Div Menor', division: '2da División', season: '2026' },
+  { id: 'copa-elite-caracas', name: 'Copa Élite Futsal Caracas', shortName: 'Copa Élite', division: 'Élite Federada', season: '2026' },
+  { id: 'torneo-institucional', name: 'Torneo Daeris Institucional', shortName: 'Institucional', division: 'Institucional', season: '2026' },
+  { id: 'futbol-7-institucional', name: 'Fútbol 7 Institucional Daeris', shortName: 'Fut 7 Inst', division: 'Fútbol 7', season: '2026' },
+  { id: 'torneo-libre-carabobo', name: 'Torneo Libre Parque Carabobo', shortName: 'Libre Carabobo', division: 'Libre', season: '2026' },
+  { id: 'liga-distrital', name: 'Liga Distrital de Fútbol Base', shortName: 'Liga Distrital', division: 'Distrital', season: '2026' },
+];
 
 // ==============================================================================
 // 1. USUARIOS DEMO PREDEFINIDOS PARA CADA ROL
@@ -88,6 +104,85 @@ export function getInitialPlayers(): DBPlayer[] {
       if (!cat) return;
 
       roster.players.forEach((p, idx) => {
+        const assignedTournaments = idx % 2 === 0
+          ? ['infantil-1ra-division', 'copa-elite-caracas']
+          : ['infantil-1ra-division'];
+
+        const tRecords: PlayerTournamentRecord[] = [
+          {
+            tournamentId: 'infantil-1ra-division',
+            tournamentName: 'Torneo Infantil 1era División',
+            categoryName: cat.name,
+            enrolledAt: '2026-09-15',
+            status: 'habilitado',
+            matchesPlayed: 4,
+            goals: p.goals || (idx === 0 ? 3 : 1),
+            yellowCards: idx === 1 ? 1 : 0,
+            redCards: 0,
+            minutesPlayed: 140,
+          },
+        ];
+
+        if (assignedTournaments.includes('copa-elite-caracas')) {
+          tRecords.push({
+            tournamentId: 'copa-elite-caracas',
+            tournamentName: 'Copa Élite Futsal Caracas',
+            categoryName: cat.name,
+            enrolledAt: '2026-10-01',
+            status: 'habilitado',
+            matchesPlayed: 2,
+            goals: Math.max(1, Math.floor((p.goals || 2) / 2)),
+            yellowCards: 0,
+            redCards: 0,
+            minutesPlayed: 75,
+          });
+        }
+
+        const mLogs: PlayerMatchLog[] = [
+          {
+            id: `log-lp-${cat.id}-${idx}-1`,
+            matchId: 'match-hist-01',
+            date: '2026-10-18',
+            tournamentId: 'infantil-1ra-division',
+            tournamentName: 'Torneo Infantil 1era División',
+            rivalClubName: 'Fénix FS',
+            result: '4 - 2 (Victoria)',
+            minutes: 35,
+            goals: p.goals && p.goals > 1 ? 1 : 0,
+            yellowCards: 0,
+            redCards: 0,
+          },
+          {
+            id: `log-lp-${cat.id}-${idx}-2`,
+            matchId: 'match-hist-02',
+            date: '2026-10-25',
+            tournamentId: 'infantil-1ra-division',
+            tournamentName: 'Torneo Infantil 1era División',
+            rivalClubName: 'DVO Paraíso',
+            result: '3 - 3 (Empate)',
+            minutes: 40,
+            goals: 1,
+            yellowCards: idx === 1 ? 1 : 0,
+            redCards: 0,
+          },
+        ];
+
+        if (assignedTournaments.includes('copa-elite-caracas')) {
+          mLogs.push({
+            id: `log-lp-${cat.id}-${idx}-3`,
+            matchId: 'match-hist-03',
+            date: '2026-11-01',
+            tournamentId: 'copa-elite-caracas',
+            tournamentName: 'Copa Élite Futsal Caracas',
+            rivalClubName: 'Fratelsa Sport',
+            result: '5 - 1 (Victoria)',
+            minutes: 38,
+            goals: 1,
+            yellowCards: 0,
+            redCards: 0,
+          });
+        }
+
         players.push({
           id: `player-lp-${cat.id}-${idx + 1}`,
           clubId: 'la-paz-futsal',
@@ -104,6 +199,9 @@ export function getInitialPlayers(): DBPlayer[] {
           position: p.position as any,
           carnetNumber: `FM-26-LP-${cat.name.replace('-', '')}-${p.dorsal}`,
           status: 'activo',
+          enrolledTournaments: assignedTournaments,
+          tournamentRecords: tRecords,
+          matchLogs: mLogs,
           createdAt: new Date().toISOString(),
         });
       });
@@ -118,6 +216,7 @@ export function getInitialPlayers(): DBPlayer[] {
       if (!cat) return;
 
       roster.players.forEach((p, idx) => {
+        const assignedTournaments = ['infantil-1ra-division', 'torneo-institucional'];
         players.push({
           id: `player-dp-${cat.id}-${idx + 1}`,
           clubId: 'dvo-paraiso',
@@ -134,6 +233,61 @@ export function getInitialPlayers(): DBPlayer[] {
           position: p.position as any,
           carnetNumber: `FM-26-DP-${cat.name.replace('-', '')}-${p.dorsal}`,
           status: 'activo',
+          enrolledTournaments: assignedTournaments,
+          tournamentRecords: [
+            {
+              tournamentId: 'infantil-1ra-division',
+              tournamentName: 'Torneo Infantil 1era División',
+              categoryName: cat.name,
+              enrolledAt: '2026-09-15',
+              status: 'habilitado',
+              matchesPlayed: 4,
+              goals: p.goals || 2,
+              yellowCards: 0,
+              redCards: 0,
+              minutesPlayed: 150,
+            },
+            {
+              tournamentId: 'torneo-institucional',
+              tournamentName: 'Torneo Daeris Institucional',
+              categoryName: cat.name,
+              enrolledAt: '2026-10-01',
+              status: 'habilitado',
+              matchesPlayed: 2,
+              goals: 1,
+              yellowCards: 1,
+              redCards: 0,
+              minutesPlayed: 60,
+            },
+          ],
+          matchLogs: [
+            {
+              id: `log-dp-${cat.id}-${idx}-1`,
+              matchId: 'match-hist-dp-01',
+              date: '2026-10-18',
+              tournamentId: 'infantil-1ra-division',
+              tournamentName: 'Torneo Infantil 1era División',
+              rivalClubName: 'Fratelsa Sport',
+              result: '3 - 1 (Victoria)',
+              minutes: 40,
+              goals: 1,
+              yellowCards: 0,
+              redCards: 0,
+            },
+            {
+              id: `log-dp-${cat.id}-${idx}-2`,
+              matchId: 'match-hist-dp-02',
+              date: '2026-10-25',
+              tournamentId: 'infantil-1ra-division',
+              tournamentName: 'Torneo Infantil 1era División',
+              rivalClubName: 'La Paz Futsal',
+              result: '3 - 3 (Empate)',
+              minutes: 40,
+              goals: 1,
+              yellowCards: 0,
+              redCards: 0,
+            },
+          ],
           createdAt: new Date().toISOString(),
         });
       });
@@ -434,4 +588,69 @@ export function saveStoredMatches(matches: DBMatch[]): void {
   try {
     localStorage.setItem(`${STORAGE_PREFIX}matches`, JSON.stringify(matches));
   } catch {}
+}
+
+// ==============================================================================
+// 9. FILTRO HISTÓRICO Y CONTROL POR PERÍODOS / TORNEOS
+// ==============================================================================
+export function filterPlayerStats(
+  player: DBPlayer,
+  options: {
+    tournamentId?: string; // 'all' o ID específico
+    periodPreset?: 'all' | '30days' | '6months' | '2026' | 'custom';
+    startDate?: string;
+    endDate?: string;
+  }
+) {
+  const { tournamentId = 'all', periodPreset = 'all', startDate, endDate } = options;
+  const logs = player.matchLogs || [];
+
+  const referenceDate = new Date('2026-11-03');
+  let minDate: Date | null = null;
+  let maxDate: Date | null = null;
+
+  if (periodPreset === '30days') {
+    minDate = new Date('2026-11-03');
+    minDate.setDate(referenceDate.getDate() - 30);
+  } else if (periodPreset === '6months') {
+    minDate = new Date('2026-11-03');
+    minDate.setMonth(referenceDate.getMonth() - 6);
+  } else if (periodPreset === '2026') {
+    minDate = new Date('2026-01-01');
+    maxDate = new Date('2026-12-31');
+  } else if (periodPreset === 'custom') {
+    if (startDate) minDate = new Date(startDate);
+    if (endDate) maxDate = new Date(endDate);
+  }
+
+  const filteredLogs = logs.filter((log) => {
+    // Filtro por torneo
+    if (tournamentId !== 'all' && log.tournamentId !== tournamentId) {
+      return false;
+    }
+
+    // Filtro por fecha
+    const logDate = new Date(log.date);
+    if (minDate && logDate < minDate) return false;
+    if (maxDate && logDate > maxDate) return false;
+
+    return true;
+  });
+
+  const matchesPlayed = filteredLogs.length;
+  const goals = filteredLogs.reduce((acc, curr) => acc + curr.goals, 0);
+  const yellowCards = filteredLogs.reduce((acc, curr) => acc + curr.yellowCards, 0);
+  const redCards = filteredLogs.reduce((acc, curr) => acc + curr.redCards, 0);
+  const minutesPlayed = filteredLogs.reduce((acc, curr) => acc + curr.minutes, 0);
+  const goalsPerMatch = matchesPlayed > 0 ? (goals / matchesPlayed).toFixed(2) : '0.00';
+
+  return {
+    filteredLogs,
+    matchesPlayed,
+    goals,
+    yellowCards,
+    redCards,
+    minutesPlayed,
+    goalsPerMatch,
+  };
 }

@@ -24,7 +24,7 @@ export function AcademyBadge({ slug, size = 64, className = "", logoUrl }: Acade
           alt={`Escudo ${slug}`}
           width={s}
           height={s}
-          className="h-full w-full object-cover rounded-full"
+          className="h-full w-full object-contain rounded-full drop-shadow-md"
         />
       </div>
     );
