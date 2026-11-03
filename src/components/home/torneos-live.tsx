@@ -1,14 +1,19 @@
 ﻿import Link from "next/link";
-import { ArrowRight, Clock, MapPin, Trophy, Newspaper } from "lucide-react";
-import { torneoDaerisMatches } from "@/data/daeris/calendario";
+import { ArrowRight, Clock, MapPin, Trophy, Calendar } from "lucide-react";
+import { TournamentData } from "@/data/tournaments-data";
+import { DaerisBadge, PruebaBadge } from "@/components/ui/tournament-badges";
 
-export function TorneosLive() {
-  const upcoming = torneoDaerisMatches
+interface TorneosLiveProps {
+  tournament: TournamentData;
+}
+
+export function TorneosLive({ tournament }: TorneosLiveProps) {
+  const upcoming = tournament.matches
     .filter((m) => m.status === "scheduled")
     .sort((a, b) => a.matchDate.localeCompare(b.matchDate) || a.matchTime.localeCompare(b.matchTime))
     .slice(0, 6);
 
-  const finished = torneoDaerisMatches
+  const finished = tournament.matches
     .filter((m) => m.status === "finished")
     .sort((a, b) => b.matchDate.localeCompare(a.matchDate))
     .slice(0, 4);
@@ -16,18 +21,40 @@ export function TorneosLive() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-red-400">Cobertura Futsal</p>
-          <h2 className="mt-1 text-xl font-bold sm:text-2xl">Marcadores, Posiciones y Próximos Partidos</h2>
-          <p className="mt-1 text-sm text-neutral-400">
-            Seguimiento periodístico del Torneo Daeris · Futsal · Caracas
-          </p>
+        <div className="flex items-center gap-3">
+          <div className="shrink-0">
+            {tournament.id === "daeris" ? (
+              <DaerisBadge size={52} />
+            ) : (
+              <PruebaBadge size={52} />
+            )}
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-[0.25em] text-red-400 font-bold">
+              Cobertura en Vivo · {tournament.name}
+            </p>
+            <h2 className="mt-0.5 text-xl font-bold sm:text-2xl text-white">
+              Marcadores y Próximos Partidos
+            </h2>
+            <p className="text-xs sm:text-sm text-neutral-400">
+              {tournament.venue}
+            </p>
+          </div>
         </div>
+
         <div className="flex items-center gap-2">
-          <Link href="/calendario" className="rounded-lg border border-neutral-800 px-3 py-1.5 text-sm text-neutral-300 transition hover:border-neutral-700 hover:text-white">
+          <Link
+            href="/calendario"
+            className="rounded-lg border border-neutral-800 bg-neutral-900/60 px-3 py-1.5 text-xs sm:text-sm text-neutral-300 transition hover:border-neutral-700 hover:text-white"
+          >
             Calendario Completo
           </Link>
-          <Link href="/posiciones" className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-red-500">
+          <Link
+            href="/posiciones"
+            className={`rounded-lg px-3 py-1.5 text-xs sm:text-sm font-semibold text-white transition ${
+              tournament.id === "daeris" ? "bg-red-600 hover:bg-red-500" : "bg-sky-600 hover:bg-sky-500"
+            }`}
+          >
             Tablas de Posiciones
           </Link>
         </div>
@@ -37,103 +64,114 @@ export function TorneosLive() {
         {/* Próximos partidos */}
         <div className="lg:col-span-7">
           <div className="mb-3 flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Próximos Partidos</h3>
+            <h3 className="text-base font-semibold text-white flex items-center gap-2">
+              <Calendar className="h-4 w-4 text-blue-400" />
+              Próximos Partidos Programados
+            </h3>
             <span className="flex items-center gap-1 text-xs text-neutral-500">
               <Clock className="h-3 w-3" />
-              Jornada en curso
+              Jornada activa
             </span>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {upcoming.map((match) => (
-              <div key={match.id} className="rounded-xl border border-neutral-800 bg-neutral-900/60 p-4 transition hover:border-neutral-700">
-                <div className="mb-2 flex flex-wrap items-center justify-between gap-2 text-xs text-neutral-500">
-                  <div className="flex items-center gap-2">
-                    <span className="rounded-full bg-red-500/10 px-2 py-0.5 text-red-400">{match.category}</span>
-                    {match.division && <span className="rounded-full bg-neutral-800 px-2 py-0.5">{match.division}</span>}
+
+          {upcoming.length > 0 ? (
+            <div className="grid gap-3 sm:grid-cols-2">
+              {upcoming.map((match) => (
+                <div
+                  key={match.id}
+                  className="rounded-xl border border-neutral-800 bg-neutral-900/60 p-4 transition hover:border-neutral-700"
+                >
+                  <div className="mb-2 flex flex-wrap items-center justify-between gap-2 text-xs text-neutral-500">
+                    <div className="flex items-center gap-2">
+                      <span className={`rounded-full px-2 py-0.5 font-medium ${tournament.accentColor.pill}`}>
+                        {match.category}
+                      </span>
+                      {match.division && (
+                        <span className="rounded-full bg-neutral-800 px-2 py-0.5 text-neutral-400">
+                          {match.division}
+                        </span>
+                      )}
+                    </div>
+                    <span className="font-medium text-neutral-400">
+                      {match.matchDate} · {match.matchTime}
+                    </span>
                   </div>
-                  <span>{match.matchDate} · {match.matchTime}</span>
+
+                  <div className="flex items-center justify-between gap-3 my-1">
+                    <p className="flex-1 text-sm font-semibold text-white truncate">{match.homeTeam}</p>
+                    <span className="text-xs font-bold text-neutral-500 px-1">vs</span>
+                    <p className="flex-1 text-right text-sm font-semibold text-white truncate">{match.awayTeam}</p>
+                  </div>
+
+                  <div className="mt-2.5 flex items-center gap-1 text-[11px] text-neutral-500">
+                    <MapPin className="h-3 w-3 text-red-400 shrink-0" />
+                    <span className="truncate">{match.venue}</span>
+                  </div>
                 </div>
-                <div className="flex items-center justify-between gap-3">
-                  <p className="flex-1 text-sm font-medium">{match.homeTeam}</p>
-                  <span className="text-xs text-neutral-500">vs</span>
-                  <p className="flex-1 text-right text-sm font-medium">{match.awayTeam}</p>
-                </div>
-                <div className="mt-2 flex items-center gap-1 text-xs text-neutral-500">
-                  <MapPin className="h-3 w-3" />
-                  <span className="truncate">{match.venue}</span>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-xl border border-dashed border-neutral-800 p-8 text-center text-sm text-neutral-500">
+              No hay partidos programados pendientes para esta fecha.
+            </div>
+          )}
         </div>
 
         {/* Últimos resultados */}
         <div className="lg:col-span-5">
           <div className="mb-3 flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Últimos Resultados</h3>
-            <Link href="/calendario" className="flex items-center gap-1 text-sm text-red-400 transition hover:text-red-300">
+            <h3 className="text-base font-semibold text-white flex items-center gap-2">
+              <Trophy className="h-4 w-4 text-amber-400" />
+              Últimos Resultados
+            </h3>
+            <Link
+              href="/calendario"
+              className="flex items-center gap-1 text-xs text-red-400 transition hover:text-red-300"
+            >
               Ver todos
-              <ArrowRight className="h-4 w-4" />
+              <ArrowRight className="h-3 w-3" />
             </Link>
           </div>
+
           <div className="flex flex-col gap-3">
             {finished.length > 0 ? (
               finished.map((match) => (
-                <div key={match.id} className="rounded-xl border border-neutral-800 bg-neutral-900/60 p-4">
+                <div
+                  key={match.id}
+                  className="rounded-xl border border-neutral-800 bg-neutral-900/60 p-4 transition hover:border-neutral-700"
+                >
                   <div className="mb-2 flex items-center justify-between text-xs text-neutral-500">
                     <div className="flex items-center gap-2">
-                      <span className="rounded-full bg-neutral-800 px-2 py-0.5">{match.category}</span>
+                      <span className="rounded-full bg-neutral-800 px-2 py-0.5 text-neutral-300 font-medium">
+                        {match.category}
+                      </span>
                       {match.division && <span>{match.division}</span>}
                     </div>
                     <span>{match.matchDate}</span>
                   </div>
-                  <div className="space-y-1">
+
+                  <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm">{match.homeTeam}</span>
-                      <span className="font-bold">{match.homeScore ?? "-"}</span>
+                      <span className="text-sm font-medium text-neutral-200 truncate">{match.homeTeam}</span>
+                      <span className="font-extrabold text-white text-base ml-2">{match.homeScore ?? "-"}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm">{match.awayTeam}</span>
-                      <span className="font-bold">{match.awayScore ?? "-"}</span>
+                      <span className="text-sm font-medium text-neutral-200 truncate">{match.awayTeam}</span>
+                      <span className="font-extrabold text-white text-base ml-2">{match.awayScore ?? "-"}</span>
                     </div>
                   </div>
-                  <div className="mt-2 text-center text-[10px] uppercase tracking-widest text-neutral-500">Final</div>
+
+                  <div className="mt-2.5 flex items-center justify-between text-[10px] uppercase tracking-widest text-neutral-500 pt-2 border-t border-neutral-800/60">
+                    <span>Finalizado</span>
+                    <span className="text-neutral-400 lowercase">{match.venue}</span>
+                  </div>
                 </div>
               ))
             ) : (
-              <div className="rounded-xl border border-dashed border-neutral-700 p-6 text-center text-sm text-neutral-500">
-                Sin resultados registrados aún
+              <div className="rounded-xl border border-dashed border-neutral-800 p-8 text-center text-sm text-neutral-500">
+                Aún no hay resultados cerrados registrados en esta edición.
               </div>
             )}
-          </div>
-        </div>
-      </div>
-
-      {/* Banner Torneo Daeris — aclaración de rol */}
-      <div className="mt-6 rounded-2xl border border-neutral-800 bg-gradient-to-r from-red-950/30 via-neutral-900 to-neutral-950 p-6 sm:p-8">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-600/20">
-            <Newspaper className="h-6 w-6 text-red-400" />
-          </div>
-          <div className="flex-1">
-            <p className="text-xs uppercase tracking-[0.2em] text-red-400">Cobertura Periodística</p>
-            <h3 className="mt-1 text-lg font-bold">Torneo Daeris — Futsal Menor</h3>
-            <p className="mt-1 text-sm text-neutral-300">
-              Furia Menor cubre periodísticamente el Torneo Daeris. Nos encargamos de traerte
-              noticias, crónicas, resultados y entrevistas — la organización del torneo es
-              independiente a este portal.
-            </p>
-            <p className="mt-1 text-xs text-neutral-500">
-              Sede: Cancha Gimnasio Libertador, 23 de Enero · Categorías Sub-6 a Sub-18 · 1ra y 2da División
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2 shrink-0">
-            <Link href="/calendario" className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-500">
-              Ver Calendario
-            </Link>
-            <Link href="/estadisticas" className="rounded-lg border border-neutral-700 px-4 py-2 text-sm text-neutral-300 transition hover:border-neutral-600 hover:text-white">
-              Estadísticas
-            </Link>
           </div>
         </div>
       </div>

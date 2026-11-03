@@ -1,25 +1,28 @@
 ﻿import Link from "next/link";
 import { ArrowRight, Goal, Shield, Trophy } from "lucide-react";
-import { standingsSub12Elite } from "@/data/daeris/posiciones";
-import { topScorers, leastConceded } from "@/data/daeris";
+import { TournamentData } from "@/data/tournaments-data";
 
-export function StatsPreview() {
-  // Top 5 posiciones para vista previa
-  const topStandings = standingsSub12Elite.slice(0, 5);
+interface StatsPreviewProps {
+  tournament: TournamentData;
+}
+
+export function StatsPreview({ tournament }: StatsPreviewProps) {
+  // Top 5 posiciones del torneo activo
+  const topStandings = tournament.standings.slice(0, 5);
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Encabezado de la sección */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-xs uppercase tracking-[0.25em] text-red-400 font-semibold">
-            Rendimiento & Datos
+            Rendimiento & Clasificación
           </p>
           <h2 className="mt-1 text-2xl font-bold text-white sm:text-3xl">
-            Estadísticas Colectivas e Individuales
+            Estadísticas de {tournament.name}
           </h2>
           <p className="mt-1 text-sm text-neutral-400">
-            Seguimiento oficial de posiciones, goleadores y porterías del Torneo Daeris
+            Seguimiento de tabla de posiciones, líderes de goleo y arquerías menos vencidas
           </p>
         </div>
 
@@ -32,7 +35,9 @@ export function StatsPreview() {
           </Link>
           <Link
             href="/estadisticas"
-            className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-red-500"
+            className={`rounded-lg px-3 py-1.5 text-xs font-semibold text-white transition ${
+              tournament.id === "daeris" ? "bg-red-600 hover:bg-red-500" : "bg-sky-600 hover:bg-sky-500"
+            }`}
           >
             Líderes de Goleo
           </Link>
@@ -49,7 +54,9 @@ export function StatsPreview() {
               </div>
               <div>
                 <h3 className="text-base font-semibold text-white">Tabla de Posiciones</h3>
-                <p className="text-xs text-neutral-400">Sub-12 Élite · Grupo A</p>
+                <p className="text-xs text-neutral-400">
+                  {tournament.name} · Categoría Principal
+                </p>
               </div>
             </div>
             <span className="rounded-full bg-neutral-800 px-2.5 py-0.5 text-[11px] font-medium text-neutral-400">
@@ -91,7 +98,7 @@ export function StatsPreview() {
                     <td className="py-3 text-center font-medium text-neutral-300">
                       {team.dif > 0 ? `+${team.dif}` : team.dif}
                     </td>
-                    <td className="py-3 pr-2 text-right font-extrabold text-red-400 text-sm">
+                    <td className={`py-3 pr-2 text-right font-extrabold text-sm ${tournament.accentColor.text}`}>
                       {team.pts}
                     </td>
                   </tr>
@@ -107,7 +114,7 @@ export function StatsPreview() {
             </span>
             <Link
               href="/posiciones"
-              className="inline-flex items-center gap-1 font-semibold text-red-400 hover:text-red-300 transition"
+              className={`inline-flex items-center gap-1 font-semibold hover:underline transition ${tournament.accentColor.text}`}
             >
               Ver tabla completa
               <ArrowRight className="h-3.5 w-3.5" />
@@ -126,7 +133,7 @@ export function StatsPreview() {
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold text-white">Líderes de Goleo</h3>
-                  <p className="text-[11px] text-neutral-400">Torneo Daeris · Futsal</p>
+                  <p className="text-[11px] text-neutral-400">{tournament.name}</p>
                 </div>
               </div>
               <Link
@@ -138,7 +145,7 @@ export function StatsPreview() {
             </div>
 
             <div className="space-y-2.5">
-              {topScorers.slice(0, 3).map((scorer, idx) => (
+              {tournament.topScorers.slice(0, 3).map((scorer, idx) => (
                 <div
                   key={scorer.player}
                   className="flex items-center justify-between rounded-xl bg-neutral-950/50 border border-neutral-800/60 p-2.5"
@@ -170,7 +177,7 @@ export function StatsPreview() {
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold text-white">Valla Menos Vencida</h3>
-                  <p className="text-[11px] text-neutral-400">Arquería Menor</p>
+                  <p className="text-[11px] text-neutral-400">Arquería {tournament.shortName}</p>
                 </div>
               </div>
               <Link
@@ -182,7 +189,7 @@ export function StatsPreview() {
             </div>
 
             <div className="space-y-2.5">
-              {leastConceded.slice(0, 2).map((keeper, idx) => (
+              {tournament.leastConceded.slice(0, 2).map((keeper, idx) => (
                 <div
                   key={keeper.player}
                   className="flex items-center justify-between rounded-xl bg-neutral-950/50 border border-neutral-800/60 p-2.5"
