@@ -1,8 +1,10 @@
 ﻿"use client";
 
-import { useState } from "react";
-import { TournamentId, tournamentsList } from "@/data/tournaments-data";
+import { useMemo, useState } from "react";
+import { TournamentId, tournamentsList, TournamentData } from "@/data/tournaments-data";
+import { DaerisSubId, daerisSubTournaments, DaerisSubTournament } from "@/data/daeris-subtournaments";
 import { TournamentSelector } from "@/components/home/tournament-selector";
+import { DaerisSubtournamentsPanel } from "@/components/home/daeris-subtournaments-panel";
 import { HeroSports } from "@/components/home/hero-sports";
 import { TorneosLive } from "@/components/home/torneos-live";
 import { StatsPreview } from "@/components/home/stats-preview";
@@ -13,36 +15,78 @@ import { Calendar, Mail } from "lucide-react";
 
 export function HomeView() {
   const [selectedTournamentId, setSelectedTournamentId] = useState<TournamentId>("daeris");
-  const currentTournament = tournamentsList[selectedTournamentId];
+  const [selectedDaerisSubId, setSelectedDaerisSubId] = useState<DaerisSubId>("infantil-1ra");
+
+  // Torneo actual activo (con soporte para los 6 sub-torneos de Daeris)
+  const currentTournament: TournamentData = useMemo(() => {
+    if (selectedTournamentId === "prueba") {
+      return tournamentsList.prueba;
+    }
+
+    const daerisBase = tournamentsList.daeris;
+    const sub = daerisSubTournaments[selectedDaerisSubId];
+
+    if (!sub) return daerisBase;
+
+    return {
+      ...daerisBase,
+      name: `${daerisBase.name} · ${sub.name}`,
+      shortName: sub.shortName,
+      status: sub.status,
+      venue: sub.venue,
+      venueShort: sub.venue,
+      totalTeams: sub.teamsCount,
+      highlightedMatch: sub.matches[0] || daerisBase.highlightedMatch,
+      matches: sub.matches,
+      standings: sub.standings,
+      topScorers: sub.topScorers,
+      leastConceded: sub.leastConceded,
+      accentColor: {
+        badge: "daeris",
+        border: sub.accent.border,
+        bgGlow: daerisBase.accentColor.bgGlow,
+        pill: sub.accent.pill,
+        text: sub.accent.text,
+      },
+    };
+  }, [selectedTournamentId, selectedDaerisSubId]);
 
   return (
     <>
-      {/* 1. Selector de Torneo Interactivo con Insignias Oficiales */}
+      {/* 1. Selector de Torneo Principal: Torneo Daeris vs Torneo de Prueba */}
       <TournamentSelector
         selectedId={selectedTournamentId}
         onSelect={(id) => setSelectedTournamentId(id)}
       />
 
-      {/* 2. Hero Deportivo adaptado al torneo activo */}
+      {/* 2. Si está en Torneo Daeris: Desplegar los 6 Torneos Internos con sus Insignias */}
+      {selectedTournamentId === "daeris" && (
+        <DaerisSubtournamentsPanel
+          selectedSubId={selectedDaerisSubId}
+          onSelectSub={(sub: DaerisSubTournament) => setSelectedDaerisSubId(sub.id)}
+        />
+      )}
+
+      {/* 3. Hero Deportivo adaptado al torneo / sub-torneo activo */}
       <HeroSports tournament={currentTournament} />
 
-      {/* 3. Marcadores y Próximos Partidos del torneo seleccionado */}
+      {/* 4. Marcadores y Próximos Partidos del torneo seleccionado */}
       <TorneosLive tournament={currentTournament} />
 
-      {/* 4. Estadísticas Colectivas e Individuales del torneo */}
+      {/* 5. Estadísticas Colectivas e Individuales del torneo */}
       <StatsPreview tournament={currentTournament} />
 
-      {/* 5. Vitrina de Academias & Clubes de Caracas */}
+      {/* 6. Vitrina de Academias & Clubes de Caracas */}
       <AcademiesPreview />
 
-      {/* 6. Galería Multimedia de la Cancha */}
+      {/* 7. Galería Multimedia de la Cancha */}
       <MultimediaGallery />
 
-      {/* 7. Banner de Cierre Furia Menor */}
+      {/* 8. Banner de Cierre Furia Menor */}
       <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-3xl border border-neutral-800 bg-gradient-to-r from-red-950/40 via-neutral-900 to-neutral-950 p-8 text-center sm:p-12 shadow-2xl">
           <div className="pointer-events-none absolute -bottom-24 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-red-600/10 blur-3xl" />
-          
+
           <p className="text-xs uppercase tracking-[0.3em] text-red-400 font-semibold">
             Furia Menor
           </p>

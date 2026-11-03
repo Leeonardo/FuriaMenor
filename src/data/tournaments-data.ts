@@ -25,7 +25,7 @@ export interface TournamentData {
   shortName: string;
   edition: string;
   sport: string;
-  status: "En Curso" | "Fase Regular" | "Inscripciones" | "En Disputa";
+  status: "En Curso" | "Fase Regular" | "Inscripciones" | "En Disputa" | "Semifinales" | "Próxima Jornada" | string;
   venue: string;
   venueShort: string;
   categories: string[];
