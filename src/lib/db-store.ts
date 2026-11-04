@@ -534,16 +534,16 @@ export function saveStoredPlayers(players: DBPlayer[]): void {
 export function getStoredMatches(): DBMatch[] {
   if (typeof window === 'undefined') return getInitialMatches();
   try {
-    const raw = localStorage.getItem(`${STORAGE_PREFIX}matches_v2`);
+    const raw = localStorage.getItem(`${STORAGE_PREFIX}matches_v3`);
     if (!raw) {
       const initial = getInitialMatches();
-      localStorage.setItem(`${STORAGE_PREFIX}matches_v2`, JSON.stringify(initial));
+      localStorage.setItem(`${STORAGE_PREFIX}matches_v3`, JSON.stringify(initial));
       return initial;
     }
     const parsed: DBMatch[] = JSON.parse(raw);
     const initial = getInitialMatches();
     if (parsed.length !== initial.length) {
-      localStorage.setItem(`${STORAGE_PREFIX}matches_v2`, JSON.stringify(initial));
+      localStorage.setItem(`${STORAGE_PREFIX}matches_v3`, JSON.stringify(initial));
       return initial;
     }
     return parsed;
@@ -555,7 +555,7 @@ export function getStoredMatches(): DBMatch[] {
 export function saveStoredMatches(matches: DBMatch[]): void {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem(`${STORAGE_PREFIX}matches_v2`, JSON.stringify(matches));
+    localStorage.setItem(`${STORAGE_PREFIX}matches_v3`, JSON.stringify(matches));
   } catch {}
 }
 

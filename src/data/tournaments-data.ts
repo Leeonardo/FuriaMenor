@@ -6,6 +6,7 @@ import {
   createGenericKeepers,
   createGenericMatches,
 } from "@/data/generic-tournament-data";
+import { FUTSAL_MATCHES_NOV_2026 } from "@/data/fixtures-noviembre-2026";
 
 export type TournamentId = "daeris" | "prueba";
 
@@ -74,26 +75,8 @@ export const tournamentsList: Record<TournamentId, TournamentData> = {
     groupName: "GRUPO A",
     qualificationRule: "CLASIFICAN LOS 8 PRIMEROS DE CADA GRUPO",
     qualificationCutoff: 8,
-    highlightedMatch: {
-      id: "td-generic-1",
-      category: "Sub-12 Élite",
-      division: "1ra División",
-      homeTeam: "Equipo 1",
-      awayTeam: "Equipo 2",
-      homeScore: null,
-      awayScore: null,
-      matchDate: "2026-11-08",
-      matchTime: "10:00",
-      venue: "Cancha Gimnasio Libertador del 23 de Enero",
-      status: "scheduled",
-      jornada: "JORNADA SÁBADO · FECHA OFICIAL",
-      referees: {
-        principal: "Árbitro 1 (Principal)",
-        asistente: "Árbitro 2 (Auxiliar)",
-        mesa: "Anotador 1 (Mesa Técnica)",
-      },
-    },
-    matches: createGenericMatches("Torneo Daeris", "Sub-12 Élite", "Gimnasio Libertador, 23 de Enero", "Equipo"),
+    highlightedMatch: FUTSAL_MATCHES_NOV_2026[0],
+    matches: FUTSAL_MATCHES_NOV_2026,
     standings: createGenericStandings("Equipo"),
     topScorers: createGenericScorers("Equipo"),
     leastConceded: createGenericKeepers("Equipo"),

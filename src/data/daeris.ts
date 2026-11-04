@@ -43,64 +43,7 @@ export interface Match {
   matchday: number;
 }
 
-export const sampleMatches: Match[] = [
-  {
-    id: "m1",
-    category: "Sub-12",
-    modality: "primera",
-    homeTeam: "FUSION ACADEMICA A",
-    awayTeam: "FUTCONEXION",
-    homeScore: null,
-    awayScore: null,
-    matchDate: "2026-10-30",
-    matchTime: "08:00",
-    venue: "Cancha Principal",
-    status: "scheduled",
-    matchday: 1,
-  },
-  {
-    id: "m2",
-    category: "Sub-12",
-    modality: "primera",
-    homeTeam: "ESPARTANOS FUTSAL",
-    awayTeam: "LA LADERA",
-    homeScore: 2,
-    awayScore: 1,
-    matchDate: "2026-10-30",
-    matchTime: "09:15",
-    venue: "Cancha 2",
-    status: "finished",
-    matchday: 1,
-  },
-  {
-    id: "m3",
-    category: "Sub-12",
-    modality: "segunda",
-    homeTeam: "TETSU FUTSAL",
-    awayTeam: "DEPORTIVO ODIN",
-    homeScore: 1,
-    awayScore: 1,
-    matchDate: "2026-10-30",
-    matchTime: "10:30",
-    venue: "Cancha Principal",
-    status: "finished",
-    matchday: 1,
-  },
-  {
-    id: "m4",
-    category: "Sub-12",
-    modality: "primera",
-    homeTeam: "FUSION ACADEMICA A",
-    awayTeam: "ESPARTANOS FUTSAL",
-    homeScore: null,
-    awayScore: null,
-    matchDate: "2026-10-30",
-    matchTime: "11:45",
-    venue: "Cancha 3",
-    status: "live",
-    matchday: 1,
-  },
-];
+export const sampleMatches: Match[] = [];
 
 export interface Scorer {
   player: string;
