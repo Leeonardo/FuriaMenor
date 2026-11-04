@@ -127,6 +127,7 @@ export function CalendarSocialExportModal({
   const [customTitle, setCustomTitle] = useState<string>("CARTELERA OFICIAL");
 
   // Filtros internos dentro del modal para máxima personalización autogestionable
+  const [modalDiscipline, setModalDiscipline] = useState<string>("all");
   const [modalVenue, setModalVenue] = useState<string>("all");
   const [modalDate, setModalDate] = useState<string>("all");
   const [modalTeam, setModalTeam] = useState<string>("all");
@@ -152,6 +153,9 @@ export function CalendarSocialExportModal({
   // Sincronizar filtros al abrir
   useEffect(() => {
     if (activeFilterSummary) {
+      if (activeFilterSummary.discipline && activeFilterSummary.discipline !== "all") {
+        setModalDiscipline(activeFilterSummary.discipline);
+      }
       if (activeFilterSummary.venue && activeFilterSummary.venue !== "all") {
         setModalVenue(activeFilterSummary.venue);
       }
@@ -177,14 +181,29 @@ export function CalendarSocialExportModal({
     setCurrentSlide(1);
   }, [format]);
 
-  // Opciones únicas de filtros
+  // Opciones únicas de filtros (Sedes CONDICIONADAS a la disciplina activa en el modal)
   const uniqueVenues = useMemo(() => {
     const s = new Set<string>();
     matches.forEach((m) => {
+      if (modalDiscipline !== "all" && m.discipline !== modalDiscipline) return;
       if (m.venue) s.add(m.venue);
     });
     return Array.from(s).sort();
-  }, [matches]);
+  }, [matches, modalDiscipline]);
+
+  // Si cambia la disciplina en el modal y la sede seleccionada no pertenece a esa disciplina, resetear a "all"
+  useEffect(() => {
+    if (modalVenue !== "all") {
+      const isValid = uniqueVenues.some((v) => {
+        const vL = v.toLowerCase();
+        const mL = modalVenue.toLowerCase();
+        return vL.includes(mL) || mL.includes(vL);
+      });
+      if (!isValid) {
+        setModalVenue("all");
+      }
+    }
+  }, [modalDiscipline, uniqueVenues, modalVenue]);
 
   const uniqueDates = useMemo(() => {
     const s = new Set<string>();
@@ -214,6 +233,9 @@ export function CalendarSocialExportModal({
   // Partidos filtrados en el modal
   const filteredMatchesInModal = useMemo(() => {
     return matches.filter((m) => {
+      if (modalDiscipline !== "all" && m.discipline !== modalDiscipline) {
+        return false;
+      }
       if (modalVenue !== "all") {
         const v = m.venue.toLowerCase();
         const target = modalVenue.toLowerCase();
@@ -232,7 +254,7 @@ export function CalendarSocialExportModal({
       }
       return true;
     });
-  }, [matches, modalVenue, modalDate, modalTeam, modalCategory]);
+  }, [matches, modalDiscipline, modalVenue, modalDate, modalTeam, modalCategory]);
 
   // Paginación por diapositivas
   const totalSlides = Math.max(1, Math.ceil(filteredMatchesInModal.length / matchesPerPage));
@@ -246,6 +268,9 @@ export function CalendarSocialExportModal({
   // Subtítulo dinámico
   const computedSubtitle = useMemo(() => {
     const parts: string[] = [];
+    if (modalDiscipline !== "all") {
+      parts.push(modalDiscipline.toUpperCase());
+    }
     if (modalVenue !== "all") {
       parts.push(modalVenue.replace("Cancha de Futsal ", "Cancha ").toUpperCase());
     }
@@ -651,15 +676,40 @@ export function CalendarSocialExportModal({
               )}
             </div>
 
-            {/* 6. Filtros Rápidos (Sede, Fecha, Equipo, Categoría) */}
+            {/* 6. Filtros Rápidos (Disciplina, Sede, Fecha, Equipo, Categoría) */}
             <div className="space-y-2 p-3 rounded-2xl bg-neutral-900/60 border border-neutral-800">
               <span className="text-[11px] font-black uppercase tracking-wider text-neutral-300 block">
                 Filtros Rápidos para este Flyer:
               </span>
 
+              {/* Selector de Disciplina que condiciona las sedes */}
+              <div>
+                <label className="block text-[10px] text-neutral-400 mb-0.5">Disciplina:</label>
+                <select
+                  value={modalDiscipline}
+                  onChange={(e) => {
+                    setModalDiscipline(e.target.value);
+                    setCurrentSlide(1);
+                  }}
+                  className="w-full px-2 py-1.5 rounded-lg bg-neutral-950 border border-neutral-800 text-xs text-white"
+                >
+                  <option value="all">⚽ Todas las Disciplinas</option>
+                  <option value="Fútbol Sala">Fútbol Sala (Futsal)</option>
+                  <option value="Fútbol 7">Fútbol 7 (Sintético)</option>
+                  <option value="Fútbol Campo">Fútbol Campo</option>
+                </select>
+              </div>
+
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div>
-                  <label className="block text-[10px] text-neutral-400 mb-0.5">Sede / Cancha:</label>
+                  <label className="block text-[10px] text-neutral-400 mb-0.5 flex items-center justify-between">
+                    <span>Sede / Cancha:</span>
+                    {modalDiscipline !== "all" && (
+                      <span className="text-[9px] text-red-400 font-bold">
+                        ({uniqueVenues.length})
+                      </span>
+                    )}
+                  </label>
                   <select
                     value={modalVenue}
                     onChange={(e) => {
@@ -668,7 +718,11 @@ export function CalendarSocialExportModal({
                     }}
                     className="w-full px-2 py-1.5 rounded-lg bg-neutral-950 border border-neutral-800 text-xs text-white"
                   >
-                    <option value="all">Todas las Sedes</option>
+                    <option value="all">
+                      {modalDiscipline === "all"
+                        ? "Todas las Sedes"
+                        : `Sedes de ${modalDiscipline} (${uniqueVenues.length})`}
+                    </option>
                     {uniqueVenues.map((v) => (
                       <option key={v} value={v}>
                         {v.replace("Cancha de Futsal ", "Cancha ")}

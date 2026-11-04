@@ -149,6 +149,48 @@ function CalendarioContent() {
     return dates;
   }, [allMatches]);
 
+  // Sedes disponibles CONDICIONADAS a la disciplina seleccionada
+  const availableVenues = useMemo(() => {
+    const matchesByDiscipline =
+      selectedDiscipline === "all"
+        ? allMatches
+        : allMatches.filter((m) => m.discipline === selectedDiscipline);
+
+    const venueMap = new Map<
+      string,
+      { venue: string; shortName: string; count: number; discipline: string }
+    >();
+
+    matchesByDiscipline.forEach((m) => {
+      const key = m.venue;
+      if (!venueMap.has(key)) {
+        venueMap.set(key, {
+          venue: m.venue,
+          shortName: m.venueShort || m.venue.replace("Cancha de Futsal ", "").replace("Cancha ", ""),
+          count: 0,
+          discipline: m.discipline,
+        });
+      }
+      venueMap.get(key)!.count += 1;
+    });
+
+    return Array.from(venueMap.values()).sort((a, b) => b.count - a.count);
+  }, [allMatches, selectedDiscipline]);
+
+  // Si cambia la disciplina y la sede seleccionada ya no pertenece a esa disciplina, resetear automáticamente a "all"
+  useEffect(() => {
+    if (selectedVenue !== "all") {
+      const existsInDiscipline = availableVenues.some((v) => {
+        const vLower = v.venue.toLowerCase();
+        const selLower = selectedVenue.toLowerCase();
+        return vLower.includes(selLower) || selLower.includes(vLower);
+      });
+      if (!existsInDiscipline) {
+        setSelectedVenue("all");
+      }
+    }
+  }, [selectedDiscipline, availableVenues, selectedVenue]);
+
   // Lista de equipos únicos disponibles para filtro interactivo
   const availableTeams = useMemo(() => {
     const teams = new Set<string>();
@@ -386,26 +428,35 @@ function CalendarioContent() {
                 <option value="all">⚽ Todas las Disciplinas</option>
                 <option value="Fútbol Sala">Fútbol Sala (Futsal - 37 Partidos)</option>
                 <option value="Fútbol 7">Fútbol 7 (Sintético - 11 Partidos)</option>
+                <option value="Fútbol Campo">Fútbol Campo</option>
               </select>
             </div>
 
-            {/* 2. Sede / Cancha */}
+            {/* 2. Sede / Cancha (Condicional según Disciplina seleccionada) */}
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-400 mb-1">
-                Sede / Cancha
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-400 mb-1 flex items-center justify-between">
+                <span>Sede / Cancha</span>
+                {selectedDiscipline !== "all" && (
+                  <span className="text-[9px] text-red-400 font-extrabold uppercase">
+                    {selectedDiscipline}
+                  </span>
+                )}
               </label>
               <select
                 value={selectedVenue}
                 onChange={(e) => setSelectedVenue(e.target.value)}
                 className="w-full rounded-xl border border-neutral-700 bg-neutral-950 px-3 py-2 text-xs font-semibold text-neutral-200 focus:border-red-500 focus:outline-none"
               >
-                <option value="all">📍 Todas las Canchas (6 Sedes)</option>
-                <option value="Cancha Hogar Canario">Hogar Canario (Futsal · 9 PJ)</option>
-                <option value="Cancha de Futsal La Paz">Cancha La Paz (Futsal · 6 PJ)</option>
-                <option value="Parque Carabobo">Parque Carabobo (Futsal · 15 PJ)</option>
-                <option value="Bloque 17 de 23 de Enero">Bloque 17 - 23 de Enero (Futsal · 7 PJ)</option>
-                <option value="Cancha Zona Rental">Cancha Zona Rental (Fútbol 7 · 5 PJ)</option>
-                <option value="Cancha Guacamaya">Cancha Guacamaya (Fútbol 7 · 6 PJ)</option>
+                <option value="all">
+                  📍 {selectedDiscipline === "all"
+                    ? `Todas las Canchas (${availableVenues.length} Sedes)`
+                    : `Sedes de ${selectedDiscipline} (${availableVenues.length})`}
+                </option>
+                {availableVenues.map((v) => (
+                  <option key={v.venue} value={v.venue}>
+                    {v.venue.replace("Cancha de Futsal ", "Cancha ")} ({v.count} PJ)
+                  </option>
+                ))}
               </select>
             </div>
 
