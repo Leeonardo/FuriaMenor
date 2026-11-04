@@ -18,6 +18,8 @@ import {
   Activity,
   Sparkles,
   Clock,
+  Share2,
+  Users,
 } from "lucide-react";
 import { useState, useEffect, useMemo, Suspense } from "react";
 import {
@@ -31,6 +33,10 @@ import {
 import { getStoredMatches, DBMatch } from "@/lib/db-store";
 import { ScoresheetModal } from "@/components/transparency/scoresheet-modal";
 import { formatDateVE, formatFullDateVE } from "@/lib/date-utils";
+import {
+  CalendarSocialExportModal,
+  CalendarExportMatch,
+} from "@/components/calendar/calendar-social-export-modal";
 
 interface ExtendedMatch {
   id: string;
@@ -70,6 +76,7 @@ function CalendarioContent() {
   const [selectedVenue, setSelectedVenue] = useState<string>("all");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedDate, setSelectedDate] = useState<string>("all");
+  const [selectedTeam, setSelectedTeam] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [groupBy, setGroupBy] = useState<GroupByMode>("date");
 
@@ -77,17 +84,23 @@ function CalendarioContent() {
   const [storedDbMatches, setStoredDbMatches] = useState<DBMatch[]>([]);
   const [selectedScoresheetMatch, setSelectedScoresheetMatch] = useState<any>(null);
 
+  // Estado para exportación en redes sociales
+  const [isSocialModalOpen, setIsSocialModalOpen] = useState<boolean>(false);
+  const [socialModalMatches, setSocialModalMatches] = useState<CalendarExportMatch[]>([]);
+
   // Inicializar parámetros desde la URL
   useEffect(() => {
     const pDiscipline = searchParams.get("disciplina");
     const pSede = searchParams.get("sede");
     const pCat = searchParams.get("cat") || searchParams.get("categoria");
     const pFecha = searchParams.get("fecha");
+    const pEquipo = searchParams.get("equipo") || searchParams.get("team");
 
     if (pDiscipline) setSelectedDiscipline(pDiscipline);
     if (pSede) setSelectedVenue(pSede);
     if (pCat) setSelectedCategory(pCat);
     if (pFecha) setSelectedDate(pFecha);
+    if (pEquipo) setSelectedTeam(pEquipo);
   }, [searchParams]);
 
   useEffect(() => {
@@ -136,6 +149,16 @@ function CalendarioContent() {
     return dates;
   }, [allMatches]);
 
+  // Lista de equipos únicos disponibles para filtro interactivo
+  const availableTeams = useMemo(() => {
+    const teams = new Set<string>();
+    allMatches.forEach((m) => {
+      if (m.homeTeam) teams.add(m.homeTeam);
+      if (m.awayTeam) teams.add(m.awayTeam);
+    });
+    return Array.from(teams).sort();
+  }, [allMatches]);
+
   // Filtrado reactivo de partidos
   const filteredMatches = useMemo(() => {
     return allMatches.filter((m) => {
@@ -163,6 +186,11 @@ function CalendarioContent() {
         return false;
       }
 
+      // Filtro de equipo específico
+      if (selectedTeam !== "all" && m.homeTeam !== selectedTeam && m.awayTeam !== selectedTeam) {
+        return false;
+      }
+
       // Búsqueda por texto (equipo o sede)
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
@@ -177,7 +205,7 @@ function CalendarioContent() {
 
       return true;
     });
-  }, [allMatches, selectedDiscipline, selectedVenue, selectedCategory, selectedDate, searchQuery]);
+  }, [allMatches, selectedDiscipline, selectedVenue, selectedCategory, selectedDate, selectedTeam, searchQuery]);
 
   // Conteo de disciplinas
   const futsalCount = useMemo(() => filteredMatches.filter((m) => m.discipline === "Fútbol Sala").length, [filteredMatches]);
@@ -189,6 +217,7 @@ function CalendarioContent() {
     selectedVenue !== "all" ||
     selectedCategory !== "all" ||
     selectedDate !== "all" ||
+    selectedTeam !== "all" ||
     searchQuery.trim() !== "";
 
   const handleResetFilters = () => {
@@ -196,6 +225,7 @@ function CalendarioContent() {
     setSelectedVenue("all");
     setSelectedCategory("all");
     setSelectedDate("all");
+    setSelectedTeam("all");
     setSearchQuery("");
   };
 
@@ -342,7 +372,7 @@ function CalendarioContent() {
           </div>
 
           {/* Selectores de Filtro en Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
             {/* 1. Disciplina */}
             <div>
               <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-400 mb-1">
@@ -411,47 +441,81 @@ function CalendarioContent() {
                 <option value="all">🗓️ Todas las Fechas Oficiales</option>
                 <option value="2026-11-05">Jueves 5-11-2026 (Zona Rental F7)</option>
                 <option value="2026-11-06">Viernes 6-11-2026 (Cancha Guacamaya F7)</option>
-                <option value="2026-11-07">Sábado 7-11-2026 (Hogar Canario, La Paz, Parque Carabobo, Zona Rental, Guacamaya)</option>
-                <option value="2026-11-08">Domingo 8-11-2026 (Parque Carabobo, Bloque 17 23 de Enero)</option>
+                <option value="2026-11-07">Sábado 7-11-2026 (Hogar Canario, La Paz, Carabobo, etc.)</option>
+                <option value="2026-11-08">Domingo 8-11-2026 (Carabobo, Bloque 17)</option>
+              </select>
+            </div>
+
+            {/* 5. Filtrar por Equipo */}
+            <div>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-400 mb-1">
+                Filtrar por Equipo
+              </label>
+              <select
+                value={selectedTeam}
+                onChange={(e) => setSelectedTeam(e.target.value)}
+                className="w-full rounded-xl border border-neutral-700 bg-neutral-950 px-3 py-2 text-xs font-semibold text-neutral-200 focus:border-red-500 focus:outline-none"
+              >
+                <option value="all">🛡️ Todos los Equipos ({availableTeams.length})</option>
+                {availableTeams.map((team) => (
+                  <option key={team} value={team}>
+                    {team}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
 
-          {/* Agrupación */}
+          {/* Agrupación y Botón de Exportar Cartelera */}
           <div className="pt-2 flex flex-wrap items-center justify-between gap-3 text-xs">
-            <div className="flex items-center gap-1.5 text-neutral-400">
-              <Layers className="h-3.5 w-3.5 text-neutral-400" />
-              <span className="font-semibold text-neutral-300">Modo de Vista:</span>
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-1.5 text-neutral-400">
+                <Layers className="h-3.5 w-3.5 text-neutral-400" />
+                <span className="font-semibold text-neutral-300">Modo de Vista:</span>
+              </div>
+              <div className="flex items-center rounded-xl bg-neutral-950 p-1 border border-neutral-800">
+                <button
+                  type="button"
+                  onClick={() => setGroupBy("date")}
+                  className={`rounded-lg px-3 py-1 text-xs font-bold transition ${
+                    groupBy === "date" ? "bg-red-600 text-white shadow-sm" : "text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  Por Fecha
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setGroupBy("venue")}
+                  className={`rounded-lg px-3 py-1 text-xs font-bold transition ${
+                    groupBy === "venue" ? "bg-red-600 text-white shadow-sm" : "text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  Por Sede / Cancha
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setGroupBy("list")}
+                  className={`rounded-lg px-3 py-1 text-xs font-bold transition ${
+                    groupBy === "list" ? "bg-red-600 text-white shadow-sm" : "text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  Lista Continua
+                </button>
+              </div>
             </div>
-            <div className="flex items-center rounded-xl bg-neutral-950 p-1 border border-neutral-800">
-              <button
-                type="button"
-                onClick={() => setGroupBy("date")}
-                className={`rounded-lg px-3 py-1 text-xs font-bold transition ${
-                  groupBy === "date" ? "bg-red-600 text-white shadow-sm" : "text-neutral-400 hover:text-white"
-                }`}
-              >
-                Por Fecha
-              </button>
-              <button
-                type="button"
-                onClick={() => setGroupBy("venue")}
-                className={`rounded-lg px-3 py-1 text-xs font-bold transition ${
-                  groupBy === "venue" ? "bg-red-600 text-white shadow-sm" : "text-neutral-400 hover:text-white"
-                }`}
-              >
-                Por Sede / Cancha
-              </button>
-              <button
-                type="button"
-                onClick={() => setGroupBy("list")}
-                className={`rounded-lg px-3 py-1 text-xs font-bold transition ${
-                  groupBy === "list" ? "bg-red-600 text-white shadow-sm" : "text-neutral-400 hover:text-white"
-                }`}
-              >
-                Lista Continua
-              </button>
-            </div>
+
+            {/* Botón Destacado de Exportación de Cartelera */}
+            <button
+              type="button"
+              onClick={() => {
+                setSocialModalMatches(filteredMatches);
+                setIsSocialModalOpen(true);
+              }}
+              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-red-600 via-rose-600 to-amber-600 hover:from-red-500 hover:to-rose-500 text-white px-4 py-2 text-xs font-black shadow-lg shadow-red-600/30 transition border border-red-400/40 active:scale-95"
+            >
+              <Sparkles className="h-4 w-4 text-amber-300" />
+              <span>📸 Exportar Cartelera (Historias / Feed / WhatsApp)</span>
+            </button>
           </div>
         </div>
 
@@ -552,9 +616,23 @@ function CalendarioContent() {
                             </span>
                           </div>
 
-                          <span className={`rounded-full border px-2.5 py-0.5 text-[11px] font-bold ${statusClass(match.status)}`}>
-                            {statusLabel(match.status)}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSocialModalMatches([match]);
+                                setIsSocialModalOpen(true);
+                              }}
+                              className="inline-flex items-center gap-1 rounded-full border border-neutral-700 bg-neutral-800/90 hover:bg-neutral-700 hover:text-white px-2.5 py-0.5 text-[10.5px] font-bold text-neutral-300 transition shadow-sm active:scale-95"
+                              title="Exportar flyer oficial de este partido para Instagram o WhatsApp"
+                            >
+                              <Share2 className="h-3 w-3 text-red-400" />
+                              <span>Flyer Redes</span>
+                            </button>
+                            <span className={`rounded-full border px-2.5 py-0.5 text-[11px] font-bold ${statusClass(match.status)}`}>
+                              {statusLabel(match.status)}
+                            </span>
+                          </div>
                         </div>
 
                         {/* Enfrentamiento y Marcador */}
@@ -648,6 +726,20 @@ function CalendarioContent() {
         isOpen={!!selectedScoresheetMatch}
         onClose={() => setSelectedScoresheetMatch(null)}
         match={selectedScoresheetMatch}
+      />
+
+      {/* MODAL DE EXPORTACIÓN PARA REDES SOCIALES (HISTORIAS / FEED / WHATSAPP) */}
+      <CalendarSocialExportModal
+        isOpen={isSocialModalOpen}
+        onClose={() => setIsSocialModalOpen(false)}
+        matches={socialModalMatches}
+        activeFilterSummary={{
+          venue: selectedVenue,
+          date: selectedDate,
+          team: selectedTeam,
+          category: selectedCategory,
+          discipline: selectedDiscipline,
+        }}
       />
     </div>
   );
