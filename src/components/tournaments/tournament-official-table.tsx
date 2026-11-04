@@ -33,6 +33,7 @@ interface TournamentOfficialTableProps {
   rows: OfficialTableRow[];
   baseTournamentPath?: string;
   currentCategory?: string;
+  highlightedTeam?: string;
 }
 
 // Escudo oficial o monograma de respaldo
@@ -41,9 +42,14 @@ function TableTeamShield({ teamName, size = 22 }: { teamName: string; size?: num
 
   if (academy) {
     return (
-      <div style={{ width: size, height: size }} className="shrink-0 flex items-center justify-center">
+      <Link
+        href={`/academias/${academy.slug}`}
+        style={{ width: size, height: size }}
+        className="shrink-0 flex items-center justify-center transition-transform hover:scale-110"
+        title={`Ver perfil del club ${academy.name}`}
+      >
         <AcademyBadge slug={academy.slug} size={size} logoUrl={academy.logoUrl} />
-      </div>
+      </Link>
     );
   }
 
@@ -118,6 +124,7 @@ export function TournamentOfficialTable({
   rows,
   baseTournamentPath,
   currentCategory,
+  highlightedTeam,
 }: TournamentOfficialTableProps) {
   return (
     <div className="w-full overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950 shadow-2xl backdrop-blur-md">
@@ -168,21 +175,26 @@ export function TournamentOfficialTable({
               const isClassified = row.pos <= qualificationCutoff && !isEliminated;
               const teamSlug = row.team.toLowerCase().replace(/\s+/g, "-");
               const catParam = currentCategory ? `?cat=${currentCategory}` : "";
-              const teamHref = baseTournamentPath
+              const academy = getAcademyBySlug(row.team);
+              const targetHref = academy
+                ? `/academias/${academy.slug}`
+                : baseTournamentPath
                 ? `${baseTournamentPath}/equipos/${teamSlug}${catParam}`
                 : undefined;
               const form = getTeamForm(row);
               const trend = getTrend(row);
+              const isHighlighted = highlightedTeam && (
+                row.team.toLowerCase().includes(highlightedTeam.toLowerCase()) ||
+                highlightedTeam.toLowerCase().includes(row.team.toLowerCase())
+              );
 
               return (
-                <motion.tr
+                <tr
                   key={row.team}
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.2, delay: Math.min(idx * 0.02, 0.25) }}
-                  whileHover={{ backgroundColor: "rgba(255, 255, 255, 0.03)" }}
-                  className={`transition-colors duration-150 ${
-                    isEliminated
+                  className={`transition-colors duration-150 hover:bg-white/[0.04] ${
+                    isHighlighted
+                      ? "bg-red-600/20 ring-2 ring-red-500/80 font-bold"
+                      : isEliminated
                       ? "bg-red-950/20 text-red-200 border-l-4 border-l-red-500"
                       : isClassified
                       ? "border-l-4 border-l-emerald-500/70"
@@ -225,15 +237,15 @@ export function TournamentOfficialTable({
                         <span className="h-1.5 w-1.5 rounded-full bg-red-400 shrink-0 shadow-sm shadow-red-400/50" />
                       )}
 
-                      {teamHref ? (
+                      {targetHref ? (
                         <Link
-                          href={teamHref}
+                          href={targetHref}
                           className="truncate uppercase tracking-wide hover:text-red-400 transition hover:underline group flex items-center gap-1.5"
-                          title={`Ver plantilla de ${row.team}`}
+                          title={`Ver perfil y plantilla de ${row.team}`}
                         >
                           <span className="truncate">{row.team}</span>
                           <span className="text-[10px] text-neutral-500 font-normal group-hover:text-red-400 opacity-0 group-hover:opacity-100 transition shrink-0">
-                            (Plantilla)
+                            {academy ? "(Club)" : "(Plantilla)"}
                           </span>
                         </Link>
                       ) : (
@@ -285,7 +297,7 @@ export function TournamentOfficialTable({
                       ))}
                     </div>
                   </td>
-                </motion.tr>
+                </tr>
               );
             })}
           </tbody>

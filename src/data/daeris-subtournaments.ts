@@ -85,7 +85,7 @@ function buildCategoryPayload(
   const matchesToUse = officialNovMatches.length > 0 ? officialNovMatches : fallbackMatches;
 
   return {
-    standings: createCategoryStandings(category, prefix),
+    standings: createCategoryStandings(category, prefix, tournamentSlug),
     topScorers: createGenericScorers(prefix, category),
     leastConceded: createGenericKeepers(prefix, category),
     matches: matchesToUse,

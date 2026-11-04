@@ -208,16 +208,171 @@ export function createGenericStandings(prefix = "Equipo", categoryName = "Sub-12
   ];
 }
 
+export const OFFICIAL_TEAMS_1RA_DIV: Record<string, string[]> = {
+  "Sub-8": [
+    "La Ladera (B)",
+    "Fuerza Vinotinto",
+    "Funvibra",
+    "Fratelsa Sport Blanco",
+    "Dvo Manaure",
+    "Fratelsa Sport Amarillo",
+    "Fusión Académica",
+    "Futconexión (A)",
+    "Unión Libertador",
+    "Dvo JC",
+    "Fratelsa Sport Negro",
+  ],
+  "Sub-10": [
+    "Futconexión",
+    "Inter de Caracas",
+    "Fusión Académica (B)",
+    "La Paz Futsal",
+    "Real Libertad",
+    "Dvo Mirador",
+  ],
+  "Sub-12": [
+    "Fusión Académica (A)",
+    "Fusión Académica (B)",
+    "La Paz Futsal",
+    "Espartanos Futsal",
+    "Tetsu Futsal",
+    "Dvo Odín",
+  ],
+  "Sub-14": [
+    "La Ladera (A)",
+    "Guatire Futsal",
+    "La Ladera (B)",
+    "Fénix Futsal",
+    "Real Esperanza",
+    "Espartanos Futsal",
+    "La Paz Futsal Verde",
+    "Tetsu Futsal",
+    "Camatagua",
+  ],
+  "Sub-16": [
+    "La Ladera",
+    "Guatire Futsal",
+    "Real Esperanza (A)",
+    "Real Esperanza (B)",
+    "Élite Caracas",
+    "NC Sport",
+    "Caricuao",
+  ],
+  "Sub-18": [
+    "Real Esperanza",
+    "Felinos FS",
+    "Team Soublette",
+    "Overcoming",
+    "Kay Kings",
+    "Nuevo Día FC",
+    "Los Jardines FC",
+    "Guerreros del Valle",
+  ],
+  "Sub-20": [
+    "Espartanos Futsal",
+    "La Paz Futsal",
+    "Futconexión",
+    "Fusión Académica",
+    "Real Esperanza",
+    "Unión Libertador",
+  ],
+};
+
+export const OFFICIAL_TEAMS_2DA_DIV: Record<string, string[]> = {
+  "Sub-8": [
+    "La Ladera (B)",
+    "Fuerza Vinotinto",
+    "Funvibra",
+    "Fratelsa Sport Blanco",
+    "Dvo Manaure",
+    "Fratelsa Sport Amarillo",
+    "Fusión Académica",
+    "Futconexión (A)",
+    "Unión Libertador",
+    "Dvo JC",
+    "Fratelsa Sport Negro",
+  ],
+  "Sub-10": [
+    "Fusión Académica (B)",
+    "La Paz Futsal",
+    "Real Libertad",
+    "Dvo Mirador",
+    "Intocable",
+    "Fusión Académica",
+    "Funvibra",
+    "Fratelsa Sport",
+    "FALG",
+    "Academia Winners",
+  ],
+  "Sub-12": [
+    "Ricardinho",
+    "FALG",
+    "Dvo Odín",
+    "Espartanos Futsal",
+    "La Paz Futsal",
+    "Fusión Académica (B)",
+  ],
+  "Sub-14": [
+    "La Ladera",
+    "Fuerza Vinotinto",
+    "Espartanos Cutira",
+    "Dvo Mirador",
+    "Dvo Manaure",
+    "Funvibra (A)",
+    "Dvo JC",
+    "Foro Libertador",
+  ],
+  "Sub-16": [
+    "Espartanos Cutira",
+    "Hogar Canario",
+    "Espartanos Futsal",
+    "Alí Primera",
+    "Funvibra",
+    "Dvo Manaure",
+    "Ricardinho (B)",
+    "Unión Libertador",
+    "Gladiadores Caricuao",
+  ],
+  "Sub-18": [
+    "Kay Kings",
+    "Nuevo Día FC",
+    "Los Jardines FC",
+    "Guerreros del Valle",
+    "Real Esperanza",
+    "Felinos FS",
+    "Team Soublette",
+    "Overcoming",
+  ],
+  "Sub-20": [
+    "Espartanos Futsal",
+    "La Paz Futsal",
+    "Futconexión",
+    "Fusión Académica",
+    "Real Esperanza",
+    "Unión Libertador",
+  ],
+};
+
 /**
  * Genera la tabla para una categoría menor específica (Sub-8 a Sub-20).
  * Integra los nombres reales de los equipos del calendario oficial 2026.
  */
 export function createCategoryStandings(
   category: MinorCategory | string,
-  prefix = "Equipo"
+  prefix = "Equipo",
+  divisionSlug?: string
 ): OfficialTableRow[] {
   const catKey = String(category);
-  const realTeams = OFFICIAL_TEAMS_BY_CATEGORY[catKey] || OFFICIAL_TEAMS_BY_CATEGORY[category as any];
+  const is2da = divisionSlug?.includes("2da");
+  const is1ra = divisionSlug?.includes("1ra");
+
+  const pool = is2da
+    ? OFFICIAL_TEAMS_2DA_DIV[catKey] || OFFICIAL_TEAMS_BY_CATEGORY[catKey]
+    : is1ra
+    ? OFFICIAL_TEAMS_1RA_DIV[catKey] || OFFICIAL_TEAMS_BY_CATEGORY[catKey]
+    : OFFICIAL_TEAMS_BY_CATEGORY[catKey] || OFFICIAL_TEAMS_BY_CATEGORY[category as any];
+
+  const realTeams = pool && pool.length > 0 ? pool : OFFICIAL_TEAMS_BY_CATEGORY[catKey];
 
   if (realTeams && realTeams.length > 0) {
     return realTeams.map((teamName, idx) => {
@@ -519,22 +674,34 @@ export function createGenericTeamProfiles(
 
   const dorsales = [1, 2, 3, 4, 7, 8, 11, 9, 10, 12];
 
+  const is2da = tournamentSlug.includes("2da");
+  const is1ra = tournamentSlug.includes("1ra");
+  const pool = is2da
+    ? OFFICIAL_TEAMS_2DA_DIV[category] || OFFICIAL_TEAMS_BY_CATEGORY[category]
+    : is1ra
+    ? OFFICIAL_TEAMS_1RA_DIV[category] || OFFICIAL_TEAMS_BY_CATEGORY[category]
+    : OFFICIAL_TEAMS_BY_CATEGORY[category] || [];
+
+  const teamNamesList = pool && pool.length > 0
+    ? pool
+    : Array.from({ length: 8 }, (_, i) => `Equipo ${i + 1}`);
+
   const teams: TeamProfile[] = [];
 
-  for (let t = 1; t <= 11; t++) {
-    const teamNumStr = String(t).padStart(2, "0");
+  for (let t = 0; t < teamNamesList.length; t++) {
+    const teamName = teamNamesList[t];
+    const teamIdx1 = t + 1;
+    const teamNumStr = String(teamIdx1).padStart(2, "0");
     const teamCode = `EQ${teamNumStr}`;
     const teamId = generateTeamId(tournamentCode, divisionCode, catCode, teamNumStr);
-    const teamSlug = `equipo-${t}`;
-    const teamName = `Equipo ${t}`;
+    const teamSlug = teamName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
     const roster: TeamPlayerItem[] = [];
 
     for (let p = 0; p < 10; p++) {
       const dorsal = dorsales[p];
       const pos = positions[p];
-      // CI única determinista basada en el número de equipo y dorsal
-      const ciRaw = 33000000 + t * 1000 + dorsal * 10;
+      const ciRaw = 33000000 + teamIdx1 * 1000 + dorsal * 10;
       const ciFormatted = `V-${String(ciRaw).replace(/(\d{2})(\d{3})(\d{3})/, "$1.$2.$3")}`;
       const playerUniqueId = generatePlayerTournamentId(
         tournamentCode,
@@ -551,17 +718,17 @@ export function createGenericTeamProfiles(
         id: playerUniqueId,
         ci: ciFormatted,
         dorsal,
-        name: `Jugador ${t}-${dorsal}`,
+        name: `Atleta ${dorsal} (${teamName})`,
         position: pos,
         category,
         teamId,
         teamName,
         matchesPlayed: 6,
-        goals: isKeeper ? 0 : isTopScorer ? (t === 1 ? 8 : 4) : p % 3,
+        goals: isKeeper ? 0 : isTopScorer ? (teamIdx1 === 1 ? 8 : 4) : p % 3,
         yellowCards: p % 4 === 0 ? 1 : 0,
         redCards: 0,
-        cleanSheets: isKeeper ? (t <= 3 ? 3 : 1) : undefined,
-        goalsConceded: isKeeper ? (t === 1 ? 3 : 6) : undefined,
+        cleanSheets: isKeeper ? (teamIdx1 <= 3 ? 3 : 1) : undefined,
+        goalsConceded: isKeeper ? (teamIdx1 === 1 ? 3 : 6) : undefined,
       });
     }
 
@@ -569,14 +736,14 @@ export function createGenericTeamProfiles(
       id: teamId,
       slug: teamSlug,
       name: teamName,
-      shortName: `EQ ${t}`,
+      shortName: teamName.length > 14 ? teamName.slice(0, 12) + ".." : teamName,
       tournamentId: tournamentCode.toLowerCase(),
       subTournamentSlug: tournamentSlug,
       subTournamentName: tournamentName,
       category,
-      coach: `Director Técnico ${t}`,
-      assistantCoach: `Asistente Técnico ${t}`,
-      delegate: `Delegado ${t}`,
+      coach: `Profesor ${teamName.split(" ")[0]}`,
+      assistantCoach: `Asistente ${teamName.split(" ")[0]}`,
+      delegate: `Delegado ${teamName.split(" ")[0]}`,
       venue: "Cancha Principal, Gimnasio Libertador",
       roster,
     });
