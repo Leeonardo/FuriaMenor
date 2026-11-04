@@ -11,6 +11,7 @@ import {
   Municipality,
   SportDiscipline,
   AcademyCategory,
+  EntityType,
   filterAcademies,
 } from "@/data/academies-data";
 import { AcademyBadge } from "@/components/academies/academy-badge";
@@ -27,6 +28,8 @@ import {
   Sparkles,
   ChevronRight,
   Star,
+  GraduationCap,
+  ShieldCheck,
 } from "lucide-react";
 
 export function AcademiesDirectory() {
@@ -34,6 +37,18 @@ export function AcademiesDirectory() {
   const [selectedMunicipality, setSelectedMunicipality] = useState<Municipality | "all">("all");
   const [selectedDiscipline, setSelectedDiscipline] = useState<SportDiscipline | "all">("all");
   const [selectedCategory, setSelectedCategory] = useState<AcademyCategory | "all">("all");
+  // Por defecto, muestra Academias Formativas (Sub-6 a Sub-20)
+  const [selectedEntityType, setSelectedEntityType] = useState<EntityType | "all">("academia");
+
+  // Conteos para los botones segmentados
+  const academiesCount = useMemo(
+    () => academiesData.filter((a) => a.entityType === "academia" || a.entityType === "ambos").length,
+    []
+  );
+  const clubsCount = useMemo(
+    () => academiesData.filter((a) => a.entityType === "club" || a.entityType === "ambos").length,
+    []
+  );
 
   const filtered = useMemo(() => {
     return filterAcademies(academiesData, {
@@ -41,20 +56,23 @@ export function AcademiesDirectory() {
       municipality: selectedMunicipality,
       discipline: selectedDiscipline,
       category: selectedCategory,
+      entityType: selectedEntityType,
     });
-  }, [searchQuery, selectedMunicipality, selectedDiscipline, selectedCategory]);
+  }, [searchQuery, selectedMunicipality, selectedDiscipline, selectedCategory, selectedEntityType]);
 
   const hasActiveFilters =
     searchQuery !== "" ||
     selectedMunicipality !== "all" ||
     selectedDiscipline !== "all" ||
-    selectedCategory !== "all";
+    selectedCategory !== "all" ||
+    selectedEntityType !== "academia";
 
   const clearFilters = () => {
     setSearchQuery("");
     setSelectedMunicipality("all");
     setSelectedDiscipline("all");
     setSelectedCategory("all");
+    setSelectedEntityType("academia");
   };
 
   return (
@@ -85,6 +103,56 @@ export function AcademiesDirectory() {
               Limpiar todos los filtros
             </button>
           )}
+        </div>
+
+        {/* SELECTOR SEGMENTADO: ACADEMIAS FORMATIVAS VS CLUBES DEPORTIVOS */}
+        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1 pb-2 border-b border-neutral-800">
+          <button
+            type="button"
+            onClick={() => setSelectedEntityType("academia")}
+            className={`inline-flex items-center gap-2 rounded-2xl px-4 py-2.5 text-xs font-black transition ${
+              selectedEntityType === "academia"
+                ? "bg-red-600 text-white shadow-lg shadow-red-600/30 ring-1 ring-red-400"
+                : "border border-neutral-800 bg-neutral-950 text-neutral-400 hover:text-white hover:border-neutral-700"
+            }`}
+          >
+            <GraduationCap className="h-4 w-4" />
+            <span>Academias Formativas (Menores)</span>
+            <span className="rounded-full bg-black/30 px-2 py-0.5 text-[10px] text-white font-bold">
+              {academiesCount}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setSelectedEntityType("club")}
+            className={`inline-flex items-center gap-2 rounded-2xl px-4 py-2.5 text-xs font-black transition ${
+              selectedEntityType === "club"
+                ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 ring-1 ring-emerald-400"
+                : "border border-neutral-800 bg-neutral-950 text-neutral-400 hover:text-white hover:border-neutral-700"
+            }`}
+          >
+            <Shield className="h-4 w-4" />
+            <span>Clubes Mayores (Fútbol 7 & Libres)</span>
+            <span className="rounded-full bg-black/30 px-2 py-0.5 text-[10px] text-white font-bold">
+              {clubsCount}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setSelectedEntityType("all")}
+            className={`inline-flex items-center gap-2 rounded-2xl px-4 py-2.5 text-xs font-black transition ${
+              selectedEntityType === "all"
+                ? "bg-neutral-100 text-neutral-950 shadow-md font-black"
+                : "border border-neutral-800 bg-neutral-950 text-neutral-400 hover:text-white hover:border-neutral-700"
+            }`}
+          >
+            <span>Ver Todo el Directorio</span>
+            <span className="rounded-full bg-neutral-800 px-2 py-0.5 text-[10px] text-neutral-300 font-bold">
+              {academiesData.length}
+            </span>
+          </button>
         </div>
 
         {/* Buscador de texto */}
@@ -246,10 +314,23 @@ export function AcademiesDirectory() {
                   </Link>
 
                   <div className="flex flex-col items-end gap-1.5">
-                    <span className="rounded-full bg-red-500/10 border border-red-500/20 px-2.5 py-0.5 text-[10px] font-bold text-red-400 uppercase tracking-wider">
+                    {acad.entityType === "ambos" ? (
+                      <span className="rounded-full bg-purple-500/15 border border-purple-500/30 px-2.5 py-0.5 text-[9.5px] font-black text-purple-300 uppercase tracking-wider">
+                        Cantera & Club
+                      </span>
+                    ) : acad.entityType === "club" ? (
+                      <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-[9.5px] font-black text-emerald-300 uppercase tracking-wider">
+                        Club Fútbol 7 / Libre
+                      </span>
+                    ) : (
+                      <span className="rounded-full bg-red-500/15 border border-red-500/30 px-2.5 py-0.5 text-[9.5px] font-black text-red-400 uppercase tracking-wider">
+                        Academia Formativa
+                      </span>
+                    )}
+                    <span className="rounded-full bg-neutral-800 border border-neutral-700 px-2 py-0.5 text-[10px] font-bold text-neutral-300 uppercase tracking-wider">
                       {acad.municipality}
                     </span>
-                    <span className="text-[11px] text-neutral-500 font-medium">
+                    <span className="text-[10.5px] text-neutral-500 font-medium">
                       Fund. {acad.foundationYear}
                     </span>
                   </div>

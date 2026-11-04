@@ -2,6 +2,8 @@ export type Municipality = "Libertador" | "Chacao" | "Baruta" | "Sucre" | "El Ha
 
 export type SportDiscipline = "Fútbol Sala" | "Fútbol Campo" | "Fútbol 7";
 
+export type EntityType = "academia" | "club" | "ambos";
+
 export type AcademyCategory =
   | "Sub-6"
   | "Sub-8"
@@ -64,6 +66,7 @@ export interface Academy {
   name: string;
   officialName: string;
   shortName: string;
+  entityType?: EntityType;
   foundationYear: number;
   founder?: string;
   motto: string;
@@ -134,6 +137,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-01",
     slug: "dvo-paraiso",
+    entityType: "ambos",
     name: "DVO Paraíso",
     officialName: "Deportivo Paraíso Futsal Club",
     shortName: "DVO Paraíso",
@@ -245,6 +249,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-02",
     slug: "fenix-fs",
+    entityType: "academia",
     name: "Fénix FS",
     officialName: "Fénix Futsal Academia",
     shortName: "Fénix FS",
@@ -325,6 +330,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-03",
     slug: "fratelsa-sport",
+    entityType: "ambos",
     name: "Fratelsa Sport",
     officialName: "Asociación Civil Fratelsa Sport Club",
     shortName: "Fratelsa",
@@ -415,6 +421,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-04",
     slug: "futsaconexion",
+    entityType: "academia",
     name: "Futsaconexion",
     officialName: "Club Social y Deportivo Futsaconexion",
     shortName: "Futconexión",
@@ -493,6 +500,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-05",
     slug: "union-libertador",
+    entityType: "ambos",
     name: "Union Libertador",
     officialName: "Club Unión Libertador Futsal",
     shortName: "Unión Lib",
@@ -564,6 +572,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-06",
     slug: "tetsu-futsal",
+    entityType: "academia",
     name: "Tetsu Futsal",
     officialName: "Club Deportivo Tetsu Futsal",
     shortName: "Tetsu",
@@ -633,6 +642,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-07",
     slug: "black-bulls",
+    entityType: "academia",
     name: "Black Bulls",
     officialName: "Black Bulls Academy Club",
     shortName: "Black Bulls",
@@ -700,6 +710,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-08",
     slug: "espartanos-cutira",
+    entityType: "academia",
     name: "Espartanos Cutira",
     officialName: "Club Deportivo Espartanos de Cutira",
     shortName: "Espartanos",
@@ -767,6 +778,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-09",
     slug: "academia-winners",
+    entityType: "academia",
     name: "Academia Winners",
     officialName: "Winners Soccer Academy El Hatillo",
     shortName: "Winners",
@@ -834,6 +846,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-10",
     slug: "la-paz-futsal",
+    entityType: "ambos",
     name: "La Paz Futsal",
     officialName: "Club Deportivo & Cancha de Futsal La Paz",
     shortName: "La Paz FS",
@@ -1006,6 +1019,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-11",
     slug: "la-ladera",
+    entityType: "academia",
     name: "La Ladera",
     officialName: "La Ladera",
     shortName: "La Ladera",
@@ -1060,6 +1074,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-12",
     slug: "fuerza-vinotinto",
+    entityType: "academia",
     name: "Fuerza Vinotinto",
     officialName: "Fuerza Vinotinto",
     shortName: "Fuerza Vinotinto",
@@ -1114,6 +1129,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-13",
     slug: "guatire-futsal",
+    entityType: "academia",
     name: "Guatire Futsal",
     officialName: "Guatire Futsal",
     shortName: "Guatire Futsal",
@@ -1168,6 +1184,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-14",
     slug: "real-esperanza",
+    entityType: "academia",
     name: "Real Esperanza",
     officialName: "Real Esperanza",
     shortName: "Real Esperanza",
@@ -1222,6 +1239,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-15",
     slug: "elite-caracas",
+    entityType: "academia",
     name: "Élite Caracas",
     officialName: "Élite Caracas",
     shortName: "Élite Caracas",
@@ -1276,6 +1294,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-16",
     slug: "hogar-canario",
+    entityType: "academia",
     name: "Hogar Canario",
     officialName: "Hogar Canario",
     shortName: "Hogar Canario",
@@ -1330,6 +1349,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-17",
     slug: "nc-sport",
+    entityType: "academia",
     name: "NC Sport",
     officialName: "NC Sport",
     shortName: "NC Sport",
@@ -1384,6 +1404,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-18",
     slug: "fusion-academica",
+    entityType: "academia",
     name: "Fusión Académica",
     officialName: "Fusión Académica",
     shortName: "Fusión Académica",
@@ -1438,6 +1459,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-19",
     slug: "ali-primera",
+    entityType: "academia",
     name: "Alí Primera",
     officialName: "Alí Primera",
     shortName: "Alí Primera",
@@ -1492,6 +1514,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-20",
     slug: "inter-de-caracas",
+    entityType: "academia",
     name: "Inter de Caracas",
     officialName: "Inter de Caracas",
     shortName: "Inter de Caracas",
@@ -1546,6 +1569,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-21",
     slug: "real-libertad",
+    entityType: "academia",
     name: "Real Libertad",
     officialName: "Real Libertad",
     shortName: "Real Libertad",
@@ -1600,6 +1624,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-22",
     slug: "dvo-mirador",
+    entityType: "academia",
     name: "Deportivo Mirador",
     officialName: "Deportivo Mirador",
     shortName: "Deportivo Mirador",
@@ -1654,6 +1679,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-23",
     slug: "intocable",
+    entityType: "academia",
     name: "Intocable",
     officialName: "Intocable",
     shortName: "Intocable",
@@ -1708,6 +1734,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-24",
     slug: "dvo-manaure",
+    entityType: "academia",
     name: "Deportivo Manaure",
     officialName: "Deportivo Manaure",
     shortName: "Deportivo Manaure",
@@ -1762,6 +1789,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-25",
     slug: "funvibra",
+    entityType: "academia",
     name: "Funvibra",
     officialName: "Funvibra",
     shortName: "Funvibra",
@@ -1816,6 +1844,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-26",
     slug: "ricardinho",
+    entityType: "academia",
     name: "Ricardinho",
     officialName: "Ricardinho",
     shortName: "Ricardinho",
@@ -1870,6 +1899,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-27",
     slug: "falg",
+    entityType: "academia",
     name: "FALG",
     officialName: "FALG",
     shortName: "FALG",
@@ -1924,6 +1954,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-28",
     slug: "gladiadores-caricuao",
+    entityType: "academia",
     name: "Gladiadores Caricuao",
     officialName: "Gladiadores Caricuao",
     shortName: "Gladiadores Caricuao",
@@ -1978,6 +2009,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-29",
     slug: "caricuao",
+    entityType: "academia",
     name: "Caricuao",
     officialName: "Caricuao",
     shortName: "Caricuao",
@@ -2032,6 +2064,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-30",
     slug: "felinos-fs",
+    entityType: "academia",
     name: "Felinos FS",
     officialName: "Felinos FS",
     shortName: "Felinos FS",
@@ -2086,6 +2119,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-31",
     slug: "dvo-jc",
+    entityType: "academia",
     name: "Deportivo JC",
     officialName: "Deportivo JC",
     shortName: "Deportivo JC",
@@ -2140,6 +2174,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-32",
     slug: "foro-libertador",
+    entityType: "academia",
     name: "Foro Libertador",
     officialName: "Foro Libertador",
     shortName: "Foro Libertador",
@@ -2194,6 +2229,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-33",
     slug: "camatagua",
+    entityType: "academia",
     name: "Camatagua",
     officialName: "Camatagua",
     shortName: "Camatagua",
@@ -2248,6 +2284,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-34",
     slug: "dvo-odin",
+    entityType: "academia",
     name: "Deportivo Odín",
     officialName: "Deportivo Odín",
     shortName: "Deportivo Odín",
@@ -2302,6 +2339,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-35",
     slug: "team-soublette",
+    entityType: "academia",
     name: "Team Soublette",
     officialName: "Team Soublette",
     shortName: "Team Soublette",
@@ -2356,6 +2394,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-36",
     slug: "overcoming",
+    entityType: "academia",
     name: "Overcoming",
     officialName: "Overcoming",
     shortName: "Overcoming",
@@ -2410,6 +2449,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-37",
     slug: "nacional-f7",
+    entityType: "club",
     name: "Nacional",
     officialName: "Nacional",
     shortName: "Nacional",
@@ -2464,6 +2504,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-38",
     slug: "tuyeros-fc",
+    entityType: "club",
     name: "Tuyeros FC",
     officialName: "Tuyeros FC",
     shortName: "Tuyeros FC",
@@ -2518,6 +2559,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-39",
     slug: "inversiones-ma",
+    entityType: "club",
     name: "Inversiones MA",
     officialName: "Inversiones MA",
     shortName: "Inversiones MA",
@@ -2572,6 +2614,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-40",
     slug: "los-expertos",
+    entityType: "club",
     name: "Los Expertos",
     officialName: "Los Expertos",
     shortName: "Los Expertos",
@@ -2626,6 +2669,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-41",
     slug: "team-1408",
+    entityType: "club",
     name: "Team 1408",
     officialName: "Team 1408",
     shortName: "Team 1408",
@@ -2680,6 +2724,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-42",
     slug: "gladiadores-del-este",
+    entityType: "club",
     name: "Gladiadores del Este",
     officialName: "Gladiadores del Este",
     shortName: "Gladiadores del Este",
@@ -2734,6 +2779,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-43",
     slug: "montana-alta",
+    entityType: "club",
     name: "Montaña Alta",
     officialName: "Montaña Alta",
     shortName: "Montaña Alta",
@@ -2788,6 +2834,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-44",
     slug: "tiki-taka",
+    entityType: "club",
     name: "Tiki Taka",
     officialName: "Tiki Taka",
     shortName: "Tiki Taka",
@@ -2842,6 +2889,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-45",
     slug: "sporting-tdc",
+    entityType: "club",
     name: "Sporting TDC",
     officialName: "Sporting TDC",
     shortName: "Sporting TDC",
@@ -2896,6 +2944,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-46",
     slug: "kay-kings",
+    entityType: "club",
     name: "Kay Kings",
     officialName: "Kay Kings",
     shortName: "Kay Kings",
@@ -2950,6 +2999,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-47",
     slug: "nuevo-dia-fc",
+    entityType: "club",
     name: "Nuevo Día FC",
     officialName: "Nuevo Día FC",
     shortName: "Nuevo Día FC",
@@ -3004,6 +3054,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-48",
     slug: "los-jardines-fc",
+    entityType: "club",
     name: "Los Jardines FC",
     officialName: "Los Jardines FC",
     shortName: "Los Jardines FC",
@@ -3058,6 +3109,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-49",
     slug: "guerreros-del-valle",
+    entityType: "club",
     name: "Guerreros del Valle",
     officialName: "Guerreros del Valle",
     shortName: "Guerreros del Valle",
@@ -3112,6 +3164,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-50",
     slug: "operaciones-fc",
+    entityType: "club",
     name: "Operaciones FC",
     officialName: "Operaciones FC",
     shortName: "Operaciones FC",
@@ -3166,6 +3219,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-51",
     slug: "cnpb",
+    entityType: "club",
     name: "CNPB",
     officialName: "CNPB",
     shortName: "CNPB",
@@ -3220,6 +3274,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-52",
     slug: "rh-f7",
+    entityType: "club",
     name: "RH",
     officialName: "RH",
     shortName: "RH",
@@ -3274,6 +3329,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-53",
     slug: "sworld-fc",
+    entityType: "club",
     name: "S'World FC",
     officialName: "S'World FC",
     shortName: "S'World FC",
@@ -3328,6 +3384,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-54",
     slug: "los-compadres",
+    entityType: "club",
     name: "Los Compadres",
     officialName: "Los Compadres",
     shortName: "Los Compadres",
@@ -3382,6 +3439,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-55",
     slug: "real-x",
+    entityType: "club",
     name: "Real X",
     officialName: "Real X",
     shortName: "Real X",
@@ -3436,6 +3494,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-56",
     slug: "rali-stones",
+    entityType: "club",
     name: "Rali Stones",
     officialName: "Rali Stones",
     shortName: "Rali Stones",
@@ -3490,6 +3549,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-57",
     slug: "independiente-fc",
+    entityType: "club",
     name: "Independiente FC",
     officialName: "Independiente FC",
     shortName: "Independiente FC",
@@ -3569,12 +3629,22 @@ export function filterAcademies(
     municipality?: Municipality | "all";
     discipline?: SportDiscipline | "all";
     category?: AcademyCategory | "all";
+    entityType?: EntityType | "all";
   }
 ): Academy[] {
   const { query, municipality, discipline, category } = options;
   const cleanQuery = query?.toLowerCase().trim();
 
   return academies.filter((acad) => {
+    // 0. Filtro Tipo de Entidad (Academia vs Club)
+    if (options.entityType && options.entityType !== "all") {
+      if (options.entityType === "academia" && acad.entityType !== "academia" && acad.entityType !== "ambos") {
+        return false;
+      }
+      if (options.entityType === "club" && acad.entityType !== "club" && acad.entityType !== "ambos") {
+        return false;
+      }
+    }
     // 1. Filtro Municipio
     if (municipality && municipality !== "all" && acad.municipality !== municipality) {
       return false;
