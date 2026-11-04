@@ -17,14 +17,19 @@ import {
   Shield,
   Layers,
   CheckCircle2,
-  Sliders,
   ChevronLeft,
   ChevronRight,
   Info,
   SlidersHorizontal,
+  Flame,
+  Tv,
+  Gem,
+  Eye,
 } from "lucide-react";
 import * as htmlToImage from "html-to-image";
 import { formatDateVE } from "@/lib/date-utils";
+import { getAcademyBySlug } from "@/data/academies-data";
+import { AcademyBadge } from "@/components/academies/academy-badge";
 
 export interface CalendarExportMatch {
   id: string;
@@ -46,6 +51,7 @@ export interface CalendarExportMatch {
 }
 
 export type SocialCardFormat = "story" | "feed" | "whatsapp";
+export type DesignTemplate = "cyber" | "arena" | "minimal";
 
 interface CalendarSocialExportModalProps {
   isOpen: boolean;
@@ -60,6 +66,51 @@ interface CalendarSocialExportModalProps {
   };
 }
 
+// Convertidor Hex a RGBA para efectos dinámicos neón con cualquier color personalizado
+function hexToRgba(hex: string, alpha: number) {
+  let c = hex.replace("#", "");
+  if (c.length === 3) {
+    c = c.split("").map((x) => x + x).join("");
+  }
+  const num = parseInt(c || "dc2626", 16);
+  const r = (num >> 16) & 255;
+  const g = (num >> 8) & 255;
+  const b = num & 255;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+// Componente para renderizar el escudo oficial o monograma heráldico de un equipo
+function TeamShield({ teamName, size = 26 }: { teamName: string; size?: number }) {
+  const academy = getAcademyBySlug(teamName);
+
+  if (academy) {
+    return (
+      <div style={{ width: size, height: size }} className="shrink-0 flex items-center justify-center">
+        <AcademyBadge slug={academy.slug} size={size} logoUrl={academy.logoUrl} />
+      </div>
+    );
+  }
+
+  // Monograma de respaldo para clubes sin escudo vectorial formal
+  const initials = teamName
+    .replace(/\s*\([a-z0-9]\)/gi, "")
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase();
+
+  return (
+    <div
+      style={{ width: size, height: size }}
+      className="shrink-0 rounded-full bg-neutral-900 border border-white/20 flex items-center justify-center shadow text-[8px] font-black text-white"
+    >
+      {initials || "FM"}
+    </div>
+  );
+}
+
 export function CalendarSocialExportModal({
   isOpen,
   onClose,
@@ -68,9 +119,11 @@ export function CalendarSocialExportModal({
 }: CalendarSocialExportModalProps) {
   const flyerRef = useRef<HTMLDivElement>(null);
 
-  // Formato seleccionado
+  // Estados de personalización principales
   const [format, setFormat] = useState<SocialCardFormat>("story");
-  const [accentTheme, setAccentTheme] = useState<"red" | "gold" | "cyan" | "emerald">("red");
+  const [designTemplate, setDesignTemplate] = useState<DesignTemplate>("cyber");
+  const [accentColor, setAccentColor] = useState<string>("#dc2626"); // Color hexadecimal 100% personalizable
+  const [showTeamShields, setShowTeamShields] = useState<boolean>(true); // Opción de mostrar escudos
   const [customTitle, setCustomTitle] = useState<string>("CARTELERA OFICIAL");
 
   // Filtros internos dentro del modal para máxima personalización autogestionable
@@ -86,7 +139,17 @@ export function CalendarSocialExportModal({
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [copiedNotification, setCopiedNotification] = useState<boolean>(false);
 
-  // Inicializar filtros internos con los filtros activos del calendario
+  // Paleta de presets rápidos populares
+  const QUICK_PRESETS = [
+    { label: "Rojo Furia", hex: "#dc2626" },
+    { label: "Dorado Real", hex: "#f59e0b" },
+    { label: "Cyan Eléctrico", hex: "#06b6d4" },
+    { label: "Verde Neón", hex: "#10b981" },
+    { label: "Morado Pro", hex: "#8b5cf6" },
+    { label: "Naranja Fuego", hex: "#f97316" },
+  ];
+
+  // Sincronizar filtros al abrir
   useEffect(() => {
     if (activeFilterSummary) {
       if (activeFilterSummary.venue && activeFilterSummary.venue !== "all") {
@@ -114,7 +177,7 @@ export function CalendarSocialExportModal({
     setCurrentSlide(1);
   }, [format]);
 
-  // Extraer opciones únicas para los filtros internos del modal
+  // Opciones únicas de filtros
   const uniqueVenues = useMemo(() => {
     const s = new Set<string>();
     matches.forEach((m) => {
@@ -171,10 +234,8 @@ export function CalendarSocialExportModal({
     });
   }, [matches, modalVenue, modalDate, modalTeam, modalCategory]);
 
-  // Paginación / Diapositivas
+  // Paginación por diapositivas
   const totalSlides = Math.max(1, Math.ceil(filteredMatchesInModal.length / matchesPerPage));
-
-  // Asegurar slide válido
   const activeSlideIndex = Math.min(Math.max(1, currentSlide), totalSlides);
 
   const paginatedMatches = useMemo(() => {
@@ -182,7 +243,7 @@ export function CalendarSocialExportModal({
     return filteredMatchesInModal.slice(start, start + matchesPerPage);
   }, [filteredMatchesInModal, activeSlideIndex, matchesPerPage]);
 
-  // Subtítulo inteligente para el flyer
+  // Subtítulo dinámico
   const computedSubtitle = useMemo(() => {
     const parts: string[] = [];
     if (modalVenue !== "all") {
@@ -205,54 +266,14 @@ export function CalendarSocialExportModal({
 
   if (!isOpen) return null;
 
-  // Temas de colores
-  const themeStyles = {
-    red: {
-      accent: "text-red-500",
-      accentBg: "bg-red-600",
-      border: "border-red-500/50",
-      glow: "rgba(220, 38, 38, 0.45)",
-      badgeBg: "bg-red-500/20 text-red-300 border-red-500/30",
-      pill: "bg-red-600 text-white shadow-md shadow-red-600/30",
-      ring: "ring-red-400",
-    },
-    gold: {
-      accent: "text-amber-400",
-      accentBg: "bg-amber-500",
-      border: "border-amber-500/50",
-      glow: "rgba(245, 158, 11, 0.45)",
-      badgeBg: "bg-amber-500/20 text-amber-300 border-amber-500/30",
-      pill: "bg-amber-500 text-black shadow-md shadow-amber-500/30",
-      ring: "ring-amber-400",
-    },
-    cyan: {
-      accent: "text-cyan-400",
-      accentBg: "bg-cyan-500",
-      border: "border-cyan-500/50",
-      glow: "rgba(6, 182, 212, 0.45)",
-      badgeBg: "bg-cyan-500/20 text-cyan-300 border-cyan-500/30",
-      pill: "bg-cyan-500 text-black shadow-md shadow-cyan-500/30",
-      ring: "ring-cyan-400",
-    },
-    emerald: {
-      accent: "text-emerald-400",
-      accentBg: "bg-emerald-500",
-      border: "border-emerald-500/50",
-      glow: "rgba(16, 185, 129, 0.45)",
-      badgeBg: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
-      pill: "bg-emerald-500 text-white shadow-md shadow-emerald-500/30",
-      ring: "ring-emerald-400",
-    },
-  }[accentTheme];
-
-  // Descarga PNG (alta resolución 2x)
+  // Descarga en PNG a resolución Retina 2x (1080x1920 o 1080x1080)
   const handleDownloadImage = async () => {
     if (!flyerRef.current) return;
     try {
       setIsGenerating(true);
       const dataUrl = await htmlToImage.toPng(flyerRef.current, {
         quality: 1,
-        pixelRatio: 2,
+        pixelRatio: 2.2,
         cacheBust: true,
       });
 
@@ -274,14 +295,14 @@ export function CalendarSocialExportModal({
     }
   };
 
-  // Compartir nativo
+  // Compartir nativo en redes móviles
   const handleNativeShare = async () => {
     if (!flyerRef.current) return;
     try {
       setIsGenerating(true);
       const dataUrl = await htmlToImage.toPng(flyerRef.current, {
         quality: 1,
-        pixelRatio: 2,
+        pixelRatio: 2.2,
         cacheBust: true,
       });
 
@@ -310,22 +331,35 @@ export function CalendarSocialExportModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-neutral-950/85 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-6xl max-h-[94vh] flex flex-col rounded-3xl border border-neutral-800 bg-neutral-900 shadow-2xl overflow-hidden">
+      <div className="relative w-full max-w-6xl max-h-[95vh] flex flex-col rounded-3xl border border-neutral-800 bg-neutral-900 shadow-2xl overflow-hidden">
         {/* Cabecera Principal */}
         <div className="flex items-center justify-between border-b border-neutral-800 px-4 sm:px-6 py-3.5 bg-neutral-950">
           <div className="flex items-center gap-3">
-            <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${themeStyles.badgeBg}`}>
-              <Sparkles className="h-5 w-5" />
+            <div
+              style={{
+                backgroundColor: hexToRgba(accentColor, 0.2),
+                borderColor: hexToRgba(accentColor, 0.4),
+              }}
+              className="flex h-9 w-9 items-center justify-center rounded-xl border text-white shadow"
+            >
+              <Sparkles style={{ color: accentColor }} className="h-5 w-5" />
             </div>
             <div>
               <h3 className="text-sm sm:text-base font-extrabold text-white flex items-center gap-2">
-                Exportador Profesional para Redes Sociales
-                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-red-600/30 text-red-400 border border-red-500/30">
+                Exportador Oficial para Redes Sociales
+                <span
+                  style={{
+                    backgroundColor: hexToRgba(accentColor, 0.25),
+                    color: accentColor,
+                    borderColor: hexToRgba(accentColor, 0.4),
+                  }}
+                  className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full border"
+                >
                   HD 1080p
                 </span>
               </h3>
               <p className="text-[11px] text-neutral-400">
-                Diseño optimizado para Instagram Historias, Feed y Estados de WhatsApp
+                Personalización total de colores, escudos y estilos de diapositiva
               </p>
             </div>
           </div>
@@ -338,23 +372,24 @@ export function CalendarSocialExportModal({
           </button>
         </div>
 
-        {/* CONTENEDOR EN 2 COLUMNAS (CONTROLES / PREVIEW) */}
+        {/* CONTENEDOR EN 2 COLUMNAS (AJUSTES / PREVISUALIZACIÓN) */}
         <div className="flex-1 overflow-y-auto grid grid-cols-1 lg:grid-cols-12 bg-neutral-950/60 divide-y lg:divide-y-0 lg:divide-x divide-neutral-800">
-          {/* COLUMNA IZQUIERDA: CONTROLES & PERSONALIZACIÓN */}
-          <div className="lg:col-span-5 p-4 sm:p-6 space-y-5 overflow-y-auto max-h-[45vh] lg:max-h-[76vh]">
+          {/* PANEL IZQUIERDO: CONTROLES & PERSONALIZACIÓN */}
+          <div className="lg:col-span-5 p-4 sm:p-6 space-y-5 overflow-y-auto max-h-[46vh] lg:max-h-[76vh]">
             {/* 1. Selector de Formato */}
             <div className="space-y-1.5">
               <label className="text-[11px] font-black uppercase tracking-wider text-neutral-300 flex items-center justify-between">
-                <span>Formato de Publicación:</span>
-                <span className="text-[10px] text-neutral-500 font-semibold">Resolución Pro</span>
+                <span>1. Formato de Publicación:</span>
+                <span className="text-[10px] text-neutral-500 font-semibold">1080p Ultra HD</span>
               </label>
               <div className="grid grid-cols-3 gap-2">
                 <button
                   type="button"
                   onClick={() => setFormat("story")}
+                  style={format === "story" ? { backgroundColor: accentColor, borderColor: accentColor } : {}}
                   className={`flex flex-col items-center justify-center p-2.5 rounded-2xl font-bold transition text-xs gap-1 border ${
                     format === "story"
-                      ? "bg-red-600 text-white border-red-400 shadow-md shadow-red-600/30"
+                      ? "text-white shadow-lg"
                       : "bg-neutral-900 border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-700"
                   }`}
                 >
@@ -366,9 +401,10 @@ export function CalendarSocialExportModal({
                 <button
                   type="button"
                   onClick={() => setFormat("whatsapp")}
+                  style={format === "whatsapp" ? { backgroundColor: accentColor, borderColor: accentColor } : {}}
                   className={`flex flex-col items-center justify-center p-2.5 rounded-2xl font-bold transition text-xs gap-1 border ${
                     format === "whatsapp"
-                      ? "bg-emerald-600 text-white border-emerald-400 shadow-md shadow-emerald-600/30"
+                      ? "text-white shadow-lg"
                       : "bg-neutral-900 border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-700"
                   }`}
                 >
@@ -380,9 +416,10 @@ export function CalendarSocialExportModal({
                 <button
                   type="button"
                   onClick={() => setFormat("feed")}
+                  style={format === "feed" ? { backgroundColor: accentColor, borderColor: accentColor } : {}}
                   className={`flex flex-col items-center justify-center p-2.5 rounded-2xl font-bold transition text-xs gap-1 border ${
                     format === "feed"
-                      ? "bg-red-600 text-white border-red-400 shadow-md shadow-red-600/30"
+                      ? "text-white shadow-lg"
                       : "bg-neutral-900 border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-700"
                   }`}
                 >
@@ -393,63 +430,173 @@ export function CalendarSocialExportModal({
               </div>
             </div>
 
-            {/* 2. Paleta de Color de Acento */}
+            {/* 2. Selector de Estilo / Template de Diseño */}
             <div className="space-y-1.5">
-              <label className="text-[11px] font-black uppercase tracking-wider text-neutral-300 flex items-center gap-1.5">
-                <Palette className="h-3.5 w-3.5 text-neutral-400" />
-                <span>Color de Acento & Luces Neón:</span>
+              <label className="text-[11px] font-black uppercase tracking-wider text-neutral-300 flex items-center justify-between">
+                <span>2. Estilo Visual del Póster:</span>
+                <span className="text-[10px] text-neutral-400 font-bold">3 Diseños Pro</span>
               </label>
-              <div className="flex gap-2.5 items-center">
-                {(
-                  [
-                    { key: "red", bg: "bg-red-600", label: "Rojo Furia" },
-                    { key: "gold", bg: "bg-amber-500", label: "Dorado Campeón" },
-                    { key: "cyan", bg: "bg-cyan-500", label: "Cyan Eléctrico" },
-                    { key: "emerald", bg: "bg-emerald-500", label: "Verde Cancha" },
-                  ] as const
-                ).map((th) => (
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setDesignTemplate("cyber")}
+                  className={`flex flex-col items-start p-2.5 rounded-2xl border text-left transition ${
+                    designTemplate === "cyber"
+                      ? "bg-neutral-800 border-white text-white shadow-md ring-1 ring-white/50"
+                      : "bg-neutral-900 border-neutral-800 text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Flame className="h-3.5 w-3.5 text-red-400" />
+                    <span className="text-[11px] font-black uppercase">Cyber Neón</span>
+                  </div>
+                  <p className="text-[9px] text-neutral-400 leading-tight">
+                    Fondo carbón con luces neón y estética esports.
+                  </p>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setDesignTemplate("arena")}
+                  className={`flex flex-col items-start p-2.5 rounded-2xl border text-left transition ${
+                    designTemplate === "arena"
+                      ? "bg-neutral-800 border-white text-white shadow-md ring-1 ring-white/50"
+                      : "bg-neutral-900 border-neutral-800 text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Tv className="h-3.5 w-3.5 text-amber-400" />
+                    <span className="text-[11px] font-black uppercase">Arena TV</span>
+                  </div>
+                  <p className="text-[9px] text-neutral-400 leading-tight">
+                    Franjas dinámicas estilo transmisión Premier League.
+                  </p>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setDesignTemplate("minimal")}
+                  className={`flex flex-col items-start p-2.5 rounded-2xl border text-left transition ${
+                    designTemplate === "minimal"
+                      ? "bg-neutral-800 border-white text-white shadow-md ring-1 ring-white/50"
+                      : "bg-neutral-900 border-neutral-800 text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Gem className="h-3.5 w-3.5 text-cyan-400" />
+                    <span className="text-[11px] font-black uppercase">Editorial</span>
+                  </div>
+                  <p className="text-[9px] text-neutral-400 leading-tight">
+                    Diseño limpio, minimalista y tipografía elegante.
+                  </p>
+                </button>
+              </div>
+            </div>
+
+            {/* 3. Selector Libre de Color (Cualquier Color en la Rueda) */}
+            <div className="space-y-2 p-3 rounded-2xl bg-neutral-900/80 border border-neutral-800">
+              <div className="flex items-center justify-between">
+                <label className="text-[11px] font-black uppercase tracking-wider text-neutral-300 flex items-center gap-1.5">
+                  <Palette className="h-3.5 w-3.5 text-neutral-400" />
+                  <span>3. Color Personalizado:</span>
+                </label>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-mono font-bold uppercase text-white bg-neutral-950 px-2 py-0.5 rounded border border-neutral-800">
+                    {accentColor}
+                  </span>
+                  {/* Selector Nativo de Color HTML5 */}
+                  <label className="relative cursor-pointer">
+                    <input
+                      type="color"
+                      value={accentColor}
+                      onChange={(e) => setAccentColor(e.target.value)}
+                      className="sr-only"
+                    />
+                    <div
+                      style={{ backgroundColor: accentColor }}
+                      className="h-7 w-7 rounded-full border-2 border-white shadow-lg cursor-pointer hover:scale-110 transition"
+                      title="Seleccionar cualquier color personalizado"
+                    />
+                  </label>
+                </div>
+              </div>
+
+              {/* Chips de Colores Rápidos */}
+              <div className="flex flex-wrap gap-2 items-center pt-1">
+                {QUICK_PRESETS.map((p) => (
                   <button
-                    key={th.key}
+                    key={p.hex}
                     type="button"
-                    onClick={() => setAccentTheme(th.key)}
-                    className={`h-8 w-8 rounded-full ${th.bg} transition-all flex items-center justify-center shadow-lg ${
-                      accentTheme === th.key ? "ring-2 ring-white scale-110" : "opacity-60 hover:opacity-100"
+                    onClick={() => setAccentColor(p.hex)}
+                    style={{ backgroundColor: p.hex }}
+                    className={`h-6 w-6 rounded-full transition-transform flex items-center justify-center ${
+                      accentColor.toLowerCase() === p.hex.toLowerCase()
+                        ? "ring-2 ring-white scale-110 shadow-md"
+                        : "opacity-70 hover:opacity-100"
                     }`}
-                    title={th.label}
+                    title={p.label}
                   >
-                    {accentTheme === th.key && <Check className="h-4 w-4 text-black font-black" />}
+                    {accentColor.toLowerCase() === p.hex.toLowerCase() && (
+                      <Check className="h-3.5 w-3.5 text-black font-black" />
+                    )}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* 3. Título personalizado del Póster */}
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-black uppercase tracking-wider text-neutral-300">
-                Título del Póster:
-              </label>
-              <input
-                type="text"
-                value={customTitle}
-                onChange={(e) => setCustomTitle(e.target.value)}
-                placeholder="Ej: CARTELERA OFICIAL"
-                className="w-full px-3.5 py-2 rounded-xl bg-neutral-900 border border-neutral-700 text-white placeholder-neutral-500 text-xs focus:outline-none focus:ring-1 focus:ring-red-500 font-bold"
-              />
+            {/* 4. Opción de Escudos & Título */}
+            <div className="space-y-3 p-3 rounded-2xl bg-neutral-900/80 border border-neutral-800">
+              {/* Toggle de Escudos */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-bold text-white block">Mostrar Escudos de Equipos</span>
+                  <span className="text-[10px] text-neutral-400">
+                    Incluye los emblemas oficiales o monogramas de cada academia
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowTeamShields((prev) => !prev)}
+                  style={showTeamShields ? { backgroundColor: accentColor } : {}}
+                  className={`w-11 h-6 flex items-center rounded-full p-1 transition duration-300 ${
+                    showTeamShields ? "" : "bg-neutral-800"
+                  }`}
+                >
+                  <div
+                    className={`bg-white w-4 h-4 rounded-full shadow-md transform transition duration-300 ${
+                      showTeamShields ? "translate-x-5" : ""
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {/* Título editable */}
+              <div>
+                <label className="text-[10px] font-bold text-neutral-400 block mb-1 uppercase tracking-wider">
+                  Título Principal del Flyer:
+                </label>
+                <input
+                  type="text"
+                  value={customTitle}
+                  onChange={(e) => setCustomTitle(e.target.value)}
+                  placeholder="Ej: CARTELERA OFICIAL"
+                  className="w-full px-3 py-1.5 rounded-xl bg-neutral-950 border border-neutral-800 text-white placeholder-neutral-500 text-xs focus:outline-none focus:ring-1 focus:ring-red-500 font-bold"
+                />
+              </div>
             </div>
 
-            {/* 4. Densidad de Partidos & Paginación por Diapositivas */}
-            <div className="space-y-2.5 p-3 rounded-2xl bg-neutral-900/80 border border-neutral-800">
+            {/* 5. Partidos por Diapositiva & Paginación */}
+            <div className="space-y-2 p-3 rounded-2xl bg-neutral-900/80 border border-neutral-800">
               <div className="flex items-center justify-between text-xs">
                 <span className="font-bold text-neutral-300 flex items-center gap-1.5">
-                  <SlidersHorizontal className="h-3.5 w-3.5 text-red-400" />
+                  <SlidersHorizontal className="h-3.5 w-3.5 text-neutral-400" />
                   Partidos por Diapositiva:
                 </span>
-                <span className="font-black text-white px-2 py-0.5 rounded bg-neutral-800 border border-neutral-700">
-                  {matchesPerPage} {matchesPerPage <= 5 ? "⭐ Óptimo" : "Compacto"}
+                <span className="font-black text-white px-2 py-0.5 rounded bg-neutral-950 border border-neutral-800">
+                  {matchesPerPage} {matchesPerPage <= 5 ? "⭐ Recomendado" : "Compacto"}
                 </span>
               </div>
 
-              {/* Botones de densidad */}
               <div className="flex gap-1.5">
                 {[3, 4, 5, 6, 7].map((num) => (
                   <button
@@ -459,10 +606,15 @@ export function CalendarSocialExportModal({
                       setMatchesPerPage(num);
                       setCurrentSlide(1);
                     }}
+                    style={
+                      matchesPerPage === num
+                        ? { backgroundColor: accentColor, color: "#ffffff" }
+                        : {}
+                    }
                     className={`flex-1 py-1.5 rounded-xl font-bold text-xs transition ${
                       matchesPerPage === num
-                        ? "bg-red-600 text-white shadow"
-                        : "bg-neutral-800 text-neutral-400 hover:text-white"
+                        ? "shadow"
+                        : "bg-neutral-950 text-neutral-400 hover:text-white border border-neutral-800"
                     }`}
                   >
                     {num}
@@ -470,10 +622,10 @@ export function CalendarSocialExportModal({
                 ))}
               </div>
 
-              {/* Selector de diapositivas si hay más partidos */}
+              {/* Diapositivas / Carrusel */}
               {totalSlides > 1 && (
                 <div className="pt-2 border-t border-neutral-800 flex items-center justify-between">
-                  <span className="text-[11px] text-neutral-400">
+                  <span className="text-[11px] text-neutral-300">
                     Diapositiva <strong className="text-white">{activeSlideIndex}</strong> de{" "}
                     <strong className="text-white">{totalSlides}</strong>
                   </span>
@@ -482,7 +634,7 @@ export function CalendarSocialExportModal({
                       type="button"
                       disabled={activeSlideIndex <= 1}
                       onClick={() => setCurrentSlide((p) => Math.max(1, p - 1))}
-                      className="p-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 disabled:opacity-40 text-white"
+                      className="p-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 disabled:opacity-30 text-white"
                     >
                       <ChevronLeft className="h-3.5 w-3.5" />
                     </button>
@@ -490,7 +642,7 @@ export function CalendarSocialExportModal({
                       type="button"
                       disabled={activeSlideIndex >= totalSlides}
                       onClick={() => setCurrentSlide((p) => Math.min(totalSlides, p + 1))}
-                      className="p-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 disabled:opacity-40 text-white"
+                      className="p-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 disabled:opacity-30 text-white"
                     >
                       <ChevronRight className="h-3.5 w-3.5" />
                     </button>
@@ -499,14 +651,13 @@ export function CalendarSocialExportModal({
               )}
             </div>
 
-            {/* 5. Filtros Internos para Personalización Inmediata */}
+            {/* 6. Filtros Rápidos (Sede, Fecha, Equipo, Categoría) */}
             <div className="space-y-2 p-3 rounded-2xl bg-neutral-900/60 border border-neutral-800">
               <span className="text-[11px] font-black uppercase tracking-wider text-neutral-300 block">
                 Filtros Rápidos para este Flyer:
               </span>
 
               <div className="grid grid-cols-2 gap-2 text-xs">
-                {/* Sede */}
                 <div>
                   <label className="block text-[10px] text-neutral-400 mb-0.5">Sede / Cancha:</label>
                   <select
@@ -526,7 +677,6 @@ export function CalendarSocialExportModal({
                   </select>
                 </div>
 
-                {/* Fecha */}
                 <div>
                   <label className="block text-[10px] text-neutral-400 mb-0.5">Fecha:</label>
                   <select
@@ -546,7 +696,6 @@ export function CalendarSocialExportModal({
                   </select>
                 </div>
 
-                {/* Equipo */}
                 <div>
                   <label className="block text-[10px] text-neutral-400 mb-0.5">Equipo:</label>
                   <select
@@ -566,7 +715,6 @@ export function CalendarSocialExportModal({
                   </select>
                 </div>
 
-                {/* Categoría */}
                 <div>
                   <label className="block text-[10px] text-neutral-400 mb-0.5">Categoría:</label>
                   <select
@@ -587,23 +735,10 @@ export function CalendarSocialExportModal({
                 </div>
               </div>
             </div>
-
-            {/* Tip Profesional de Social Media */}
-            <div className="flex items-start gap-2 p-3 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-amber-300 text-xs leading-relaxed">
-              <Info className="h-4 w-4 shrink-0 text-amber-400 mt-0.5" />
-              <div>
-                <p className="font-bold text-[11px] text-amber-200">Recomendación Social Media:</p>
-                <p className="text-[10.5px] text-amber-300/90 mt-0.5">
-                  Para Stories y WhatsApp Status, el límite óptimo son <strong>4 a 5 partidos</strong> para que
-                  los usuarios lean claramente nombres y horarios en 5 segundos. Para jornadas largas, exporta en
-                  varias diapositivas.
-                </p>
-              </div>
-            </div>
           </div>
 
-          {/* COLUMNA DERECHA: VISTA PREVIA DEL FLYER */}
-          <div className="lg:col-span-7 p-4 sm:p-6 flex flex-col items-center justify-center bg-neutral-950/80 overflow-y-auto">
+          {/* PANEL DERECHO: PREVISUALIZACIÓN DEL FLYER (RESPONSIVO Y SIN RECORTES) */}
+          <div className="lg:col-span-7 p-3 sm:p-6 flex flex-col items-center justify-center bg-neutral-950/80 overflow-y-auto">
             {paginatedMatches.length === 0 ? (
               <div className="text-center py-12 text-neutral-400">
                 <Layers className="h-10 w-10 mx-auto text-neutral-600 mb-2" />
@@ -614,26 +749,60 @@ export function CalendarSocialExportModal({
               </div>
             ) : (
               <div className="w-full flex flex-col items-center">
-                {/* CONTENEDOR ESCALABLE DEL LIENZO */}
+                {/* LIENZO A EXPORTAR */}
                 <div
                   ref={flyerRef}
-                  className={`relative overflow-hidden text-neutral-100 flex flex-col justify-between border-2 ${
-                    themeStyles.border
-                  } shadow-2xl transition-all ${
+                  className={`relative overflow-hidden text-neutral-100 flex flex-col justify-between shadow-2xl transition-all ${
                     format === "feed"
                       ? "w-full max-w-[420px] aspect-square p-4 sm:p-5"
-                      : "w-full max-w-[340px] sm:max-w-[370px] aspect-[9/16] p-4 sm:p-5"
+                      : "w-full max-w-[340px] sm:max-w-[365px] aspect-[9/16] p-4 sm:p-5"
+                  } ${
+                    designTemplate === "arena"
+                      ? "border-2"
+                      : designTemplate === "minimal"
+                      ? "border"
+                      : "border-2"
                   }`}
                   style={{
-                    background: `radial-gradient(circle at 50% 0%, ${themeStyles.glow} 0%, rgba(10, 10, 10, 0.98) 55%, #050505 100%)`,
+                    borderColor: hexToRgba(accentColor, 0.45),
+                    background:
+                      designTemplate === "arena"
+                        ? `repeating-linear-gradient(45deg, #09090b, #09090b 14px, #101014 14px, #101014 28px)`
+                        : designTemplate === "minimal"
+                        ? `#09090b`
+                        : `radial-gradient(circle at 50% 0%, ${hexToRgba(
+                            accentColor,
+                            0.45
+                          )} 0%, rgba(10, 10, 10, 0.98) 55%, #050505 100%)`,
                   }}
                 >
-                  {/* Patrón deportivo de fondo */}
-                  <div className="absolute inset-0 opacity-15 pointer-events-none bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px]" />
-                  <div
-                    className="absolute top-0 right-0 w-36 h-36 blur-3xl pointer-events-none"
-                    style={{ backgroundColor: themeStyles.glow }}
-                  />
+                  {/* Decoraciones de fondo según estilo */}
+                  {designTemplate === "cyber" && (
+                    <>
+                      <div className="absolute inset-0 opacity-15 pointer-events-none bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px]" />
+                      <div
+                        className="absolute top-0 right-0 w-36 h-36 blur-3xl pointer-events-none"
+                        style={{ backgroundColor: hexToRgba(accentColor, 0.35) }}
+                      />
+                    </>
+                  )}
+
+                  {designTemplate === "arena" && (
+                    <>
+                      <div
+                        className="absolute -top-12 -left-12 w-44 h-44 blur-3xl pointer-events-none"
+                        style={{ backgroundColor: hexToRgba(accentColor, 0.3) }}
+                      />
+                      <div
+                        className="absolute top-0 right-0 w-2 h-full opacity-70"
+                        style={{ backgroundColor: accentColor }}
+                      />
+                    </>
+                  )}
+
+                  {designTemplate === "minimal" && (
+                    <div className="absolute inset-0 bg-gradient-to-b from-neutral-900/40 via-transparent to-neutral-950/80 pointer-events-none" />
+                  )}
 
                   {/* 1. Header del Flyer */}
                   <div className="relative z-10 flex items-center justify-between border-b border-white/15 pb-2">
@@ -651,7 +820,10 @@ export function CalendarSocialExportModal({
                         <p className="text-xs sm:text-sm font-black tracking-tight leading-none text-white uppercase">
                           Furia Menor
                         </p>
-                        <p className={`text-[8px] uppercase tracking-[0.2em] ${themeStyles.accent} font-extrabold mt-0.5`}>
+                        <p
+                          style={{ color: accentColor }}
+                          className="text-[8px] uppercase tracking-[0.2em] font-extrabold mt-0.5"
+                        >
                           Torneo Oficial 2026
                         </p>
                       </div>
@@ -659,7 +831,10 @@ export function CalendarSocialExportModal({
 
                     <div className="text-right">
                       {totalSlides > 1 ? (
-                        <span className={`text-[9px] font-black ${themeStyles.accent} uppercase tracking-wider block`}>
+                        <span
+                          style={{ color: accentColor }}
+                          className="text-[9px] font-black uppercase tracking-wider block"
+                        >
                           PARTE {activeSlideIndex} DE {totalSlides}
                         </span>
                       ) : (
@@ -674,7 +849,7 @@ export function CalendarSocialExportModal({
                   </div>
 
                   {/* 2. Banner de Título */}
-                  <div className="relative z-10 my-1.5 text-center">
+                  <div className="relative z-10 my-1 text-center">
                     <h2 className="text-sm sm:text-base font-black tracking-tight text-white uppercase drop-shadow-md">
                       {customTitle}
                     </h2>
@@ -683,54 +858,94 @@ export function CalendarSocialExportModal({
                     </p>
                   </div>
 
-                  {/* 3. Lista de Enfrentamientos con Diseño Espacioso (SIN TEXTOS CORTADOS) */}
+                  {/* 3. Lista de Enfrentamientos con Escudos y Espacio Amplio */}
                   <div className="relative z-10 flex-1 flex flex-col justify-center gap-2 my-1 overflow-hidden">
-                    {paginatedMatches.map((m, idx) => (
-                      <div
-                        key={m.id || idx}
-                        className="rounded-xl bg-neutral-900/90 border border-white/10 p-2 sm:p-2.5 backdrop-blur-md shadow-lg"
-                      >
-                        {/* Fila Superior del Partido: Hora + Categoría + Cancha */}
-                        <div className="flex items-center justify-between text-[8.5px] sm:text-[9.5px] border-b border-white/10 pb-1 mb-1.5">
-                          <div className="flex items-center gap-1.5">
-                            <span className="font-black text-white flex items-center gap-1">
-                              <Clock className={`h-2.5 w-2.5 ${themeStyles.accent}`} />
-                              {m.matchTime}
-                            </span>
-                            <span className={`px-1.5 py-0.2 rounded text-[7.5px] sm:text-[8px] font-black uppercase ${themeStyles.badgeBg}`}>
-                              {m.category} {m.division ? `(${m.division})` : ""}
-                            </span>
+                    {paginatedMatches.map((m, idx) => {
+                      return (
+                        <div
+                          key={m.id || idx}
+                          style={
+                            designTemplate === "arena"
+                              ? { borderLeftColor: accentColor, borderLeftWidth: "4px" }
+                              : {}
+                          }
+                          className={`rounded-xl p-2 sm:p-2.5 backdrop-blur-md shadow-lg transition-all ${
+                            designTemplate === "minimal"
+                              ? "bg-neutral-900/60 border border-white/5"
+                              : "bg-neutral-900/90 border border-white/10"
+                          }`}
+                        >
+                          {/* Fila Superior: Hora + Categoría + Cancha */}
+                          <div className="flex items-center justify-between text-[8px] sm:text-[9px] border-b border-white/10 pb-1 mb-1.5">
+                            <div className="flex items-center gap-1.5">
+                              <span className="font-black text-white flex items-center gap-1">
+                                <Clock style={{ color: accentColor }} className="h-2.5 w-2.5" />
+                                {m.matchTime}
+                              </span>
+                              <span
+                                style={{
+                                  backgroundColor: hexToRgba(accentColor, 0.2),
+                                  color: accentColor,
+                                  borderColor: hexToRgba(accentColor, 0.35),
+                                }}
+                                className="px-1.5 py-0.2 rounded text-[7.5px] sm:text-[8px] font-black uppercase border"
+                              >
+                                {m.category} {m.division ? `(${m.division})` : ""}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-1 text-[8px] text-neutral-300 font-semibold truncate max-w-[130px]">
+                              <MapPin className="h-2.5 w-2.5 text-neutral-400 shrink-0" />
+                              <span className="truncate">
+                                {m.venueShort || m.venue.replace("Cancha ", "")}
+                              </span>
+                              {m.courtDetail && (
+                                <span className="text-neutral-400 font-bold">({m.courtDetail})</span>
+                              )}
+                            </div>
                           </div>
 
-                          <div className="flex items-center gap-1 text-[8px] sm:text-[8.5px] text-neutral-300 font-semibold truncate max-w-[140px]">
-                            <MapPin className="h-2.5 w-2.5 text-neutral-400 shrink-0" />
-                            <span className="truncate">{m.venueShort || m.venue.replace("Cancha ", "")}</span>
-                            {m.courtDetail && (
-                              <span className="text-neutral-400 font-bold">({m.courtDetail})</span>
-                            )}
+                          {/* Enfrentamiento con Escudos Opcionales */}
+                          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+                            {/* Equipo Local */}
+                            <div className="flex items-center justify-end gap-1.5 min-w-0">
+                              <p className="text-[10px] sm:text-[11.5px] font-black text-white uppercase text-right leading-tight break-words">
+                                {m.homeTeam}
+                              </p>
+                              {showTeamShields && (
+                                <TeamShield teamName={m.homeTeam} size={22} />
+                              )}
+                            </div>
+
+                            {/* Insignia Central VS */}
+                            <span
+                              style={{
+                                backgroundColor: accentColor,
+                                color: "#ffffff",
+                                boxShadow: `0 2px 10px ${hexToRgba(accentColor, 0.4)}`,
+                              }}
+                              className="px-2 py-0.5 rounded-full text-[8px] font-black shrink-0 tracking-wider"
+                            >
+                              VS
+                            </span>
+
+                            {/* Equipo Visitante */}
+                            <div className="flex items-center justify-start gap-1.5 min-w-0">
+                              {showTeamShields && (
+                                <TeamShield teamName={m.awayTeam} size={22} />
+                              )}
+                              <p className="text-[10px] sm:text-[11.5px] font-black text-white uppercase text-left leading-tight break-words">
+                                {m.awayTeam}
+                              </p>
+                            </div>
                           </div>
                         </div>
-
-                        {/* Enfrentamiento: Nombres Completos con Espacio Total */}
-                        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-                          <p className="text-[10.5px] sm:text-[11.5px] font-black text-white uppercase text-right leading-tight break-words">
-                            {m.homeTeam}
-                          </p>
-                          <span
-                            className={`px-2 py-0.5 rounded-full text-[8.5px] font-black ${themeStyles.pill} shrink-0`}
-                          >
-                            VS
-                          </span>
-                          <p className="text-[10.5px] sm:text-[11.5px] font-black text-white uppercase text-left leading-tight break-words">
-                            {m.awayTeam}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
 
                   {/* 4. Footer del Flyer */}
-                  <div className="relative z-10 border-t border-white/15 pt-2 flex items-center justify-between text-[8px] text-neutral-400">
+                  <div className="relative z-10 border-t border-white/15 pt-1.5 flex items-center justify-between text-[8px] text-neutral-400">
                     <div className="flex items-center gap-1">
                       <MapPin className="h-2.5 w-2.5 text-neutral-400" />
                       <span>Fútbol Sala Menor & Fútbol 7</span>
@@ -741,13 +956,13 @@ export function CalendarSocialExportModal({
                   </div>
                 </div>
 
-                {/* Indicador de Diapositiva & Total */}
-                <div className="mt-3 flex items-center gap-2 text-[11px] text-neutral-400 font-medium">
+                {/* Sub-texto informativo de la diapositiva */}
+                <div className="mt-2.5 flex items-center gap-2 text-[11px] text-neutral-400 font-medium">
                   <span>
-                    Mostrando {paginatedMatches.length} de {filteredMatchesInModal.length} partidos filtrados
+                    Mostrando {paginatedMatches.length} de {filteredMatchesInModal.length} partidos
                   </span>
                   {totalSlides > 1 && (
-                    <span className="text-red-400 font-bold">
+                    <span style={{ color: accentColor }} className="font-bold">
                       · Diapositiva {activeSlideIndex} de {totalSlides}
                     </span>
                   )}
@@ -762,7 +977,7 @@ export function CalendarSocialExportModal({
           <div className="flex items-center gap-2 text-xs">
             {copiedNotification ? (
               <span className="flex items-center gap-1 text-emerald-400 font-bold text-xs animate-in fade-in">
-                <CheckCircle2 className="h-4 w-4" /> ¡Imagen descargada en alta resolución!
+                <CheckCircle2 className="h-4 w-4" /> ¡Imagen generada y descargada en alta resolución!
               </span>
             ) : (
               <span className="text-neutral-500 text-xs">
@@ -786,9 +1001,11 @@ export function CalendarSocialExportModal({
               type="button"
               onClick={handleDownloadImage}
               disabled={isGenerating || paginatedMatches.length === 0}
-              className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-extrabold text-xs transition text-white shadow-lg disabled:opacity-50 ${
-                format === "whatsapp" ? "bg-emerald-600 hover:bg-emerald-500" : "bg-red-600 hover:bg-red-500"
-              }`}
+              style={{
+                backgroundColor: accentColor,
+                boxShadow: `0 4px 14px ${hexToRgba(accentColor, 0.4)}`,
+              }}
+              className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-extrabold text-xs transition text-white hover:brightness-110 active:scale-95 disabled:opacity-50"
             >
               <Download className="h-4 w-4" />
               <span>{isGenerating ? "Generando..." : "Descargar Imagen PNG"}</span>
