@@ -5,6 +5,7 @@ import Link from "next/link";
 import { TournamentMatchItem } from "@/data/tournaments-data";
 import { MatchSocialCardModal } from "@/components/tournaments/match-social-card-modal";
 import { Clock, MapPin, UserCheck, Share2, Sparkles, Camera } from "lucide-react";
+import { formatDateVE } from "@/lib/date-utils";
 
 interface MatchCardProps {
   match: TournamentMatchItem;
@@ -42,7 +43,7 @@ export function MatchCard({
             <div className="flex items-center gap-2">
               <span className="flex items-center gap-1 font-medium text-neutral-300">
                 <Clock className="h-3.5 w-3.5 text-neutral-500" />
-                {match.matchDate} · {match.matchTime}
+                {formatDateVE(match.matchDate)} · {match.matchTime}
               </span>
             </div>
           </div>

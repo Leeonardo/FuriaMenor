@@ -15,6 +15,7 @@ import {
   MapPin,
   UserCheck,
 } from "lucide-react";
+import { formatDateVE } from "@/lib/date-utils";
 
 export interface ScoresheetModalProps {
   isOpen: boolean;
@@ -129,7 +130,7 @@ export function ScoresheetModal({ isOpen, onClose, match }: ScoresheetModalProps
               {match.matchDate && (
                 <>
                   <span className="text-neutral-600">•</span>
-                  <span>{match.matchDate}</span>
+                  <span>{formatDateVE(match.matchDate)}</span>
                 </>
               )}
             </div>

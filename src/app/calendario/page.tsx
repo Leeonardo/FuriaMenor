@@ -30,6 +30,7 @@ import {
 } from "@/data/fixtures-noviembre-2026";
 import { getStoredMatches, DBMatch } from "@/lib/db-store";
 import { ScoresheetModal } from "@/components/transparency/scoresheet-modal";
+import { formatDateVE, formatFullDateVE } from "@/lib/date-utils";
 
 interface ExtendedMatch {
   id: string;
@@ -229,31 +230,9 @@ function CalendarioContent() {
 
     const sortedDates = Object.keys(groups).sort();
     return sortedDates.map((dateStr) => {
-      // Formatear fecha legible
-      const [year, month, day] = dateStr.split("-").map(Number);
-      const dateObj = new Date(year, month - 1, day);
-      const dayNames = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
-      const monthNames = [
-        "Enero",
-        "Febrero",
-        "Marzo",
-        "Abril",
-        "Mayo",
-        "Junio",
-        "Julio",
-        "Agosto",
-        "Septiembre",
-        "Octubre",
-        "Noviembre",
-        "Diciembre",
-      ];
-      const dayName = dayNames[dateObj.getDay()] || "";
-      const monthName = monthNames[month - 1] || "";
-      const formattedTitle = `${dayName} ${day} de ${monthName} de ${year}`;
-
       return {
         groupKey: dateStr,
-        groupTitle: formattedTitle,
+        groupTitle: formatFullDateVE(dateStr),
         matches: groups[dateStr],
       };
     });
@@ -550,6 +529,13 @@ function CalendarioContent() {
                             )}
 
                             <span className="font-bold text-neutral-300">{match.jornada || `Jornada ${match.matchday}`}</span>
+
+                            <span className="hidden sm:inline text-neutral-600">·</span>
+
+                            <span className="flex items-center gap-1 font-bold text-neutral-200">
+                              <Calendar className="h-3 w-3 text-red-400" />
+                              {formatDateVE(match.matchDate)}
+                            </span>
 
                             <span className="hidden sm:inline text-neutral-600">·</span>
 

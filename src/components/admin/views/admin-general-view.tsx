@@ -16,6 +16,7 @@ import {
   saveStoredCategories,
 } from "@/lib/db-store";
 import { ScoresheetModal } from "@/components/transparency/scoresheet-modal";
+import { formatDateVE } from "@/lib/date-utils";
 import {
   ShieldAlert,
   Trophy,
@@ -433,7 +434,7 @@ export function AdminGeneralView({
                 </div>
 
                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-xs text-neutral-400">
-                  <span>📅 {m.matchDate} · {m.matchTime}</span>
+                  <span>📅 {formatDateVE(m.matchDate)} · {m.matchTime}</span>
                   <span>📍 {m.venue}</span>
                   {m.refereeName && <span className="text-amber-400">👨‍⚖️ {m.refereeName}</span>}
                 </div>
