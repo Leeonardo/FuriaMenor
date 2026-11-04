@@ -3602,21 +3602,84 @@ export const academiesData: Academy[] = [
   },
 ];
 
+function stripAccents(str: string): string {
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+function cleanTeamSearchKey(name: string): string {
+  return stripAccents(name)
+    .toLowerCase()
+    .replace(/\s*\([a-z0-9]\)|\s*blanco|\s*amarillo|\s*negro|\s*verde/gi, "")
+    .replace(/\b(deportivo|dvo|academia|club|futsal|fc|fs)\b/gi, "")
+    .replace(/[^a-z0-9]/g, "")
+    .trim();
+}
+
+const SPECIAL_TEAM_ALIASES: Record<string, string> = {
+  "fenix-futsal": "fenix-fs",
+  "fenix": "fenix-fs",
+  "futconexion": "futsaconexion",
+  "futconexion-a": "futsaconexion",
+  "espartanos-futsal": "espartanos-cutira",
+  "espartanos": "espartanos-cutira",
+  "la-paz-futsal-verde": "la-paz-futsal",
+  "dvo-odin": "dvo-odin",
+  "deportivo-odin": "dvo-odin",
+  "caricuao": "gladiadores-caricuao",
+  "ricardinho-b": "ricardinho",
+  "funvibra-a": "funvibra",
+  "real-esperanza-a": "real-esperanza",
+  "real-esperanza-b": "real-esperanza",
+  "la-ladera-a": "la-ladera",
+  "la-ladera-b": "la-ladera",
+  "fratelsa-sport-blanco": "fratelsa-sport",
+  "fratelsa-sport-amarillo": "fratelsa-sport",
+  "fratelsa-sport-negro": "fratelsa-sport",
+  "fusion-academica-a": "fusion-academica",
+  "fusion-academica-b": "fusion-academica",
+};
+
 /**
- * Busca una academia por su ID o por su slug
+ * Busca una academia por su ID, slug o nombre oficial con tolerancia a variantes
  */
 export function getAcademyBySlug(slugOrId: string): Academy | undefined {
+  if (!slugOrId) return undefined;
   const clean = slugOrId.toLowerCase().trim();
-  const normalizedName = clean.replace(/\s*\([a-z0-9]\)|\s*blanco|\s*amarillo|\s*negro|\s*verde/gi, '').trim();
-  return academiesData.find(
+  const cleanSlug = clean.replace(/\s+/g, "-");
+
+  // 1. Alias directo
+  if (SPECIAL_TEAM_ALIASES[cleanSlug]) {
+    const aliasSlug = SPECIAL_TEAM_ALIASES[cleanSlug];
+    const foundByAlias = academiesData.find((a) => a.slug === aliasSlug || a.id === aliasSlug);
+    if (foundByAlias) return foundByAlias;
+  }
+
+  // 2. Coincidencia exacta por slug o id
+  const exact = academiesData.find(
     (a) =>
-      a.slug === clean ||
+      a.slug === cleanSlug ||
       a.id === clean ||
-      a.name.toLowerCase() === clean ||
-      a.name.toLowerCase().replace(/\s+/g, "-") === clean ||
-      a.name.toLowerCase() === normalizedName ||
-      a.slug === normalizedName.replace(/\s+/g, "-")
+      a.slug === clean ||
+      a.name.toLowerCase() === clean
   );
+  if (exact) return exact;
+
+  // 3. Coincidencia normalizada sin tildes ni sufijos (A), (B), colores
+  const searchKey = cleanTeamSearchKey(slugOrId);
+  if (searchKey.length >= 3) {
+    const normMatch = academiesData.find((a) => {
+      const aKey = cleanTeamSearchKey(a.name);
+      const aSlugKey = cleanTeamSearchKey(a.slug);
+      return aKey === searchKey || aSlugKey === searchKey;
+    });
+    if (normMatch) return normMatch;
+  }
+
+  // 4. Búsqueda por subcadena
+  return academiesData.find((a) => {
+    const aClean = a.name.toLowerCase();
+    return clean.includes(aClean) || aClean.includes(clean);
+  });
 }
 
 /**

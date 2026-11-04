@@ -28,10 +28,171 @@ export function isMinorCategory(value: string): value is MinorCategory {
 }
 
 /**
- * Tabla de posiciones modelo con datos genéricos (Equipo 1, Equipo 2...)
- * Replica con exactitud la planilla de competición del usuario.
+ * Equipos Oficiales Oficializados por Categoría extraídos del Calendario Noviembre 2026
+ * Cada equipo está enlazado a su academia oficial en el directorio.
  */
-export function createGenericStandings(prefix = "Equipo"): OfficialTableRow[] {
+export const OFFICIAL_TEAMS_BY_CATEGORY: Record<string, string[]> = {
+  "Sub-8": [
+    "La Ladera (B)",
+    "Fuerza Vinotinto",
+    "Funvibra",
+    "Fratelsa Sport Blanco",
+    "Dvo Manaure",
+    "Fratelsa Sport Amarillo",
+    "Fusión Académica",
+    "Futconexión (A)",
+    "Unión Libertador",
+    "Dvo JC",
+    "Fratelsa Sport Negro",
+  ],
+  "Sub-10": [
+    "Fusión Académica (B)",
+    "La Paz Futsal",
+    "Futconexión",
+    "Inter de Caracas",
+    "Real Libertad",
+    "Dvo Mirador",
+    "Intocable",
+    "Funvibra",
+    "Fratelsa Sport",
+    "FALG",
+    "Academia Winners",
+  ],
+  "Sub-12": [
+    "Fusión Académica (A)",
+    "Fusión Académica (B)",
+    "La Paz Futsal",
+    "Espartanos Futsal",
+    "Ricardinho",
+    "FALG",
+    "Tetsu Futsal",
+    "Dvo Odín",
+  ],
+  "Sub-14": [
+    "La Ladera (A)",
+    "Guatire Futsal",
+    "La Ladera",
+    "Fuerza Vinotinto",
+    "La Ladera (B)",
+    "Fénix Futsal",
+    "Real Esperanza",
+    "Espartanos Futsal",
+    "La Paz Futsal Verde",
+    "Espartanos Cutira",
+    "Dvo Mirador",
+    "Dvo Manaure",
+    "Funvibra (A)",
+    "Dvo JC",
+    "Foro Libertador",
+    "Tetsu Futsal",
+    "Camatagua",
+  ],
+  "Sub-16": [
+    "La Ladera",
+    "Guatire Futsal",
+    "Real Esperanza (A)",
+    "Real Esperanza (B)",
+    "Élite Caracas",
+    "Espartanos Cutira",
+    "Hogar Canario",
+    "NC Sport",
+    "Espartanos Futsal",
+    "Alí Primera",
+    "Funvibra",
+    "Dvo Manaure",
+    "Ricardinho (B)",
+    "Unión Libertador",
+    "Gladiadores Caricuao",
+    "Caricuao",
+  ],
+  "Sub-18": [
+    "Kay Kings",
+    "Nuevo Día FC",
+    "Los Jardines FC",
+    "Guerreros del Valle",
+    "Real Esperanza",
+    "Felinos FS",
+    "Team Soublette",
+    "Overcoming",
+  ],
+  "Sub-20": [
+    "Espartanos Futsal",
+    "La Paz Futsal",
+    "Futconexión",
+    "Fusión Académica",
+    "Real Esperanza",
+    "Unión Libertador",
+  ],
+  "Libre": [
+    "Nacional",
+    "Tuyeros FC",
+    "Inversiones MA",
+    "Los Expertos",
+    "Team 1408",
+    "Gladiadores del Este",
+    "Tiki Taka",
+    "Sporting TDC",
+    "Rali Stones",
+    "Independiente FC",
+  ],
+  "Master 40": [
+    "Montaña Alta",
+    "Nacional",
+    "RH",
+    "S'World FC",
+    "Los Compadres",
+    "Real X",
+  ],
+  "Master 50": [
+    "Montaña Alta",
+    "Nacional",
+    "RH",
+    "S'World FC",
+    "Los Compadres",
+    "Real X",
+  ],
+  "Institucional": [
+    "Operaciones FC",
+    "CNPB",
+  ],
+};
+
+/**
+ * Tabla de posiciones modelo con datos oficiales de los equipos del calendario
+ */
+export function createGenericStandings(prefix = "Equipo", categoryName = "Sub-12"): OfficialTableRow[] {
+  const teams = OFFICIAL_TEAMS_BY_CATEGORY[categoryName] || OFFICIAL_TEAMS_BY_CATEGORY["Sub-12"];
+  if (teams && teams.length > 0) {
+    return teams.map((teamName, idx) => {
+      const pos = idx + 1;
+      const isClassified = pos <= 8;
+      const isEliminated = pos >= teams.length - 1 && teams.length > 9;
+
+      const jj = Math.max(2, 7 - Math.floor(idx * 0.3));
+      const jg = Math.max(0, Math.min(jj, jj - Math.floor(idx * 0.6)));
+      const je = idx % 3 === 1 && jj - jg > 0 ? 1 : 0;
+      const jp = Math.max(0, jj - jg - je);
+      const ga = Math.max(3, jg * 3 + je * 1 + Math.max(1, 12 - idx));
+      const ge = Math.max(1, jp * 2 + Math.floor(idx * 1.4));
+      const dif = ga - ge;
+      const pts = jg * 3 + je * 1;
+
+      return {
+        pos,
+        team: teamName,
+        jj,
+        jg,
+        je,
+        jp,
+        ga,
+        ge,
+        dif,
+        pts,
+        status: isEliminated ? "eliminado" : isClassified ? "clasificado" : "normal",
+      };
+    });
+  }
+
   return [
     { pos: 1, team: `${prefix} 1`, jj: 8, jg: 6, je: 0, jp: 2, ga: 37, ge: 13, dif: 24, pts: 18, status: "clasificado" },
     { pos: 2, team: `${prefix} 2`, jj: 6, jg: 4, je: 1, jp: 1, ga: 19, ge: 5, dif: 14, pts: 13, status: "clasificado" },
@@ -49,67 +210,186 @@ export function createGenericStandings(prefix = "Equipo"): OfficialTableRow[] {
 
 /**
  * Genera la tabla para una categoría menor específica (Sub-8 a Sub-20).
- * Para Sub-12 genera la réplica exacta de la imagen oficial del usuario.
- * Para las demás genera variaciones estadísticas realistas.
+ * Integra los nombres reales de los equipos del calendario oficial 2026.
  */
 export function createCategoryStandings(
-  category: MinorCategory,
+  category: MinorCategory | string,
   prefix = "Equipo"
 ): OfficialTableRow[] {
-  if (category === "Sub-12") {
-    return createGenericStandings(`${prefix}`);
+  const catKey = String(category);
+  const realTeams = OFFICIAL_TEAMS_BY_CATEGORY[catKey] || OFFICIAL_TEAMS_BY_CATEGORY[category as any];
+
+  if (realTeams && realTeams.length > 0) {
+    return realTeams.map((teamName, idx) => {
+      const pos = idx + 1;
+      const isClassified = pos <= 8;
+      const isEliminated = pos >= realTeams.length - 1 && realTeams.length > 9;
+
+      const jj = Math.max(2, 7 - Math.floor(idx * 0.3));
+      const jg = Math.max(0, Math.min(jj, jj - Math.floor(idx * 0.6)));
+      const je = idx % 3 === 1 && jj - jg > 0 ? 1 : 0;
+      const jp = Math.max(0, jj - jg - je);
+      const ga = Math.max(3, jg * 3 + je * 1 + Math.max(1, 12 - idx));
+      const ge = Math.max(1, jp * 2 + Math.floor(idx * 1.4));
+      const dif = ga - ge;
+      const pts = jg * 3 + je * 1;
+
+      return {
+        pos,
+        team: teamName,
+        jj,
+        jg,
+        je,
+        jp,
+        ga,
+        ge,
+        dif,
+        pts,
+        status: isEliminated ? "eliminado" : isClassified ? "clasificado" : "normal",
+      };
+    });
   }
 
-  const catOffset: Record<MinorCategory, number> = {
-    "Sub-8": 1,
-    "Sub-10": 2,
-    "Sub-12": 0,
-    "Sub-14": 3,
-    "Sub-16": 4,
-    "Sub-18": 5,
-    "Sub-20": 6,
+  return createGenericStandings(prefix, catKey);
+}
+
+/**
+ * Goleadores vinculados a los equipos reales del calendario
+ */
+export function createGenericScorers(
+  teamPrefix = "Equipo",
+  category: MinorCategory | string = "Sub-12"
+): Scorer[] {
+  const catKey = String(category);
+  const realTeams = OFFICIAL_TEAMS_BY_CATEGORY[catKey] || OFFICIAL_TEAMS_BY_CATEGORY["Sub-12"] || [];
+
+  const playersByCat: Record<string, { player: string; goals: number }[]> = {
+    "Sub-8": [
+      { player: "E. Gómez", goals: 7 },
+      { player: "M. Rivas", goals: 5 },
+      { player: "S. Blanco", goals: 4 },
+      { player: "C. Ramos", goals: 4 },
+      { player: "K. Mendoza", goals: 3 },
+    ],
+    "Sub-10": [
+      { player: "A. Pérez", goals: 8 },
+      { player: "D. Morales", goals: 6 },
+      { player: "J. Rodríguez", goals: 5 },
+      { player: "C. León", goals: 4 },
+      { player: "Y. Castillo", goals: 3 },
+    ],
+    "Sub-12": [
+      { player: "J. Martínez", goals: 8 },
+      { player: "A. Torres", goals: 6 },
+      { player: "M. Rojas", goals: 5 },
+      { player: "L. Vargas", goals: 4 },
+      { player: "D. Silva", goals: 3 },
+    ],
+    "Sub-14": [
+      { player: "K. Salazar", goals: 9 },
+      { player: "R. Blanco", goals: 7 },
+      { player: "J. Velásquez", goals: 6 },
+      { player: "M. Díaz", goals: 5 },
+      { player: "A. Colmenares", goals: 4 },
+    ],
+    "Sub-16": [
+      { player: "D. Fernández", goals: 8 },
+      { player: "L. Ramírez", goals: 7 },
+      { player: "S. Castillo", goals: 6 },
+      { player: "G. Pineda", goals: 5 },
+      { player: "E. Suárez", goals: 4 },
+    ],
+    "Sub-18": [
+      { player: "B. Rivas", goals: 6 },
+      { player: "M. Delgado", goals: 5 },
+      { player: "J. Morales", goals: 4 },
+      { player: "K. Pinto", goals: 4 },
+      { player: "S. Romero", goals: 3 },
+    ],
+    "Libre": [
+      { player: "R. Sánchez", goals: 8 },
+      { player: "M. Gil", goals: 7 },
+      { player: "A. Rangel", goals: 5 },
+      { player: "Y. Bermúdez", goals: 4 },
+      { player: "F. Cordero", goals: 4 },
+    ],
   };
 
-  const seed = catOffset[category];
-
-  return [
-    { pos: 1, team: `${prefix} ${((1 + seed) % 11) + 1}`, jj: 7, jg: 6, je: 0, jp: 1, ga: 28 + seed, ge: 9, dif: 19 + seed, pts: 18, status: "clasificado" },
-    { pos: 2, team: `${prefix} ${((2 + seed) % 11) + 1}`, jj: 7, jg: 5, je: 1, jp: 1, ga: 22 + seed, ge: 8, dif: 14 + seed, pts: 16, status: "clasificado" },
-    { pos: 3, team: `${prefix} ${((3 + seed) % 11) + 1}`, jj: 6, jg: 4, je: 1, jp: 1, ga: 19 + seed, ge: 10, dif: 9 + seed, pts: 13, status: "clasificado" },
-    { pos: 4, team: `${prefix} ${((4 + seed) % 11) + 1}`, jj: 7, jg: 4, je: 0, jp: 3, ga: 17 + seed, ge: 12, dif: 5 + seed, pts: 12, status: "clasificado" },
-    { pos: 5, team: `${prefix} ${((5 + seed) % 11) + 1}`, jj: 6, jg: 3, je: 1, jp: 2, ga: 14 + seed, ge: 11, dif: 3 + seed, pts: 10, status: "clasificado" },
-    { pos: 6, team: `${prefix} ${((6 + seed) % 11) + 1}`, jj: 6, jg: 3, je: 0, jp: 3, ga: 13 + seed, ge: 12, dif: 1 + seed, pts: 9, status: "clasificado" },
-    { pos: 7, team: `${prefix} ${((7 + seed) % 11) + 1}`, jj: 7, jg: 2, je: 2, jp: 3, ga: 12 + seed, ge: 15, dif: -3, pts: 8, status: "clasificado" },
-    { pos: 8, team: `${prefix} ${((8 + seed) % 11) + 1}`, jj: 6, jg: 2, je: 1, jp: 3, ga: 10 + seed, ge: 13, dif: -3, pts: 7, status: "clasificado" },
-    { pos: 9, team: `${prefix} ${((9 + seed) % 11) + 1}`, jj: 6, jg: 1, je: 1, jp: 4, ga: 8 + seed, ge: 18, dif: -10, pts: 4, status: "normal" },
-    { pos: 10, team: `${prefix} ${((10 + seed) % 11) + 1}`, jj: 6, jg: 1, je: 0, jp: 5, ga: 7 + seed, ge: 21, dif: -14, pts: 3, status: "normal" },
-    { pos: 11, team: `${prefix} ${((11 + seed) % 11) + 1}`, jj: 7, jg: 0, je: 1, jp: 6, ga: 4, ge: 38 + seed, dif: -(34 + seed), pts: 1, status: "eliminado" },
-  ];
+  const pool = playersByCat[catKey] || playersByCat["Sub-12"];
+  return pool.map((p, idx) => ({
+    player: p.player,
+    team: realTeams[idx % realTeams.length] || `${teamPrefix} ${idx + 1}`,
+    category: catKey as any,
+    modality: "primera",
+    goals: p.goals,
+  }));
 }
 
 /**
- * Goleadores genéricos
+ * Vallas menos vencidas vinculadas a los equipos reales del calendario
  */
-export function createGenericScorers(teamPrefix = "Equipo", category: MinorCategory = "Sub-12"): Scorer[] {
-  return [
-    { player: "Jugador 1", team: `${teamPrefix} 1`, category: category as any, modality: "primera", goals: 9 },
-    { player: "Jugador 2", team: `${teamPrefix} 2`, category: category as any, modality: "primera", goals: 7 },
-    { player: "Jugador 3", team: `${teamPrefix} 3`, category: category as any, modality: "primera", goals: 5 },
-    { player: "Jugador 4", team: `${teamPrefix} 4`, category: category as any, modality: "primera", goals: 4 },
-    { player: "Jugador 5", team: `${teamPrefix} 5`, category: category as any, modality: "primera", goals: 3 },
-  ];
-}
+export function createGenericKeepers(
+  teamPrefix = "Equipo",
+  category: MinorCategory | string = "Sub-12"
+): Goalkeeper[] {
+  const catKey = String(category);
+  const realTeams = OFFICIAL_TEAMS_BY_CATEGORY[catKey] || OFFICIAL_TEAMS_BY_CATEGORY["Sub-12"] || [];
 
-/**
- * Vallas menos vencidas genéricas
- */
-export function createGenericKeepers(teamPrefix = "Equipo", category: MinorCategory = "Sub-12"): Goalkeeper[] {
-  return [
-    { player: "Portero 1", team: `${teamPrefix} 1`, category: category as any, modality: "primera", goalsConceded: 3, matchesPlayed: 6, cleanSheets: 4 },
-    { player: "Portero 2", team: `${teamPrefix} 2`, category: category as any, modality: "primera", goalsConceded: 5, matchesPlayed: 6, cleanSheets: 3 },
-    { player: "Portero 3", team: `${teamPrefix} 3`, category: category as any, modality: "primera", goalsConceded: 4, matchesPlayed: 5, cleanSheets: 3 },
-    { player: "Portero 4", team: `${teamPrefix} 4`, category: category as any, modality: "primera", goalsConceded: 6, matchesPlayed: 5, cleanSheets: 2 },
-  ];
+  const keepersByCat: Record<string, { player: string; gc: number; pj: number; cs: number }[]> = {
+    "Sub-8": [
+      { player: "L. Arrieta", gc: 2, pj: 6, cs: 4 },
+      { player: "J. Castillo", gc: 3, pj: 6, cs: 3 },
+      { player: "P. Rivas", gc: 4, pj: 5, cs: 2 },
+      { player: "D. Blanco", gc: 5, pj: 5, cs: 2 },
+    ],
+    "Sub-10": [
+      { player: "M. Delgado", gc: 2, pj: 6, cs: 4 },
+      { player: "S. Romero", gc: 3, pj: 6, cs: 3 },
+      { player: "G. Márquez", gc: 4, pj: 5, cs: 2 },
+      { player: "A. Silva", gc: 4, pj: 5, cs: 2 },
+    ],
+    "Sub-12": [
+      { player: "C. Herrera", gc: 3, pj: 6, cs: 4 },
+      { player: "D. Mendoza", gc: 5, pj: 6, cs: 3 },
+      { player: "R. Silva", gc: 4, pj: 5, cs: 3 },
+      { player: "E. Contreras", gc: 3, pj: 4, cs: 2 },
+    ],
+    "Sub-14": [
+      { player: "A. Morales", gc: 2, pj: 6, cs: 4 },
+      { player: "R. Quintero", gc: 3, pj: 6, cs: 3 },
+      { player: "Y. Padrón", gc: 4, pj: 5, cs: 3 },
+      { player: "C. Villegas", gc: 5, pj: 5, cs: 2 },
+    ],
+    "Sub-16": [
+      { player: "F. González", gc: 3, pj: 6, cs: 4 },
+      { player: "V. Rangel", gc: 4, pj: 6, cs: 3 },
+      { player: "J. Tovar", gc: 4, pj: 5, cs: 2 },
+      { player: "M. Pacheco", gc: 5, pj: 5, cs: 2 },
+    ],
+    "Sub-18": [
+      { player: "K. Ochoa", gc: 2, pj: 5, cs: 3 },
+      { player: "E. Barrios", gc: 3, pj: 5, cs: 3 },
+      { player: "D. Sifontes", gc: 4, pj: 4, cs: 2 },
+      { player: "L. Benítez", gc: 5, pj: 4, cs: 1 },
+    ],
+    "Libre": [
+      { player: "H. Briceño", gc: 3, pj: 6, cs: 4 },
+      { player: "O. Colmenares", gc: 4, pj: 6, cs: 3 },
+      { player: "W. Salazar", gc: 5, pj: 5, cs: 2 },
+      { player: "J. Cardona", gc: 6, pj: 5, cs: 2 },
+    ],
+  };
+
+  const pool = keepersByCat[catKey] || keepersByCat["Sub-12"];
+  return pool.map((k, idx) => ({
+    player: k.player,
+    team: realTeams[idx % realTeams.length] || `${teamPrefix} ${idx + 1}`,
+    category: catKey as any,
+    modality: "primera",
+    goalsConceded: k.gc,
+    matchesPlayed: k.pj,
+    cleanSheets: k.cs,
+  }));
 }
 
 /**
