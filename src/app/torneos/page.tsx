@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { Calendar, MapPin, Trophy, Users, Layers, ArrowRight, ShieldCheck } from "lucide-react";
+import { Calendar, MapPin, Trophy, Users, Layers, ArrowRight, ShieldCheck, Activity, Sparkles } from "lucide-react";
 import { DaerisBadge, PruebaBadge } from "@/components/ui/tournament-badges";
 import { DaerisBadgeRenderer } from "@/components/ui/daeris-sub-badge-renderer";
 import { daerisSubList } from "@/data/daeris-subtournaments";
+import { OFFICIAL_VENUES } from "@/data/fixtures-noviembre-2026";
 
 export const metadata = {
   title: "Torneos & Ligas | Furia Menor",
@@ -40,6 +41,98 @@ export default function TorneosPage() {
           >
             Tablas de Posiciones
           </Link>
+        </div>
+      </div>
+
+      {/* BANNER OFICIAL: PROGRAMACIÓN NOVIEMBRE 2026 (FUTSAL & FÚTBOL 7) */}
+      <div className="mb-10 overflow-hidden rounded-3xl border border-neutral-800 bg-neutral-900/80 p-5 sm:p-7 shadow-2xl relative">
+        <div className="absolute top-0 right-0 h-40 w-40 bg-red-600/10 blur-3xl pointer-events-none rounded-full" />
+        <div className="absolute bottom-0 left-0 h-40 w-40 bg-emerald-600/10 blur-3xl pointer-events-none rounded-full" />
+
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-neutral-800/80">
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1 rounded-full bg-red-500/20 px-3 py-1 text-xs font-black text-red-400 border border-red-500/30">
+                <Sparkles className="h-3.5 w-3.5" />
+                NUEVOS FIXTURES OFICIALES · NOVIEMBRE 2026
+              </span>
+              <span className="rounded-full bg-neutral-800 px-2.5 py-1 text-xs font-semibold text-neutral-300">
+                51 Partidos Programados
+              </span>
+            </div>
+            <h2 className="mt-2 text-2xl sm:text-3xl font-black text-white">
+              Calendarios Oficiales de Futsal & Fútbol 7
+            </h2>
+            <p className="mt-1 text-xs sm:text-sm text-neutral-300 max-w-2xl">
+              Consulta la programación integral para noviembre de 2026 en las 6 canchas oficiales de Caracas:
+              37 partidos de Fútbol Sala y 14 encuentros de Fútbol 7 sobre césped sintético.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            <Link
+              href="/calendario?disciplina=Fútbol+Sala"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 hover:bg-red-500 px-4 py-2.5 text-xs font-bold text-white transition shadow-md shadow-red-600/20 active:scale-95"
+            >
+              ⚽ Ver Futsal (37)
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+            <Link
+              href="/calendario?disciplina=Fútbol+7"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 px-4 py-2.5 text-xs font-bold text-white transition shadow-md shadow-emerald-600/20 active:scale-95"
+            >
+              🏟️ Ver Fútbol 7 (14)
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+        </div>
+
+        {/* Sedes directas para acceso móvil instantáneo */}
+        <div className="mt-6">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-bold uppercase tracking-wider text-neutral-400">
+              Acceso Rápido por Sede & Cancha:
+            </span>
+            <span className="text-[11px] text-neutral-500">Haz clic para filtrar</span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+            {OFFICIAL_VENUES.map((v) => {
+              const isFutsal = v.discipline === "Fútbol Sala";
+              const count = v.id === "la-paz" ? 10 : v.id === "zona-rental" ? 8 : v.id === "guacamaya" ? 6 : 9;
+              return (
+                <Link
+                  key={v.id}
+                  href={`/calendario?sede=${encodeURIComponent(v.name)}`}
+                  className={`group flex flex-col justify-between p-3 rounded-2xl border transition hover:scale-[1.02] active:scale-98 ${
+                    isFutsal
+                      ? "border-neutral-800 bg-neutral-950/70 hover:border-red-500/50 hover:bg-neutral-900"
+                      : "border-neutral-800 bg-neutral-950/70 hover:border-emerald-500/50 hover:bg-neutral-900"
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-1 mb-2">
+                    <span
+                      className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                        isFutsal ? "bg-red-500/20 text-red-400" : "bg-emerald-500/20 text-emerald-400"
+                      }`}
+                    >
+                      {v.discipline === "Fútbol Sala" ? "Futsal" : "Fútbol 7"}
+                    </span>
+                    <span className="text-xs font-black text-white">{count} PJ</span>
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-neutral-200 group-hover:text-white transition line-clamp-1">
+                      {v.short}
+                    </h4>
+                    <p className="text-[10px] text-neutral-500 flex items-center gap-1 mt-0.5">
+                      <MapPin className="h-2.5 w-2.5 shrink-0" />
+                      <span className="truncate">{v.location}</span>
+                    </p>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </div>
 

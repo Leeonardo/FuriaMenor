@@ -12,6 +12,10 @@ import {
   createGenericMatches,
   createGenericTeamProfiles,
 } from "@/data/generic-tournament-data";
+import {
+  FUTSAL_MATCHES_NOV_2026,
+  FUTBOL7_MATCHES_NOV_2026,
+} from "@/data/fixtures-noviembre-2026";
 
 export type DaerisSubId =
   | "institucional"
@@ -69,11 +73,22 @@ function buildCategoryPayload(
   prefix: string,
   tournamentCode = "DAE"
 ): CategoryPayload {
+  const officialNovMatches = FUTSAL_MATCHES_NOV_2026.filter(
+    (m) =>
+      m.category === category &&
+      (tournamentSlug.includes("1ra")
+        ? m.venue.includes("La Paz") || m.venue.includes("Hogar Canario")
+        : m.venue.includes("Bloque 17") || m.tournamentId === tournamentSlug)
+  );
+
+  const fallbackMatches = createGenericMatches(tournamentName, category, venue, prefix);
+  const matchesToUse = officialNovMatches.length > 0 ? officialNovMatches : fallbackMatches;
+
   return {
     standings: createCategoryStandings(category, prefix),
     topScorers: createGenericScorers(prefix, category),
     leastConceded: createGenericKeepers(prefix, category),
-    matches: createGenericMatches(tournamentName, category, venue, prefix),
+    matches: matchesToUse,
     teams: createGenericTeamProfiles(tournamentSlug, tournamentName, category, tournamentCode),
   };
 }
@@ -120,7 +135,7 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
     shortName: "Institucional",
     categoryLabel: "Empresas & Organismos",
     badgeKey: "institucional",
-    venue: "Cancha Gimnasio Libertador del 23 de Enero, Caracas",
+    venue: "Cancha Zona Rental & Gimnasio Libertador, Caracas",
     teamsCount: 11,
     status: "Fase Regular",
     groupName: "GRUPO INSTITUCIONAL A",
@@ -133,7 +148,7 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
       pill: "bg-amber-500/10 text-amber-400 border-amber-500/30",
       text: "text-amber-400",
     },
-    matches: createGenericMatches("Torneo Institucional", "Institucional", "Gimnasio Libertador, 23 de Enero", "Equipo"),
+    matches: FUTBOL7_MATCHES_NOV_2026.filter((m) => m.category === "Institucional"),
     standings: createGenericStandings("Equipo"),
     topScorers: createGenericScorers("Equipo"),
     leastConceded: createGenericKeepers("Equipo"),
@@ -148,20 +163,20 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
     shortName: "Fútbol 7 Inst",
     categoryLabel: "Modalidad Fútbol 7",
     badgeKey: "futbol7",
-    venue: "Complejo Deportivo San Agustín, Caracas",
+    venue: "Cancha Zona Rental & Cancha Guacamaya, Caracas",
     teamsCount: 11,
     status: "En Curso",
     groupName: "GRUPO F7 ÚNICO",
     qualificationRule: "CLASIFICAN LOS 8 PRIMEROS DE CADA GRUPO",
     qualificationCutoff: 8,
     hasCategories: false,
-    description: "Competición de fútbol 7 en césped sintético institucional.",
+    description: "Competición oficial de fútbol 7 en césped sintético en Zona Rental y La Guacamaya.",
     accent: {
       border: "border-emerald-500/50 hover:border-emerald-400",
       pill: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
       text: "text-emerald-400",
     },
-    matches: createGenericMatches("Fútbol 7 Institucional", "Fútbol 7", "Complejo San Agustín, Caracas", "Equipo"),
+    matches: FUTBOL7_MATCHES_NOV_2026,
     standings: createGenericStandings("Equipo"),
     topScorers: createGenericScorers("Equipo"),
     leastConceded: createGenericKeepers("Equipo"),
@@ -176,20 +191,20 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
     shortName: "Master +50",
     categoryLabel: "Veteranos (+50 Años)",
     badgeKey: "master50",
-    venue: "Cancha Gimnasio Libertador, 23 de Enero",
+    venue: "Cancha Hogar Canario & Cancha Guacamaya, Caracas",
     teamsCount: 11,
     status: "Semifinales",
     groupName: "GRUPO MASTER VETERANOS",
     qualificationRule: "CLASIFICAN LOS 8 PRIMEROS DE CADA GRUPO",
     qualificationCutoff: 8,
     hasCategories: false,
-    description: "Torneo de veteranos mayores de 50 años en Caracas.",
+    description: "Torneo de veteranos mayores de 50 años en Hogar Canario y El Paraíso.",
     accent: {
       border: "border-yellow-500/50 hover:border-yellow-400",
       pill: "bg-yellow-500/10 text-yellow-400 border-yellow-500/30",
       text: "text-yellow-400",
     },
-    matches: createGenericMatches("Master 50", "Master 50", "Gimnasio Libertador, 23 de Enero", "Equipo"),
+    matches: FUTSAL_MATCHES_NOV_2026.filter((m) => m.category === "Master 50" || m.category === "Master 40"),
     standings: createGenericStandings("Equipo"),
     topScorers: createGenericScorers("Equipo"),
     leastConceded: createGenericKeepers("Equipo"),
@@ -217,7 +232,7 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
       pill: "bg-orange-500/10 text-orange-400 border-orange-500/30",
       text: "text-orange-400",
     },
-    matches: createGenericMatches("Torneo Libre Parque Carabobo", "Libre", "Cancha Parque Carabobo, Caracas", "Equipo"),
+    matches: FUTSAL_MATCHES_NOV_2026.filter((m) => m.venue.includes("Parque Carabobo")),
     standings: createGenericStandings("Equipo"),
     topScorers: createGenericScorers("Equipo"),
     leastConceded: createGenericKeepers("Equipo"),

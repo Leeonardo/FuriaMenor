@@ -26,6 +26,7 @@ export type {
   PlayerMatchLog,
 };
 import { academiesData } from '@/data/academies-data';
+import { ALL_NOV_2026_FIXTURES } from '@/data/fixtures-noviembre-2026';
 
 // ==============================================================================
 // 0. LISTADO OFICIAL DE TORNEOS VIGENTES
@@ -84,6 +85,10 @@ export const DB_CATEGORIES: DBCategory[] = [
   { id: 'cat-sub-16', name: 'Sub-16', discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2010, maxBirthYear: 2011, matchDurationMinutes: 50, registrationDeadline: '2026-10-20' },
   { id: 'cat-sub-18', name: 'Sub-18', discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2008, maxBirthYear: 2009, matchDurationMinutes: 50, registrationDeadline: '2026-11-25' },
   { id: 'cat-sub-20', name: 'Sub-20', discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2006, maxBirthYear: 2007, matchDurationMinutes: 50, registrationDeadline: '2026-11-30' },
+  { id: 'cat-libre',  name: 'Libre',  discipline: 'Fútbol Sala', division: 'Libre Adultos', minBirthYear: 1980, maxBirthYear: 2008, matchDurationMinutes: 50, registrationDeadline: '2026-11-30' },
+  { id: 'cat-master-40', name: 'Master 40', discipline: 'Fútbol Sala', division: 'Master +40', minBirthYear: 1960, maxBirthYear: 1986, matchDurationMinutes: 45, registrationDeadline: '2026-11-30' },
+  { id: 'cat-master-50', name: 'Master 50', discipline: 'Fútbol Sala', division: 'Master +50', minBirthYear: 1950, maxBirthYear: 1976, matchDurationMinutes: 45, registrationDeadline: '2026-11-30' },
+  { id: 'cat-institucional', name: 'Institucional', discipline: 'Fútbol 7', division: 'Fútbol 7', minBirthYear: 1970, maxBirthYear: 2008, matchDurationMinutes: 50, registrationDeadline: '2026-11-30' },
 ];
 
 // ==============================================================================
@@ -315,94 +320,31 @@ export function getInitialPlayers(): DBPlayer[] {
 // 5. PARTIDOS INICIALES DEL CALENDARIO
 // ==============================================================================
 export function getInitialMatches(): DBMatch[] {
-  return [
-    {
-      id: 'match-01',
-      tournamentName: 'Torneo Daeris 1era División',
-      categoryId: 'cat-sub-12',
-      categoryName: 'Sub-12',
-      homeClubId: 'la-paz-futsal',
-      homeClubName: 'La Paz Futsal',
-      awayClubId: 'dvo-paraiso',
-      awayClubName: 'DVO Paraíso',
-      matchDate: '2026-11-08',
-      matchTime: '10:00',
-      venue: 'Cancha de Futsal LA PAZ',
-      jornada: 'Jornada 5 (Grupo A)',
-      refereeId: 'user-arbitro-01',
-      refereeName: 'Prof. José Colina',
-      status: 'programado',
-      homeScore: null,
-      awayScore: null,
-      updatedAt: new Date().toISOString(),
-    },
-    {
-      id: 'match-02',
-      tournamentName: 'Torneo Daeris 1era División',
-      categoryId: 'cat-sub-12',
-      categoryName: 'Sub-12',
-      homeClubId: 'fratelsa-sport',
-      homeClubName: 'Fratelsa Sport',
-      awayClubId: 'fenix-fs',
-      awayClubName: 'Fénix FS',
-      matchDate: '2026-11-08',
-      matchTime: '11:15',
-      venue: 'Gimnasio José Beracasa, El Paraíso',
-      jornada: 'Jornada 5 (Grupo A)',
-      refereeId: 'user-arbitro-01',
-      refereeName: 'Prof. José Colina',
-      status: 'programado',
-      homeScore: null,
-      awayScore: null,
-      updatedAt: new Date().toISOString(),
-    },
-    {
-      id: 'match-03-hist',
-      tournamentName: 'Torneo Daeris 1era División',
-      categoryId: 'cat-sub-12',
-      categoryName: 'Sub-12',
-      homeClubId: 'la-paz-futsal',
-      homeClubName: 'La Paz Futsal',
-      awayClubId: 'fenix-fs',
-      awayClubName: 'Fénix FS',
-      matchDate: '2026-10-25',
-      matchTime: '09:30',
-      venue: 'Cancha de Futsal LA PAZ',
-      jornada: 'Jornada 4 (Grupo A)',
-      refereeId: 'user-arbitro-01',
-      refereeName: 'Prof. José Colina',
-      status: 'finalizado',
-      homeScore: 4,
-      awayScore: 2,
-      sheetPhotoUrl: '/images/planilla-ejemplo.jpg',
-      scoresheetUrl: '/images/planilla-ejemplo.jpg',
-      refereeNotes: 'Partido sin incidencias. Se entregó copia del acta a ambos delegados.',
-      updatedAt: new Date().toISOString(),
-    },
-    {
-      id: 'match-04-hist',
-      tournamentName: 'Torneo Daeris 1era División',
-      categoryId: 'cat-sub-12',
-      categoryName: 'Sub-12',
-      homeClubId: 'dvo-paraiso',
-      homeClubName: 'DVO Paraíso',
-      awayClubId: 'fratelsa-sport',
-      awayClubName: 'Fratelsa Sport',
-      matchDate: '2026-10-25',
-      matchTime: '10:45',
-      venue: 'Polideportivo Chacao',
-      jornada: 'Jornada 4 (Grupo A)',
-      refereeId: 'user-arbitro-01',
-      refereeName: 'Prof. José Colina',
-      status: 'finalizado',
-      homeScore: 3,
-      awayScore: 3,
-      sheetPhotoUrl: '/images/planilla-ejemplo.jpg',
-      scoresheetUrl: '/images/planilla-ejemplo.jpg',
-      refereeNotes: 'Encuentro empatado con alta intensidad. Tarjeta amarilla por juego brusco.',
-      updatedAt: new Date().toISOString(),
-    },
-  ];
+  const convertedFixtures: DBMatch[] = ALL_NOV_2026_FIXTURES.map((f) => ({
+    id: f.id,
+    tournamentName: f.tournamentName,
+    categoryId: `cat-${f.category.toLowerCase().replace(/\s+/g, '-')}`,
+    categoryName: f.category,
+    homeClubId: f.homeTeam.toLowerCase().replace(/\s+/g, '-'),
+    homeClubName: f.homeTeam,
+    awayClubId: f.awayTeam.toLowerCase().replace(/\s+/g, '-'),
+    awayClubName: f.awayTeam,
+    matchDate: f.matchDate,
+    matchTime: f.matchTime,
+    venue: f.venue,
+    jornada: f.jornada,
+    refereeId: 'user-arbitro-01',
+    refereeName: f.referees?.principal || 'Prof. José Colina',
+    status: f.status === 'finished' ? 'finalizado' : f.status === 'live' ? 'en_vivo' : 'programado',
+    homeScore: f.homeScore,
+    awayScore: f.awayScore,
+    sheetPhotoUrl: f.sheetPhotoUrl || undefined,
+    scoresheetUrl: f.scoresheetUrl || undefined,
+    refereeNotes: f.refereeNotes || undefined,
+    updatedAt: new Date().toISOString(),
+  }));
+
+  return convertedFixtures;
 }
 
 // ==============================================================================
@@ -593,7 +535,21 @@ export function getStoredMatches(): DBMatch[] {
   if (typeof window === 'undefined') return getInitialMatches();
   try {
     const raw = localStorage.getItem(`${STORAGE_PREFIX}matches`);
-    return raw ? JSON.parse(raw) : getInitialMatches();
+    if (!raw) {
+      const initial = getInitialMatches();
+      localStorage.setItem(`${STORAGE_PREFIX}matches`, JSON.stringify(initial));
+      return initial;
+    }
+    const parsed: DBMatch[] = JSON.parse(raw);
+    const initial = getInitialMatches();
+    if (parsed.length < initial.length) {
+      const existingIds = new Set(parsed.map((m) => m.id));
+      const missing = initial.filter((m) => !existingIds.has(m.id));
+      const combined = [...parsed, ...missing];
+      localStorage.setItem(`${STORAGE_PREFIX}matches`, JSON.stringify(combined));
+      return combined;
+    }
+    return parsed;
   } catch {
     return getInitialMatches();
   }
