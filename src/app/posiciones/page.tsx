@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { Trophy, Filter, ArrowLeft, ShieldCheck, RefreshCw } from "lucide-react";
+import { Trophy, Filter, ArrowLeft, ShieldCheck, RefreshCw, Sparkles, Share2 } from "lucide-react";
 import { TournamentOfficialTable, OfficialTableRow } from "@/components/tournaments/tournament-official-table";
+import { StandingsSocialExportModal } from "@/components/tournaments/standings-social-export-modal";
 import { daerisSubList, DaerisSubId } from "@/data/daeris-subtournaments";
 import {
   createGenericStandings,
@@ -24,6 +25,7 @@ export default function PosicionesPage() {
   const [selectedDaerisSub, setSelectedDaerisSub] = useState<DaerisSubId>("infantil-1ra");
   const [selectedCategory, setSelectedCategory] = useState<MinorCategory>("Sub-12");
   const [storedMatches, setStoredMatches] = useState<DBMatch[]>([]);
+  const [isExportModalOpen, setIsExportModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     setStoredMatches(getStoredMatches());
@@ -182,7 +184,24 @@ export default function PosicionesPage() {
         </div>
 
         {/* Tabla Oficial idéntica a la imagen de referencia */}
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto space-y-4">
+          {/* Botón de Exportación Social Pro */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-neutral-900/60 border border-neutral-800 rounded-2xl p-3 sm:px-5">
+            <div className="flex items-center gap-2 text-xs text-neutral-400">
+              <Trophy className="h-4 w-4 text-amber-400" />
+              <span>
+                ¿Deseas publicar la tabla oficial en tus redes sociales?
+              </span>
+            </div>
+            <button
+              onClick={() => setIsExportModalOpen(true)}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-bold text-xs shadow-lg shadow-red-900/30 transition transform active:scale-95"
+            >
+              <Sparkles className="h-3.5 w-3.5 text-amber-300" />
+              <span>Exportar Tabla (Historias / Feed / WhatsApp)</span>
+            </button>
+          </div>
+
           <TournamentOfficialTable
             title={
               selectedTournament === "daeris"
@@ -205,6 +224,26 @@ export default function PosicionesPage() {
             rows={standingsRows}
           />
         </div>
+
+        {/* Modal de Exportación para Redes Sociales con 3 Diseños, Escudos y Selector Libre de Color */}
+        <StandingsSocialExportModal
+          isOpen={isExportModalOpen}
+          onClose={() => setIsExportModalOpen(false)}
+          rows={standingsRows}
+          tournamentName={selectedTournament === "daeris" ? "Torneo Daeris" : "Torneo de Prueba"}
+          categoryName={
+            selectedTournament === "daeris" && currentSub.hasCategories
+              ? selectedCategory
+              : currentSub.name
+          }
+          groupName={
+            selectedTournament === "daeris"
+              ? currentSub.hasCategories
+                ? `Grupo ${selectedCategory}`
+                : currentSub.groupName
+              : "Grupo Prueba A"
+          }
+        />
       </main>
     </div>
   );
