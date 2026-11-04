@@ -54,18 +54,18 @@ export default function TorneosPage() {
             <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1 rounded-full bg-red-500/20 px-3 py-1 text-xs font-black text-red-400 border border-red-500/30">
                 <Sparkles className="h-3.5 w-3.5" />
-                NUEVOS FIXTURES OFICIALES · NOVIEMBRE 2026
+                FIXTURES OFICIALES · NOVIEMBRE 2026
               </span>
               <span className="rounded-full bg-neutral-800 px-2.5 py-1 text-xs font-semibold text-neutral-300">
-                51 Partidos Programados
+                48 Partidos Oficiales en Cartelera
               </span>
             </div>
             <h2 className="mt-2 text-2xl sm:text-3xl font-black text-white">
               Calendarios Oficiales de Futsal & Fútbol 7
             </h2>
             <p className="mt-1 text-xs sm:text-sm text-neutral-300 max-w-2xl">
-              Consulta la programación integral para noviembre de 2026 en las 6 canchas oficiales de Caracas:
-              37 partidos de Fútbol Sala y 14 encuentros de Fútbol 7 sobre césped sintético.
+              Consulta la programación oficial y exacta de las planillas de liga para noviembre de 2026:
+              37 partidos de Fútbol Sala y 11 encuentros de Fútbol 7 en las 6 canchas de Caracas.
             </p>
           </div>
 
@@ -81,7 +81,7 @@ export default function TorneosPage() {
               href="/calendario?disciplina=Fútbol+7"
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 px-4 py-2.5 text-xs font-bold text-white transition shadow-md shadow-emerald-600/20 active:scale-95"
             >
-              🏟️ Ver Fútbol 7 (14)
+              🏟️ Ver Fútbol 7 (11)
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
@@ -99,7 +99,6 @@ export default function TorneosPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
             {OFFICIAL_VENUES.map((v) => {
               const isFutsal = v.discipline === "Fútbol Sala";
-              const count = v.id === "la-paz" ? 10 : v.id === "zona-rental" ? 8 : v.id === "guacamaya" ? 6 : 9;
               return (
                 <Link
                   key={v.id}
@@ -118,7 +117,7 @@ export default function TorneosPage() {
                     >
                       {v.discipline === "Fútbol Sala" ? "Futsal" : "Fútbol 7"}
                     </span>
-                    <span className="text-xs font-black text-white">{count} PJ</span>
+                    <span className="text-xs font-black text-white">{v.matchesCount} PJ</span>
                   </div>
                   <div>
                     <h4 className="text-xs font-bold text-neutral-200 group-hover:text-white transition line-clamp-1">

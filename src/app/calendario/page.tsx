@@ -44,6 +44,7 @@ interface ExtendedMatch {
   matchTime: string;
   venue: string;
   venueShort?: string;
+  courtDetail?: string;
   status: MatchStatus;
   matchday: number;
   jornada?: string;
@@ -375,7 +376,7 @@ function CalendarioContent() {
               >
                 <option value="all">⚽ Todas las Disciplinas</option>
                 <option value="Fútbol Sala">Fútbol Sala (Futsal - 37 Partidos)</option>
-                <option value="Fútbol 7">Fútbol 7 (Sintético - 14 Partidos)</option>
+                <option value="Fútbol 7">Fútbol 7 (Sintético - 11 Partidos)</option>
               </select>
             </div>
 
@@ -390,11 +391,11 @@ function CalendarioContent() {
                 className="w-full rounded-xl border border-neutral-700 bg-neutral-950 px-3 py-2 text-xs font-semibold text-neutral-200 focus:border-red-500 focus:outline-none"
               >
                 <option value="all">📍 Todas las Canchas (6 Sedes)</option>
-                <option value="Cancha de Futsal La Paz">Cancha La Paz (Futsal · 10 PJ)</option>
-                <option value="Parque Carabobo">Parque Carabobo (Futsal · 9 PJ)</option>
-                <option value="Hogar Canario">Hogar Canario (Futsal · 9 PJ)</option>
-                <option value="Bloque 17 de 23 de Enero">Bloque 17 - 23 de Enero (Futsal · 9 PJ)</option>
-                <option value="Cancha Zona Rental">Cancha Zona Rental (Fútbol 7 · 8 PJ)</option>
+                <option value="Cancha Hogar Canario">Hogar Canario (Futsal · 9 PJ)</option>
+                <option value="Cancha de Futsal La Paz">Cancha La Paz (Futsal · 6 PJ)</option>
+                <option value="Parque Carabobo">Parque Carabobo (Futsal · 15 PJ)</option>
+                <option value="Bloque 17 de 23 de Enero">Bloque 17 - 23 de Enero (Futsal · 7 PJ)</option>
+                <option value="Cancha Zona Rental">Cancha Zona Rental (Fútbol 7 · 5 PJ)</option>
                 <option value="Cancha Guacamaya">Cancha Guacamaya (Fútbol 7 · 6 PJ)</option>
               </select>
             </div>
@@ -428,12 +429,11 @@ function CalendarioContent() {
                 onChange={(e) => setSelectedDate(e.target.value)}
                 className="w-full rounded-xl border border-neutral-700 bg-neutral-950 px-3 py-2 text-xs font-semibold text-neutral-200 focus:border-red-500 focus:outline-none"
               >
-                <option value="all">🗓️ Todas las Fechas (Noviembre 2026)</option>
-                {availableDates.map((d) => (
-                  <option key={d} value={d}>
-                    {d}
-                  </option>
-                ))}
+                <option value="all">🗓️ Todas las Fechas Oficiales</option>
+                <option value="2026-11-05">Jueves 5-11-2026 (Zona Rental F7)</option>
+                <option value="2026-11-06">Viernes 6-11-2026 (Cancha Guacamaya F7)</option>
+                <option value="2026-11-07">Sábado 7-11-2026 (Hogar Canario, La Paz, Parque Carabobo, Zona Rental, Guacamaya)</option>
+                <option value="2026-11-08">Domingo 8-11-2026 (Parque Carabobo, Bloque 17 23 de Enero)</option>
               </select>
             </div>
           </div>
@@ -540,14 +540,20 @@ function CalendarioContent() {
                             </span>
 
                             <span className="rounded-md bg-neutral-800 px-2 py-0.5 text-[11px] font-bold text-neutral-200">
-                              {match.category}
+                              {match.category} {match.division ? `(${match.division})` : ""}
                             </span>
+
+                            {match.courtDetail && (
+                              <span className="rounded-md bg-sky-500/10 border border-sky-500/30 px-2 py-0.5 text-[10px] font-bold text-sky-400">
+                                {match.courtDetail}
+                              </span>
+                            )}
 
                             <span className="font-bold text-neutral-300">{match.jornada || `Jornada ${match.matchday}`}</span>
 
                             <span className="hidden sm:inline text-neutral-600">·</span>
 
-                            <span className="flex items-center gap-1 text-neutral-300">
+                            <span className="flex items-center gap-1 text-neutral-300 font-semibold">
                               <Clock className="h-3 w-3 text-neutral-500" />
                               {match.matchTime}
                             </span>
