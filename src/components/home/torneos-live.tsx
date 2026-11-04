@@ -1,7 +1,42 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowRight, Clock, MapPin, Trophy, Calendar } from "lucide-react";
+import { motion } from "framer-motion";
 import { TournamentData } from "@/data/tournaments-data";
 import { DaerisBadge, PruebaBadge } from "@/components/ui/tournament-badges";
+import { getAcademyBySlug } from "@/data/academies-data";
+import { AcademyBadge } from "@/components/academies/academy-badge";
+
+function HomeTeamShield({ teamName, size = 18 }: { teamName: string; size?: number }) {
+  const academy = getAcademyBySlug(teamName);
+
+  if (academy) {
+    return (
+      <div style={{ width: size, height: size }} className="shrink-0 flex items-center justify-center">
+        <AcademyBadge slug={academy.slug} size={size} logoUrl={academy.logoUrl} />
+      </div>
+    );
+  }
+
+  const initials = teamName
+    .replace(/\s*\([a-z0-9]\)/gi, "")
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase();
+
+  return (
+    <div
+      style={{ width: size, height: size }}
+      className="shrink-0 rounded-full bg-neutral-900 border border-white/20 flex items-center justify-center text-[7px] font-black text-white"
+    >
+      {initials || "FM"}
+    </div>
+  );
+}
 
 interface TorneosLiveProps {
   tournament: TournamentData;
@@ -76,10 +111,14 @@ export function TorneosLive({ tournament }: TorneosLiveProps) {
 
           {upcoming.length > 0 ? (
             <div className="grid gap-3 sm:grid-cols-2">
-              {upcoming.map((match) => (
-                <div
+              {upcoming.map((match, idx) => (
+                <motion.div
                   key={match.id}
-                  className="rounded-xl border border-neutral-800 bg-neutral-900/60 p-4 transition hover:border-neutral-700"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2, delay: idx * 0.03 }}
+                  whileHover={{ y: -2 }}
+                  className="rounded-xl border border-neutral-800 bg-neutral-900/60 p-4 transition hover:border-neutral-700 shadow-sm hover:shadow-md"
                 >
                   <div className="mb-2 flex flex-wrap items-center justify-between gap-2 text-xs text-neutral-500">
                     <div className="flex items-center gap-2">
@@ -97,17 +136,23 @@ export function TorneosLive({ tournament }: TorneosLiveProps) {
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between gap-3 my-1">
-                    <p className="flex-1 text-sm font-semibold text-white truncate">{match.homeTeam}</p>
+                  <div className="flex items-center justify-between gap-2 my-1">
+                    <div className="flex-1 flex items-center gap-1.5 min-w-0">
+                      <HomeTeamShield teamName={match.homeTeam} size={18} />
+                      <p className="text-sm font-semibold text-white truncate">{match.homeTeam}</p>
+                    </div>
                     <span className="text-xs font-bold text-neutral-500 px-1">vs</span>
-                    <p className="flex-1 text-right text-sm font-semibold text-white truncate">{match.awayTeam}</p>
+                    <div className="flex-1 flex items-center justify-end gap-1.5 min-w-0">
+                      <p className="text-right text-sm font-semibold text-white truncate">{match.awayTeam}</p>
+                      <HomeTeamShield teamName={match.awayTeam} size={18} />
+                    </div>
                   </div>
 
                   <div className="mt-2.5 flex items-center gap-1 text-[11px] text-neutral-500">
                     <MapPin className="h-3 w-3 text-red-400 shrink-0" />
                     <span className="truncate">{match.venue}</span>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           ) : (
@@ -135,10 +180,14 @@ export function TorneosLive({ tournament }: TorneosLiveProps) {
 
           <div className="flex flex-col gap-3">
             {finished.length > 0 ? (
-              finished.map((match) => (
-                <div
+              finished.map((match, idx) => (
+                <motion.div
                   key={match.id}
-                  className="rounded-xl border border-neutral-800 bg-neutral-900/60 p-4 transition hover:border-neutral-700"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2, delay: idx * 0.03 }}
+                  whileHover={{ y: -2 }}
+                  className="rounded-xl border border-neutral-800 bg-neutral-900/60 p-4 transition hover:border-neutral-700 shadow-sm hover:shadow-md"
                 >
                   <div className="mb-2 flex items-center justify-between text-xs text-neutral-500">
                     <div className="flex items-center gap-2">
@@ -152,11 +201,17 @@ export function TorneosLive({ tournament }: TorneosLiveProps) {
 
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-neutral-200 truncate">{match.homeTeam}</span>
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <HomeTeamShield teamName={match.homeTeam} size={18} />
+                        <span className="text-sm font-medium text-neutral-200 truncate">{match.homeTeam}</span>
+                      </div>
                       <span className="font-extrabold text-white text-base ml-2">{match.homeScore ?? "-"}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-neutral-200 truncate">{match.awayTeam}</span>
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <HomeTeamShield teamName={match.awayTeam} size={18} />
+                        <span className="text-sm font-medium text-neutral-200 truncate">{match.awayTeam}</span>
+                      </div>
                       <span className="font-extrabold text-white text-base ml-2">{match.awayScore ?? "-"}</span>
                     </div>
                   </div>
@@ -165,7 +220,7 @@ export function TorneosLive({ tournament }: TorneosLiveProps) {
                     <span>Finalizado</span>
                     <span className="text-neutral-400 lowercase">{match.venue}</span>
                   </div>
-                </div>
+                </motion.div>
               ))
             ) : (
               <div className="rounded-xl border border-dashed border-neutral-800 p-8 text-center text-sm text-neutral-500">

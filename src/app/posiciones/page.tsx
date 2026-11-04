@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { Trophy, Filter, ArrowLeft, ShieldCheck, RefreshCw, Sparkles, Share2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { TournamentOfficialTable, OfficialTableRow } from "@/components/tournaments/tournament-official-table";
 import { StandingsSocialExportModal } from "@/components/tournaments/standings-social-export-modal";
 import { daerisSubList, DaerisSubId } from "@/data/daeris-subtournaments";
@@ -202,27 +203,37 @@ export default function PosicionesPage() {
             </button>
           </div>
 
-          <TournamentOfficialTable
-            title={
-              selectedTournament === "daeris"
-                ? `TABLA DE POSICIONES · ${currentSub.name}${currentSub.hasCategories ? ` (${selectedCategory.toUpperCase()})` : ""}`
-                : "TABLA DE POSICIONES · TORNEO DE PRUEBA"
-            }
-            groupName={
-              selectedTournament === "daeris"
-                ? currentSub.hasCategories
-                  ? `GRUPO ${selectedCategory.toUpperCase()}`
-                  : currentSub.groupName
-                : "GRUPO PRUEBA A"
-            }
-            qualificationRule={
-              selectedTournament === "daeris"
-                ? currentSub.qualificationRule
-                : "CLASIFICAN LOS 8 PRIMEROS DE CADA GRUPO"
-            }
-            qualificationCutoff={selectedTournament === "daeris" ? currentSub.qualificationCutoff : 8}
-            rows={standingsRows}
-          />
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`${selectedTournament}-${selectedDaerisSub}-${selectedCategory}`}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+            >
+              <TournamentOfficialTable
+                title={
+                  selectedTournament === "daeris"
+                    ? `TABLA DE POSICIONES · ${currentSub.name}${currentSub.hasCategories ? ` (${selectedCategory.toUpperCase()})` : ""}`
+                    : "TABLA DE POSICIONES · TORNEO DE PRUEBA"
+                }
+                groupName={
+                  selectedTournament === "daeris"
+                    ? currentSub.hasCategories
+                      ? `GRUPO ${selectedCategory.toUpperCase()}`
+                      : currentSub.groupName
+                    : "GRUPO PRUEBA A"
+                }
+                qualificationRule={
+                  selectedTournament === "daeris"
+                    ? currentSub.qualificationRule
+                    : "CLASIFICAN LOS 8 PRIMEROS DE CADA GRUPO"
+                }
+                qualificationCutoff={selectedTournament === "daeris" ? currentSub.qualificationCutoff : 8}
+                rows={standingsRows}
+              />
+            </motion.div>
+          </AnimatePresence>
         </div>
 
         {/* Modal de Exportación para Redes Sociales con 3 Diseños, Escudos y Selector Libre de Color */}

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Goal, Shield, Filter, ArrowLeft, ShieldCheck, Sparkles, Award } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { daerisSubList, DaerisSubId } from "@/data/daeris-subtournaments";
 import {
   createGenericScorers,
@@ -11,6 +12,39 @@ import {
   MinorCategory,
 } from "@/data/generic-tournament-data";
 import { StatsSocialExportModal, StatItem } from "@/components/tournaments/stats-social-export-modal";
+import { CrackDeLaJornadaShowcase } from "@/components/players/player-spotlight-card";
+import { getAcademyBySlug } from "@/data/academies-data";
+import { AcademyBadge } from "@/components/academies/academy-badge";
+
+function StatTeamShield({ teamName, size = 18 }: { teamName: string; size?: number }) {
+  const academy = getAcademyBySlug(teamName);
+
+  if (academy) {
+    return (
+      <div style={{ width: size, height: size }} className="shrink-0 flex items-center justify-center">
+        <AcademyBadge slug={academy.slug} size={size} logoUrl={academy.logoUrl} />
+      </div>
+    );
+  }
+
+  const initials = teamName
+    .replace(/\s*\([a-z0-9]\)/gi, "")
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase();
+
+  return (
+    <div
+      style={{ width: size, height: size }}
+      className="shrink-0 rounded-full bg-neutral-900 border border-white/20 flex items-center justify-center text-[7px] font-black text-white"
+    >
+      {initials || "FM"}
+    </div>
+  );
+}
 
 export default function EstadisticasPage() {
   const [selectedTournament, setSelectedTournament] = useState<"daeris" | "prueba">("daeris");
@@ -64,7 +98,7 @@ export default function EstadisticasPage() {
     <div className="min-h-screen bg-neutral-950 text-neutral-100">
       <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         {/* Encabezado */}
-        <div className="mb-8 flex flex-col items-center sm:items-start text-center sm:text-left">
+        <div className="mb-6 flex flex-col items-center sm:items-start text-center sm:text-left">
           <Link
             href="/"
             className="inline-flex items-center gap-1.5 text-xs text-neutral-400 hover:text-white transition mb-3 self-center sm:self-auto"
@@ -85,6 +119,9 @@ export default function EstadisticasPage() {
             Máximos artilleros y porterías menos vencidas por cada división y categoría formativa
           </p>
         </div>
+
+        {/* 🌟 EL CRACK DE LA JORNADA (Gamificación y Cromos Digitales Coleccionables) */}
+        <CrackDeLaJornadaShowcase />
 
         {/* Filtros */}
         <div className="mb-8 flex flex-col gap-4 rounded-2xl border border-neutral-800 bg-neutral-900/60 p-4 sm:p-5">
@@ -242,12 +279,18 @@ export default function EstadisticasPage() {
                 </thead>
                 <tbody className="divide-y divide-neutral-800/60">
                   {scorers.map((scorer, idx) => (
-                    <tr key={scorer.player} className="hover:bg-neutral-800/30 transition">
+                    <motion.tr
+                      key={scorer.player}
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.15, delay: idx * 0.02 }}
+                      className="hover:bg-neutral-800/30 transition"
+                    >
                       <td className="py-3 font-bold text-neutral-400">
                         <span
                           className={`inline-flex h-6 w-6 items-center justify-center rounded-md text-xs font-black ${
                             idx === 0
-                              ? "bg-amber-400 text-black"
+                              ? "bg-amber-400 text-black shadow-md shadow-amber-400/30"
                               : idx === 1
                               ? "bg-neutral-300 text-black"
                               : idx === 2
@@ -259,11 +302,16 @@ export default function EstadisticasPage() {
                         </span>
                       </td>
                       <td className="py-3 font-semibold text-white">{scorer.player}</td>
-                      <td className="py-3 text-neutral-400">{scorer.team}</td>
+                      <td className="py-3 text-neutral-300">
+                        <div className="flex items-center gap-1.5">
+                          <StatTeamShield teamName={scorer.team} size={18} />
+                          <span className="truncate">{scorer.team}</span>
+                        </div>
+                      </td>
                       <td className="py-3 text-right font-black text-red-400 text-base">
                         {scorer.goals}
                       </td>
-                    </tr>
+                    </motion.tr>
                   ))}
                 </tbody>
               </table>
@@ -314,12 +362,18 @@ export default function EstadisticasPage() {
                 </thead>
                 <tbody className="divide-y divide-neutral-800/60">
                   {keepers.map((keeper, idx) => (
-                    <tr key={keeper.player} className="hover:bg-neutral-800/30 transition">
+                    <motion.tr
+                      key={keeper.player}
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.15, delay: idx * 0.02 }}
+                      className="hover:bg-neutral-800/30 transition"
+                    >
                       <td className="py-3 font-bold text-neutral-400">
                         <span
                           className={`inline-flex h-6 w-6 items-center justify-center rounded-md text-xs font-black ${
                             idx === 0
-                              ? "bg-emerald-400 text-black"
+                              ? "bg-emerald-400 text-black shadow-md shadow-emerald-400/30"
                               : "bg-neutral-800 text-neutral-400"
                           }`}
                         >
@@ -327,13 +381,18 @@ export default function EstadisticasPage() {
                         </span>
                       </td>
                       <td className="py-3 font-semibold text-white">{keeper.player}</td>
-                      <td className="py-3 text-neutral-400">{keeper.team}</td>
+                      <td className="py-3 text-neutral-300">
+                        <div className="flex items-center gap-1.5">
+                          <StatTeamShield teamName={keeper.team} size={18} />
+                          <span className="truncate">{keeper.team}</span>
+                        </div>
+                      </td>
                       <td className="py-3 text-center text-neutral-300">{keeper.matchesPlayed}</td>
                       <td className="py-3 text-center text-red-400 font-bold">{keeper.goalsConceded}</td>
                       <td className="py-3 text-right font-black text-emerald-400 text-base">
                         {keeper.cleanSheets}
                       </td>
-                    </tr>
+                    </motion.tr>
                   ))}
                 </tbody>
               </table>

@@ -22,6 +22,7 @@ import {
   Users,
 } from "lucide-react";
 import { useState, useEffect, useMemo, Suspense } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ALL_NOV_2026_FIXTURES,
   OFFICIAL_VENUES,
@@ -37,6 +38,38 @@ import {
   CalendarSocialExportModal,
   CalendarExportMatch,
 } from "@/components/calendar/calendar-social-export-modal";
+import { getAcademyBySlug } from "@/data/academies-data";
+import { AcademyBadge } from "@/components/academies/academy-badge";
+
+function CalendarTeamShield({ teamName, size = 22 }: { teamName: string; size?: number }) {
+  const academy = getAcademyBySlug(teamName);
+
+  if (academy) {
+    return (
+      <div style={{ width: size, height: size }} className="shrink-0 flex items-center justify-center">
+        <AcademyBadge slug={academy.slug} size={size} logoUrl={academy.logoUrl} />
+      </div>
+    );
+  }
+
+  const initials = teamName
+    .replace(/\s*\([a-z0-9]\)/gi, "")
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase();
+
+  return (
+    <div
+      style={{ width: size, height: size }}
+      className="shrink-0 rounded-full bg-neutral-900 border border-white/20 flex items-center justify-center text-[7.5px] font-black text-white"
+    >
+      {initials || "FM"}
+    </div>
+  );
+}
 
 interface ExtendedMatch {
   id: string;
@@ -610,132 +643,144 @@ function CalendarioContent() {
                   </div>
                 )}
 
-                {/* Tarjetas de Partidos */}
+                {/* Tarjetas de Partidos con Animación Fluida */}
                 <div className="grid gap-4">
-                  {group.matches.map((match) => {
-                    const isFutsal = match.discipline === "Fútbol Sala";
-                    return (
-                      <div
-                        key={match.id}
-                        className="rounded-2xl border border-neutral-800 bg-neutral-900/80 p-4 sm:p-5 hover:border-neutral-700 transition shadow-lg"
-                      >
-                        {/* Fila superior: metadata */}
-                        <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-xs">
-                          <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-neutral-400">
-                            {/* Insignia de disciplina */}
-                            <span
-                              className={`rounded-md px-2 py-0.5 text-[10px] font-black uppercase tracking-wider ${
-                                isFutsal
-                                  ? "bg-red-500/20 text-red-400 border border-red-500/30"
-                                  : "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                              }`}
-                            >
-                              {match.discipline}
-                            </span>
-
-                            <span className="rounded-md bg-neutral-800 px-2 py-0.5 text-[11px] font-bold text-neutral-200">
-                              {match.category} {match.division ? `(${match.division})` : ""}
-                            </span>
-
-                            {match.courtDetail && (
-                              <span className="rounded-md bg-sky-500/10 border border-sky-500/30 px-2 py-0.5 text-[10px] font-bold text-sky-400">
-                                {match.courtDetail}
+                  <AnimatePresence mode="popLayout">
+                    {group.matches.map((match, mIdx) => {
+                      const isFutsal = match.discipline === "Fútbol Sala";
+                      return (
+                        <motion.div
+                          layout
+                          key={match.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, scale: 0.98 }}
+                          transition={{ duration: 0.2, delay: Math.min(mIdx * 0.02, 0.2) }}
+                          className="rounded-2xl border border-neutral-800 bg-neutral-900/80 p-4 sm:p-5 hover:border-neutral-700 hover:bg-neutral-900 transition-all shadow-lg"
+                        >
+                          {/* Fila superior: metadata */}
+                          <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-xs">
+                            <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-neutral-400">
+                              {/* Insignia de disciplina */}
+                              <span
+                                className={`rounded-md px-2 py-0.5 text-[10px] font-black uppercase tracking-wider ${
+                                  isFutsal
+                                    ? "bg-red-500/20 text-red-400 border border-red-500/30"
+                                    : "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                                }`}
+                              >
+                                {match.discipline}
                               </span>
-                            )}
 
-                            <span className="font-bold text-neutral-300">{match.jornada || `Jornada ${match.matchday}`}</span>
+                              <span className="rounded-md bg-neutral-800 px-2 py-0.5 text-[11px] font-bold text-neutral-200">
+                                {match.category} {match.division ? `(${match.division})` : ""}
+                              </span>
 
-                            <span className="hidden sm:inline text-neutral-600">·</span>
-
-                            <span className="flex items-center gap-1 font-bold text-neutral-200">
-                              <Calendar className="h-3 w-3 text-red-400" />
-                              {formatDateVE(match.matchDate)}
-                            </span>
-
-                            <span className="hidden sm:inline text-neutral-600">·</span>
-
-                            <span className="flex items-center gap-1 text-neutral-300 font-semibold">
-                              <Clock className="h-3 w-3 text-neutral-500" />
-                              {match.matchTime}
-                            </span>
-
-                            <span className="hidden sm:inline text-neutral-600">·</span>
-
-                            <span className="flex items-center gap-1 text-neutral-300">
-                              <MapPin className="h-3 w-3 text-red-400" />
-                              <span className="max-w-[220px] truncate sm:max-w-none">{match.venue}</span>
-                            </span>
-                          </div>
-
-                          <div className="flex items-center gap-2">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setSocialModalMatches([match]);
-                                setIsSocialModalOpen(true);
-                              }}
-                              className="inline-flex items-center gap-1 rounded-full border border-neutral-700 bg-neutral-800/90 hover:bg-neutral-700 hover:text-white px-2.5 py-0.5 text-[10.5px] font-bold text-neutral-300 transition shadow-sm active:scale-95"
-                              title="Exportar flyer oficial de este partido para Instagram o WhatsApp"
-                            >
-                              <Share2 className="h-3 w-3 text-red-400" />
-                              <span>Flyer Redes</span>
-                            </button>
-                            <span className={`rounded-full border px-2.5 py-0.5 text-[11px] font-bold ${statusClass(match.status)}`}>
-                              {statusLabel(match.status)}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Enfrentamiento y Marcador */}
-                        <div className="grid items-center gap-3 sm:grid-cols-[1fr_auto_1fr] sm:gap-4 py-3 border-y border-neutral-800/80">
-                          {/* Equipo Local */}
-                          <div className="text-center sm:text-right">
-                            <p className="text-base sm:text-lg font-black text-white">{match.homeTeam}</p>
-                            <span className="text-[10px] uppercase tracking-wider text-neutral-500 font-bold">Local</span>
-                          </div>
-
-                          {/* Marcador Central */}
-                          <div className="text-center px-4 flex flex-col items-center justify-center">
-                            {match.status === "finished" ? (
-                              <div className="flex flex-col items-center gap-1.5">
-                                <p className="text-2xl font-black text-red-400 sm:text-3xl tracking-wider">
-                                  {match.homeScore} - {match.awayScore}
-                                </p>
-                                <button
-                                  type="button"
-                                  onClick={() => setSelectedScoresheetMatch(match)}
-                                  className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-950/80 hover:bg-emerald-900 px-3.5 py-1 text-[11px] font-bold text-emerald-300 shadow-md shadow-emerald-950/50 transition active:scale-95"
-                                  title="Ver fotografía de la planilla física firmada por el árbitro"
-                                >
-                                  <FileText className="h-3.5 w-3.5 text-emerald-400" />
-                                  <span>Ver Planilla Original</span>
-                                </button>
-                              </div>
-                            ) : match.status === "live" ? (
-                              <div className="flex flex-col items-center gap-1">
-                                <p className="text-2xl font-black text-red-400 sm:text-3xl">
-                                  {match.homeScore ?? 0} - {match.awayScore ?? 0}
-                                </p>
-                                <span className="rounded-full bg-red-600/30 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-red-400 animate-pulse">
-                                  En Cancha
+                              {match.courtDetail && (
+                                <span className="rounded-md bg-sky-500/10 border border-sky-500/30 px-2 py-0.5 text-[10px] font-bold text-sky-400">
+                                  {match.courtDetail}
                                 </span>
-                              </div>
-                            ) : (
-                              <div className="flex flex-col items-center gap-0.5">
-                                <span className="text-xs font-black text-neutral-400 bg-neutral-950 px-3 py-1 rounded-lg border border-neutral-800">
-                                  VS
-                                </span>
-                                <span className="text-[10px] text-neutral-500 mt-0.5">{match.matchTime}</span>
-                              </div>
-                            )}
+                              )}
+
+                              <span className="font-bold text-neutral-300">{match.jornada || `Jornada ${match.matchday}`}</span>
+
+                              <span className="hidden sm:inline text-neutral-600">·</span>
+
+                              <span className="flex items-center gap-1 font-bold text-neutral-200">
+                                <Calendar className="h-3 w-3 text-red-400" />
+                                {formatDateVE(match.matchDate)}
+                              </span>
+
+                              <span className="hidden sm:inline text-neutral-600">·</span>
+
+                              <span className="flex items-center gap-1 text-neutral-300 font-semibold">
+                                <Clock className="h-3 w-3 text-neutral-500" />
+                                {match.matchTime}
+                              </span>
+
+                              <span className="hidden sm:inline text-neutral-600">·</span>
+
+                              <span className="flex items-center gap-1 text-neutral-300">
+                                <MapPin className="h-3 w-3 text-red-400" />
+                                <span className="max-w-[220px] truncate sm:max-w-none">{match.venue}</span>
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setSocialModalMatches([match]);
+                                  setIsSocialModalOpen(true);
+                                }}
+                                className="inline-flex items-center gap-1 rounded-full border border-neutral-700 bg-neutral-800/90 hover:bg-neutral-700 hover:text-white px-2.5 py-0.5 text-[10.5px] font-bold text-neutral-300 transition shadow-sm active:scale-95"
+                                title="Exportar flyer oficial de este partido para Instagram o WhatsApp"
+                              >
+                                <Share2 className="h-3 w-3 text-red-400" />
+                                <span>Flyer Redes</span>
+                              </button>
+                              <span className={`rounded-full border px-2.5 py-0.5 text-[11px] font-bold ${statusClass(match.status)}`}>
+                                {statusLabel(match.status)}
+                              </span>
+                            </div>
                           </div>
 
-                          {/* Equipo Visitante */}
-                          <div className="text-center sm:text-left">
-                            <p className="text-base sm:text-lg font-black text-white">{match.awayTeam}</p>
-                            <span className="text-[10px] uppercase tracking-wider text-neutral-500 font-bold">Visitante</span>
+                          {/* Enfrentamiento y Marcador con Escudos */}
+                          <div className="grid items-center gap-3 sm:grid-cols-[1fr_auto_1fr] sm:gap-4 py-3 border-y border-neutral-800/80">
+                            {/* Equipo Local con Escudo */}
+                            <div className="flex flex-col sm:items-end items-center text-center sm:text-right">
+                              <div className="flex items-center justify-center sm:justify-end gap-2 max-w-full">
+                                <span className="text-base sm:text-lg font-black text-white truncate">{match.homeTeam}</span>
+                                <CalendarTeamShield teamName={match.homeTeam} size={26} />
+                              </div>
+                              <span className="text-[10px] uppercase tracking-wider text-neutral-500 font-bold mt-0.5">Local</span>
+                            </div>
+
+                            {/* Marcador Central */}
+                            <div className="text-center px-4 flex flex-col items-center justify-center">
+                              {match.status === "finished" ? (
+                                <div className="flex flex-col items-center gap-1.5">
+                                  <p className="text-2xl font-black text-red-400 sm:text-3xl tracking-wider">
+                                    {match.homeScore} - {match.awayScore}
+                                  </p>
+                                  <button
+                                    type="button"
+                                    onClick={() => setSelectedScoresheetMatch(match)}
+                                    className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-950/80 hover:bg-emerald-900 px-3.5 py-1 text-[11px] font-bold text-emerald-300 shadow-md shadow-emerald-950/50 transition active:scale-95"
+                                    title="Ver fotografía de la planilla física firmada por el árbitro"
+                                  >
+                                    <FileText className="h-3.5 w-3.5 text-emerald-400" />
+                                    <span>Ver Planilla Original</span>
+                                  </button>
+                                </div>
+                              ) : match.status === "live" ? (
+                                <div className="flex flex-col items-center gap-1">
+                                  <p className="text-2xl font-black text-red-400 sm:text-3xl">
+                                    {match.homeScore ?? 0} - {match.awayScore ?? 0}
+                                  </p>
+                                  <span className="rounded-full bg-red-600/30 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-red-400 animate-pulse">
+                                    En Cancha
+                                  </span>
+                                </div>
+                              ) : (
+                                <div className="flex flex-col items-center gap-0.5">
+                                  <span className="text-xs font-black text-neutral-400 bg-neutral-950 px-3 py-1 rounded-lg border border-neutral-800">
+                                    VS
+                                  </span>
+                                  <span className="text-[10px] text-neutral-500 mt-0.5">{match.matchTime}</span>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Equipo Visitante con Escudo */}
+                            <div className="flex flex-col sm:items-start items-center text-center sm:text-left">
+                              <div className="flex items-center justify-center sm:justify-start gap-2 max-w-full">
+                                <CalendarTeamShield teamName={match.awayTeam} size={26} />
+                                <span className="text-base sm:text-lg font-black text-white truncate">{match.awayTeam}</span>
+                              </div>
+                              <span className="text-[10px] uppercase tracking-wider text-neutral-500 font-bold mt-0.5">Visitante</span>
+                            </div>
                           </div>
-                        </div>
 
                         {/* CUERPO ARBITRAL OFICIAL DESIGNADO */}
                         {match.referees && (
@@ -762,9 +807,10 @@ function CalendarioContent() {
                             </div>
                           </div>
                         )}
-                      </div>
+                      </motion.div>
                     );
                   })}
+                  </AnimatePresence>
                 </div>
               </div>
             ))

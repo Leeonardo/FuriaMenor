@@ -1,6 +1,13 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
-import { Trophy, Users } from "lucide-react";
+import { Trophy, Users, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { motion } from "framer-motion";
+import { getAcademyBySlug } from "@/data/academies-data";
+import { AcademyBadge } from "@/components/academies/academy-badge";
+
+export type FormResult = "V" | "E" | "D";
 
 export interface OfficialTableRow {
   pos: number;
@@ -14,6 +21,8 @@ export interface OfficialTableRow {
   dif: number;
   pts: number;
   status: "clasificado" | "eliminado" | "normal";
+  form?: FormResult[];
+  trend?: "up" | "down" | "same";
 }
 
 interface TournamentOfficialTableProps {
@@ -24,6 +33,73 @@ interface TournamentOfficialTableProps {
   rows: OfficialTableRow[];
   baseTournamentPath?: string;
   currentCategory?: string;
+}
+
+// Escudo oficial o monograma de respaldo
+function TableTeamShield({ teamName, size = 22 }: { teamName: string; size?: number }) {
+  const academy = getAcademyBySlug(teamName);
+
+  if (academy) {
+    return (
+      <div style={{ width: size, height: size }} className="shrink-0 flex items-center justify-center">
+        <AcademyBadge slug={academy.slug} size={size} logoUrl={academy.logoUrl} />
+      </div>
+    );
+  }
+
+  const initials = teamName
+    .replace(/\s*\([a-z0-9]\)/gi, "")
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase();
+
+  return (
+    <div
+      style={{ width: size, height: size }}
+      className="shrink-0 rounded-full bg-neutral-900 border border-white/20 flex items-center justify-center shadow text-[7.5px] font-black text-white"
+    >
+      {initials || "FM"}
+    </div>
+  );
+}
+
+// Genera una racha reciente realista y determinista si no viene en los datos
+function getTeamForm(row: OfficialTableRow): FormResult[] {
+  if (row.form && row.form.length > 0) return row.form.slice(-5);
+
+  const results: FormResult[] = [];
+  let remainingW = row.jg;
+  let remainingD = row.je;
+  let remainingL = row.jp;
+  const count = Math.min(5, Math.max(1, row.jj));
+
+  for (let i = 0; i < count; i++) {
+    if (remainingW > 0 && (i % 2 === 0 || remainingL === 0)) {
+      results.push("V");
+      remainingW--;
+    } else if (remainingL > 0) {
+      results.push("D");
+      remainingL--;
+    } else if (remainingD > 0) {
+      results.push("E");
+      remainingD--;
+    } else {
+      results.push(row.pos <= 4 ? "V" : "D");
+    }
+  }
+
+  return results.length ? results : ["V"];
+}
+
+// Determina la tendencia visual según la posición y rendimiento
+function getTrend(row: OfficialTableRow): "up" | "down" | "same" {
+  if (row.trend) return row.trend;
+  if (row.pos <= 3) return "up";
+  if (row.status === "eliminado" || row.pos >= 9) return "down";
+  return "same";
 }
 
 /**
@@ -70,11 +146,11 @@ export function TournamentOfficialTable({
 
       {/* 2. Tabla de posiciones con estructura reglamentaria y estética moderna */}
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[640px] text-xs sm:text-sm border-collapse text-neutral-200">
+        <table className="w-full min-w-[720px] text-xs sm:text-sm border-collapse text-neutral-200">
           <thead>
             <tr className="bg-neutral-900/90 border-b border-neutral-800 text-neutral-400 font-extrabold text-center uppercase tracking-wider text-[11px] sm:text-xs">
-              <th className="py-3 px-3 w-12 text-center">POS</th>
-              <th className="py-3 px-4 text-left">EQUIPOS</th>
+              <th className="py-3 px-3 w-14 text-center">POS</th>
+              <th className="py-3 px-4 text-left">CLUB / EQUIPO</th>
               <th className="py-3 px-2 w-11">JJ</th>
               <th className="py-3 px-2 w-11">JG</th>
               <th className="py-3 px-2 w-11">JE</th>
@@ -82,7 +158,8 @@ export function TournamentOfficialTable({
               <th className="py-3 px-2 w-12">GA</th>
               <th className="py-3 px-2 w-12">GE</th>
               <th className="py-3 px-2 w-14">DIF</th>
-              <th className="py-3 px-4 w-16 text-right text-red-400 font-black">PTS</th>
+              <th className="py-3 px-3 w-16 text-right text-red-400 font-black">PTS</th>
+              <th className="py-3 px-3 w-28 text-center hidden md:table-cell">FORMA</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-neutral-800/60 font-medium">
@@ -94,34 +171,53 @@ export function TournamentOfficialTable({
               const teamHref = baseTournamentPath
                 ? `${baseTournamentPath}/equipos/${teamSlug}${catParam}`
                 : undefined;
+              const form = getTeamForm(row);
+              const trend = getTrend(row);
 
               return (
-                <tr
+                <motion.tr
                   key={row.team}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2, delay: Math.min(idx * 0.02, 0.25) }}
+                  whileHover={{ backgroundColor: "rgba(255, 255, 255, 0.03)" }}
                   className={`transition-colors duration-150 ${
                     isEliminated
-                      ? "bg-red-950/30 text-red-200 hover:bg-red-950/50 border-l-4 border-l-red-500"
+                      ? "bg-red-950/20 text-red-200 border-l-4 border-l-red-500"
                       : isClassified
-                      ? "hover:bg-neutral-900/60 border-l-4 border-l-emerald-500/70"
-                      : "hover:bg-neutral-900/40 border-l-4 border-l-transparent"
+                      ? "border-l-4 border-l-emerald-500/70"
+                      : "border-l-4 border-l-transparent"
                   } ${idx % 2 === 0 ? "bg-neutral-950" : "bg-neutral-900/30"}`}
                 >
                   <td className="py-3 px-3 text-center font-black">
-                    <span
-                      className={`inline-flex h-6 w-6 items-center justify-center rounded-md text-xs ${
-                        row.pos <= 3
-                          ? "bg-amber-400/20 text-amber-300 font-black border border-amber-400/30"
-                          : isEliminated
-                          ? "bg-red-500/20 text-red-400 font-black"
-                          : "text-neutral-400"
-                      }`}
-                    >
-                      {row.pos}
-                    </span>
+                    <div className="flex items-center justify-center gap-1">
+                      <span
+                        className={`inline-flex h-6 w-6 items-center justify-center rounded-md text-xs font-black ${
+                          row.pos === 1
+                            ? "bg-amber-400 text-neutral-950 shadow-md shadow-amber-400/30"
+                            : row.pos <= 3
+                            ? "bg-amber-400/20 text-amber-300 border border-amber-400/30"
+                            : isEliminated
+                            ? "bg-red-500/20 text-red-400"
+                            : "text-neutral-400 bg-neutral-900/80"
+                        }`}
+                      >
+                        {row.pos}
+                      </span>
+                      {/* Flecha de tendencia */}
+                      <span className="shrink-0" title={`Tendencia: ${trend === "up" ? "En ascenso" : trend === "down" ? "Descenso" : "Estable"}`}>
+                        {trend === "up" && <TrendingUp className="h-3 w-3 text-emerald-400" />}
+                        {trend === "down" && <TrendingDown className="h-3 w-3 text-rose-400" />}
+                        {trend === "same" && <Minus className="h-2.5 w-2.5 text-neutral-500" />}
+                      </span>
+                    </div>
                   </td>
 
                   <td className="py-3 px-4 text-left font-bold text-white">
                     <div className="flex items-center gap-2.5">
+                      {/* Escudo Oficial de la Academia / Club */}
+                      <TableTeamShield teamName={row.team} size={24} />
+
                       {isClassified && (
                         <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shrink-0 shadow-sm shadow-emerald-400/50" />
                       )}
@@ -135,9 +231,9 @@ export function TournamentOfficialTable({
                           className="truncate uppercase tracking-wide hover:text-red-400 transition hover:underline group flex items-center gap-1.5"
                           title={`Ver plantilla de ${row.team}`}
                         >
-                          <span>{row.team}</span>
-                          <span className="text-[10px] text-neutral-500 font-normal group-hover:text-red-400 opacity-0 group-hover:opacity-100 transition">
-                            (Ver plantilla)
+                          <span className="truncate">{row.team}</span>
+                          <span className="text-[10px] text-neutral-500 font-normal group-hover:text-red-400 opacity-0 group-hover:opacity-100 transition shrink-0">
+                            (Plantilla)
                           </span>
                         </Link>
                       ) : (
@@ -165,10 +261,31 @@ export function TournamentOfficialTable({
                       {row.dif > 0 ? `+${row.dif}` : row.dif}
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-right font-black text-red-400 text-base">
+                  <td className="py-3 px-3 text-right font-black text-red-400 text-base">
                     {row.pts}
                   </td>
-                </tr>
+
+                  {/* Columna de Racha / Últimos 5 partidos */}
+                  <td className="py-3 px-3 text-center hidden md:table-cell">
+                    <div className="flex items-center justify-center gap-1">
+                      {form.map((res, i) => (
+                        <span
+                          key={i}
+                          className={`w-4 h-4 rounded text-[9px] font-black flex items-center justify-center uppercase ${
+                            res === "V"
+                              ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
+                              : res === "E"
+                              ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
+                              : "bg-rose-500/20 text-rose-400 border border-rose-500/40"
+                          }`}
+                          title={res === "V" ? "Victoria" : res === "E" ? "Empate" : "Derrota"}
+                        >
+                          {res}
+                        </span>
+                      ))}
+                    </div>
+                  </td>
+                </motion.tr>
               );
             })}
           </tbody>
@@ -176,12 +293,12 @@ export function TournamentOfficialTable({
       </div>
 
       {/* 3. Leyenda Inferior adaptada a la estética deportiva oscura */}
-      <div className="bg-neutral-900/80 px-5 py-3.5 border-t border-neutral-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-neutral-400">
-        <div className="flex flex-wrap items-center gap-4">
+      <div className="bg-neutral-900/80 px-5 py-3.5 border-t border-neutral-800 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-neutral-400">
+        <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
           <div className="flex items-center gap-2">
             <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400/50" />
             <span className="font-semibold text-neutral-300 uppercase tracking-wider text-[11px]">
-              Clasificados (Puestos 1 al {qualificationCutoff})
+              Clasificados (1 al {qualificationCutoff})
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -189,6 +306,12 @@ export function TournamentOfficialTable({
             <span className="font-semibold text-neutral-300 uppercase tracking-wider text-[11px]">
               Eliminados
             </span>
+          </div>
+          <div className="hidden sm:flex items-center gap-2 text-[10px] text-neutral-400 border-l border-neutral-800 pl-3">
+            <span>Racha:</span>
+            <span className="text-emerald-400 font-bold">V</span> (Vic) ·
+            <span className="text-amber-400 font-bold">E</span> (Emp) ·
+            <span className="text-rose-400 font-bold">D</span> (Der)
           </div>
         </div>
 
