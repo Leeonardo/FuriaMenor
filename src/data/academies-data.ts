@@ -3637,6 +3637,12 @@ const SPECIAL_TEAM_ALIASES: Record<string, string> = {
   "fratelsa-sport-negro": "fratelsa-sport",
   "fusion-academica-a": "fusion-academica",
   "fusion-academica-b": "fusion-academica",
+  "la-paz-thimat": "la-paz-futsal",
+  "halcones-del-paraiso-fs": "dvo-paraiso",
+  "halcones-del-paraiso": "dvo-paraiso",
+  "overcoming-fs": "overcoming",
+  "rh-sport-club": "rh-futsal",
+  "atletico-nacional": "nacional",
 };
 
 /**

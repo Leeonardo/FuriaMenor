@@ -16,12 +16,24 @@ import {
   FUTSAL_MATCHES_NOV_2026,
   FUTBOL7_MATCHES_NOV_2026,
 } from "@/data/fixtures-noviembre-2026";
+import {
+  STANDINGS_INSTITUCIONAL_OFICIAL,
+  INSTITUCIONAL_RULE,
+  STANDINGS_LIBRE_1RA_OFICIAL,
+  LIBRE_1RA_RULE,
+  STANDINGS_MASTER_50_OFICIAL,
+  MASTER_50_RULE,
+  STANDINGS_LIBRE_2DA_GROUPS,
+  STANDINGS_LIBRE_2DA_GRUPO_A,
+  LIBRE_2DA_RULE,
+} from "@/data/official-standings-tables";
 
 export type DaerisSubId =
   | "institucional"
   | "futbol7"
   | "master50"
   | "libre-parquecarabobo"
+  | "libre-2da"
   | "infantil-1ra"
   | "infantil-2da";
 
@@ -50,6 +62,7 @@ export interface DaerisSubTournament {
   hasCategories?: boolean;
   categories?: readonly MinorCategory[];
   categoryData?: Record<MinorCategory, CategoryPayload>;
+  groups?: Record<string, OfficialTableRow[]>;
   accent: {
     border: string;
     pill: string;
@@ -127,7 +140,7 @@ const infantil2daCatData = buildAllMinorCategories(
 );
 
 export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
-  // 1. Torneo Institucional
+  // 1. Torneo Institucional (Imagen 1)
   institucional: {
     id: "institucional",
     slug: "institucional",
@@ -136,11 +149,11 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
     categoryLabel: "Empresas & Organismos",
     badgeKey: "institucional",
     venue: "Cancha Zona Rental & Gimnasio Libertador, Caracas",
-    teamsCount: 2,
+    teamsCount: 6,
     status: "Fase Regular",
-    groupName: "GRUPO INSTITUCIONAL A",
-    qualificationRule: "CLASIFICAN LOS 8 PRIMEROS A CUARTOS DE FINAL",
-    qualificationCutoff: 8,
+    groupName: "GRUPO U",
+    qualificationRule: INSTITUCIONAL_RULE,
+    qualificationCutoff: 2,
     hasCategories: false,
     description: "Torneo institucional de futsal para entidades públicas y privadas.",
     accent: {
@@ -149,7 +162,7 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
       text: "text-amber-400",
     },
     matches: FUTBOL7_MATCHES_NOV_2026.filter((m) => m.category === "Institucional"),
-    standings: createCategoryStandings("Institucional"),
+    standings: STANDINGS_INSTITUCIONAL_OFICIAL,
     topScorers: createGenericScorers("Equipo", "Institucional"),
     leastConceded: createGenericKeepers("Equipo", "Institucional"),
     teams: createGenericTeamProfiles("institucional", "Torneo Institucional", "Institucional", "DAE"),
@@ -183,7 +196,7 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
     teams: createGenericTeamProfiles("futbol-7-institucional", "Fútbol 7 Institucional", "Fútbol 7", "DAE"),
   },
 
-  // 3. Master 50
+  // 3. Master 50 (Imagen 3)
   master50: {
     id: "master50",
     slug: "master-50",
@@ -192,11 +205,11 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
     categoryLabel: "Veteranos (+50 Años)",
     badgeKey: "master50",
     venue: "Cancha Hogar Canario & Cancha Guacamaya, Caracas",
-    teamsCount: 6,
+    teamsCount: 7,
     status: "Semifinales",
-    groupName: "GRUPO MASTER VETERANOS",
-    qualificationRule: "CLASIFICAN LOS 8 PRIMEROS DE CADA GRUPO",
-    qualificationCutoff: 8,
+    groupName: "GRUPO U",
+    qualificationRule: MASTER_50_RULE,
+    qualificationCutoff: 2,
     hasCategories: false,
     description: "Torneo de veteranos mayores de 50 años en Hogar Canario y El Paraíso.",
     accent: {
@@ -205,38 +218,67 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
       text: "text-yellow-400",
     },
     matches: FUTSAL_MATCHES_NOV_2026.filter((m) => m.category === "Master 50" || m.category === "Master 40"),
-    standings: createCategoryStandings("Master 40"),
+    standings: STANDINGS_MASTER_50_OFICIAL,
     topScorers: createGenericScorers("Equipo", "Master 40"),
     leastConceded: createGenericKeepers("Equipo", "Master 40"),
     teams: createGenericTeamProfiles("master-50", "Master 50", "Master 50", "DAE"),
   },
 
-  // 4. Torneo Libre Parque Carabobo
+  // 4. Torneo Libre 1ra División (Imagen 2)
   "libre-parquecarabobo": {
     id: "libre-parquecarabobo",
     slug: "libre-parque-carabobo",
-    name: "Torneo Libre Parque Carabobo",
-    shortName: "Libre P. Carabobo",
-    categoryLabel: "Categoría Libre",
+    name: "Torneo Libre 1ra División",
+    shortName: "Libre 1ra Div",
+    categoryLabel: "Categoría Libre · 1ra Div",
     badgeKey: "libre-parquecarabobo",
     venue: "Cancha Municipal Parque Carabobo, La Candelaria",
-    teamsCount: 10,
+    teamsCount: 7,
     status: "En Curso",
-    groupName: "GRUPO LIBRE NOCTURNO",
-    qualificationRule: "CLASIFICAN LOS 8 PRIMEROS DE CADA GRUPO",
-    qualificationCutoff: 8,
+    groupName: "GRUPO U",
+    qualificationRule: LIBRE_1RA_RULE,
+    qualificationCutoff: 2,
     hasCategories: false,
-    description: "Circuito de futsal libre de alta intensidad en Parque Carabobo.",
+    description: "Circuito de futsal libre 1ra división de alta intensidad en Parque Carabobo.",
     accent: {
       border: "border-orange-500/50 hover:border-orange-400",
       pill: "bg-orange-500/10 text-orange-400 border-orange-500/30",
       text: "text-orange-400",
     },
     matches: FUTSAL_MATCHES_NOV_2026.filter((m) => m.venue.includes("Parque Carabobo")),
-    standings: createCategoryStandings("Libre"),
+    standings: STANDINGS_LIBRE_1RA_OFICIAL,
     topScorers: createGenericScorers("Equipo", "Libre"),
     leastConceded: createGenericKeepers("Equipo", "Libre"),
     teams: createGenericTeamProfiles("libre-parque-carabobo", "Torneo Libre Parque Carabobo", "Libre", "DAE"),
+  },
+
+  // 4.1. Torneo Libre 2da División (Imagen 4 · 4 Grupos)
+  "libre-2da": {
+    id: "libre-2da",
+    slug: "libre-2da-division",
+    name: "Torneo Libre 2da División",
+    shortName: "Libre 2da Div",
+    categoryLabel: "Categoría Libre · 2da Div (4 Grupos)",
+    badgeKey: "libre-2da",
+    venue: "Cancha Parque Carabobo & Zona Rental, Caracas",
+    teamsCount: 28,
+    status: "En Curso",
+    groupName: "GRUPO A",
+    qualificationRule: LIBRE_2DA_RULE,
+    qualificationCutoff: 4,
+    hasCategories: false,
+    groups: STANDINGS_LIBRE_2DA_GROUPS,
+    description: "Circuito oficial de futsal libre 2da división con 28 clubes clasificados en 4 grupos.",
+    accent: {
+      border: "border-sky-500/50 hover:border-sky-400",
+      pill: "bg-sky-500/10 text-sky-400 border-sky-500/30",
+      text: "text-sky-400",
+    },
+    matches: FUTSAL_MATCHES_NOV_2026.filter((m) => m.division?.includes("2da") || m.category === "Libre"),
+    standings: STANDINGS_LIBRE_2DA_GRUPO_A,
+    topScorers: createGenericScorers("Equipo", "Libre"),
+    leastConceded: createGenericKeepers("Equipo", "Libre"),
+    teams: createGenericTeamProfiles("libre-2da-division", "Torneo Libre 2da División", "Libre", "DAE"),
   },
 
   // 5. Torneo Infantil 1era División

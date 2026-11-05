@@ -16,7 +16,6 @@ import {
   Shield,
   Layers,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 import { TournamentOfficialTable, OfficialTableRow } from "@/components/tournaments/tournament-official-table";
 import { StandingsSocialExportModal } from "@/components/tournaments/standings-social-export-modal";
 import { daerisSubList, DaerisSubId } from "@/data/daeris-subtournaments";
@@ -24,11 +23,16 @@ import {
   createGenericStandings,
   MINOR_CATEGORIES,
   MinorCategory,
-  createCategoryStandings,
   OFFICIAL_TEAMS_BY_CATEGORY,
   OFFICIAL_TEAMS_1RA_DIV,
   OFFICIAL_TEAMS_2DA_DIV,
 } from "@/data/generic-tournament-data";
+import {
+  STANDINGS_INSTITUCIONAL_OFICIAL,
+  STANDINGS_LIBRE_1RA_OFICIAL,
+  STANDINGS_MASTER_50_OFICIAL,
+  STANDINGS_LIBRE_2DA_GROUPS,
+} from "@/data/official-standings-tables";
 import {
   getStoredMatches,
   calculateStandingsForCategory,
@@ -41,8 +45,9 @@ import { AcademyBadge } from "@/components/academies/academy-badge";
 
 export default function PosicionesPage() {
   const [selectedTournament, setSelectedTournament] = useState<"daeris" | "prueba">("daeris");
-  const [selectedDaerisSub, setSelectedDaerisSub] = useState<DaerisSubId>("infantil-1ra");
+  const [selectedDaerisSub, setSelectedDaerisSub] = useState<DaerisSubId>("institucional");
   const [selectedCategory, setSelectedCategory] = useState<MinorCategory>("Sub-12");
+  const [selectedGroup, setSelectedGroup] = useState<string>("GRUPO A");
   const [storedMatches, setStoredMatches] = useState<DBMatch[]>([]);
   const [isExportModalOpen, setIsExportModalOpen] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -62,9 +67,56 @@ export default function PosicionesPage() {
       category: string;
       divisionId: DaerisSubId;
       divisionName: string;
+      groupName?: string;
     }[] = [];
 
-    // Categorías de 1ra División
+    // 1. Institucional Oficial
+    STANDINGS_INSTITUCIONAL_OFICIAL.forEach((row) => {
+      list.push({
+        teamName: row.team,
+        category: "Institucional",
+        divisionId: "institucional",
+        divisionName: "Institucional",
+        groupName: "GRUPO U",
+      });
+    });
+
+    // 2. Libre 1ra División Oficial
+    STANDINGS_LIBRE_1RA_OFICIAL.forEach((row) => {
+      list.push({
+        teamName: row.team,
+        category: "Libre 1ra Div",
+        divisionId: "libre-parquecarabobo",
+        divisionName: "Libre 1ra Div",
+        groupName: "GRUPO U",
+      });
+    });
+
+    // 3. Master 50 Oficial
+    STANDINGS_MASTER_50_OFICIAL.forEach((row) => {
+      list.push({
+        teamName: row.team,
+        category: "Master 50",
+        divisionId: "master50",
+        divisionName: "Master +50",
+        groupName: "GRUPO U",
+      });
+    });
+
+    // 4. Libre 2da División Oficial (Grupos A, B, C, D)
+    Object.entries(STANDINGS_LIBRE_2DA_GROUPS).forEach(([groupName, rows]) => {
+      rows.forEach((row) => {
+        list.push({
+          teamName: row.team,
+          category: `Libre 2da (${groupName})`,
+          divisionId: "libre-2da",
+          divisionName: "Libre 2da Div",
+          groupName,
+        });
+      });
+    });
+
+    // 5. Categorías Menores Formativas de 1ra División
     Object.entries(OFFICIAL_TEAMS_1RA_DIV).forEach(([cat, teams]) => {
       teams.forEach((t) => {
         list.push({
@@ -76,7 +128,7 @@ export default function PosicionesPage() {
       });
     });
 
-    // Categorías de 2da División
+    // 6. Categorías Menores Formativas de 2da División
     Object.entries(OFFICIAL_TEAMS_2DA_DIV).forEach(([cat, teams]) => {
       teams.forEach((t) => {
         list.push({
@@ -85,42 +137,6 @@ export default function PosicionesPage() {
           divisionId: "infantil-2da",
           divisionName: "Infantil 2da Div",
         });
-      });
-    });
-
-    // Libre
-    (OFFICIAL_TEAMS_BY_CATEGORY["Libre"] || []).forEach((t) => {
-      list.push({
-        teamName: t,
-        category: "Libre",
-        divisionId: "libre-parquecarabobo",
-        divisionName: "Libre P. Carabobo",
-      });
-      list.push({
-        teamName: t,
-        category: "Libre (Fútbol 7)",
-        divisionId: "futbol7",
-        divisionName: "Fútbol 7 Inst",
-      });
-    });
-
-    // Master 40
-    (OFFICIAL_TEAMS_BY_CATEGORY["Master 40"] || []).forEach((t) => {
-      list.push({
-        teamName: t,
-        category: "Master 40",
-        divisionId: "master50",
-        divisionName: "Master +50",
-      });
-    });
-
-    // Institucional
-    (OFFICIAL_TEAMS_BY_CATEGORY["Institucional"] || []).forEach((t) => {
-      list.push({
-        teamName: t,
-        category: "Institucional",
-        divisionId: "institucional",
-        divisionName: "Institucional",
       });
     });
 
@@ -147,6 +163,9 @@ export default function PosicionesPage() {
     if (MINOR_CATEGORIES.includes(item.category as MinorCategory)) {
       setSelectedCategory(item.category as MinorCategory);
     }
+    if (item.groupName) {
+      setSelectedGroup(item.groupName);
+    }
     setHighlightedTeam(item.teamName);
     setSearchTerm("");
   };
@@ -156,37 +175,44 @@ export default function PosicionesPage() {
       return createGenericStandings("Equipo");
     }
 
-    // Comprobar si hay partidos finalizados en la base de datos para esta categoría
-    const targetCatObj = DB_CATEGORIES.find((c) => c.name === selectedCategory);
-    const catId = targetCatObj?.id || `cat-${selectedCategory.toLowerCase()}`;
-
-    if (storedMatches.length > 0) {
-      const liveStandings = calculateStandingsForCategory(catId, storedMatches, DB_CLUBS);
-      const totalPlayed = liveStandings.reduce((sum, r) => sum + r.played, 0);
-
-      if (totalPlayed > 0) {
-        return liveStandings.map((row, idx) => ({
-          pos: idx + 1,
-          team: row.clubName,
-          jj: row.played,
-          jg: row.won,
-          je: row.drawn,
-          jp: row.lost,
-          ga: row.goalsFor,
-          ge: row.goalsAgainst,
-          dif: row.goalDifference,
-          pts: row.points,
-          status: idx < (currentSub.qualificationCutoff || 8) ? "clasificado" : "normal",
-        }));
-      }
+    // 1. Torneos con grupos múltiples (ej. Libre 2da División con Grupos A, B, C, D)
+    if (currentSub.groups) {
+      return currentSub.groups[selectedGroup] || currentSub.standings;
     }
 
+    // 2. Torneos con categorías formativas (Sub-8 a Sub-20)
     if (currentSub.hasCategories && currentSub.categoryData) {
+      // Comprobar si hay partidos finalizados en vivo
+      const targetCatObj = DB_CATEGORIES.find((c) => c.name === selectedCategory);
+      const catId = targetCatObj?.id || `cat-${selectedCategory.toLowerCase()}`;
+
+      if (storedMatches.length > 0) {
+        const liveStandings = calculateStandingsForCategory(catId, storedMatches, DB_CLUBS);
+        const totalPlayed = liveStandings.reduce((sum, r) => sum + r.played, 0);
+
+        if (totalPlayed > 0) {
+          return liveStandings.map((row, idx) => ({
+            pos: idx + 1,
+            team: row.clubName,
+            jj: row.played,
+            jg: row.won,
+            je: row.drawn,
+            jp: row.lost,
+            ga: row.goalsFor,
+            ge: row.goalsAgainst,
+            dif: row.goalDifference,
+            pts: row.points,
+            status: idx < (currentSub.qualificationCutoff || 8) ? "clasificado" : "normal",
+          }));
+        }
+      }
+
       return currentSub.categoryData[selectedCategory]?.standings || currentSub.standings;
     }
 
+    // 3. Tablas directas (Institucional, Master 50, Libre 1ra)
     return currentSub.standings;
-  }, [selectedTournament, selectedCategory, storedMatches, currentSub]);
+  }, [selectedTournament, selectedCategory, selectedGroup, storedMatches, currentSub]);
 
   // Contadores de equipos por categoría según división activa
   const getCategoryTeamCount = (cat: MinorCategory) => {
@@ -201,7 +227,7 @@ export default function PosicionesPage() {
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100">
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <main className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 py-6 sm:py-10">
         {/* Encabezado */}
         <div className="mb-6 flex flex-col items-center sm:items-start text-center sm:text-left">
           <Link
@@ -217,17 +243,17 @@ export default function PosicionesPage() {
               Tablas de Posiciones Oficiales
             </span>
           </div>
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl text-white">
-            Planillas de Clasificación
+          <h1 className="mt-2 text-2xl sm:text-4xl font-extrabold text-white">
+            Planillas de Clasificación Oficiales
           </h1>
-          <p className="mt-1 text-sm text-neutral-400 max-w-3xl">
-            Consulta los 69 equipos oficiales distribuidos en las 9 categorías del Torneo Daeris 2026.
+          <p className="mt-1 text-xs sm:text-sm text-neutral-400 max-w-3xl">
+            Tablas oficiales actualizadas con puntajes reales, goles y reglas clasificatorias de las categorías Institucional, Libre 1ra y 2da, Master 50 y categorías formativas.
           </p>
         </div>
 
         {/* 1. BUSCADOR RÁPIDO DE EQUIPOS / CLUBES */}
-        <div className="mb-6 rounded-2xl border border-neutral-800 bg-neutral-900/80 p-4 sm:p-5 shadow-xl">
-          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+        <div className="mb-6 rounded-2xl border border-neutral-800 bg-neutral-900/80 p-3 sm:p-5 shadow-xl">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
             <div className="relative flex-1">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-neutral-400">
                 <Search className="h-4 w-4 text-red-400" />
@@ -236,7 +262,7 @@ export default function PosicionesPage() {
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Buscar equipo o academia (ej: La Ladera, Guatire, Fuerza Vinotinto, Funvibra, Espartanos, Nacional...)"
+                placeholder="Buscar equipo o academia (ej: BDV, PDVSA, HRD, La Paz Thimat, K9, Halcones, La Ladera...)"
                 className="w-full rounded-xl border border-neutral-700 bg-neutral-950 py-2.5 pl-10 pr-9 text-xs sm:text-sm text-white placeholder-neutral-500 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500 transition"
               />
               {searchTerm && (
@@ -254,7 +280,7 @@ export default function PosicionesPage() {
               className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-neutral-700 bg-neutral-800 hover:bg-neutral-700/80 text-neutral-200 hover:text-white text-xs font-bold transition shadow-sm"
             >
               <Users className="h-4 w-4 text-amber-400" />
-              <span>Ver los 69 Equipos del Torneo</span>
+              <span>Ver Equipos Oficiales</span>
               {isTeamDirectoryOpen ? (
                 <ChevronUp className="h-3.5 w-3.5 text-neutral-400" />
               ) : (
@@ -307,69 +333,132 @@ export default function PosicionesPage() {
               <div className="flex items-center justify-between">
                 <span className="text-xs font-black text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
                   <Layers className="h-4 w-4" />
-                  Listado Completo de Equipos del Calendario Oficial 2026
+                  Listado de Equipos Oficiales por División
                 </span>
                 <span className="text-[11px] text-neutral-400">
-                  Haz clic en cualquier equipo para abrir su categoría
+                  Haz clic en cualquier equipo para abrir su tabla oficial
                 </span>
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 max-h-96 overflow-y-auto pr-1">
-                {Object.entries(OFFICIAL_TEAMS_BY_CATEGORY).map(([category, teams]) => (
-                  <div
-                    key={category}
-                    className="rounded-xl border border-neutral-800/80 bg-neutral-950/70 p-3"
-                  >
-                    <div className="flex items-center justify-between border-b border-neutral-800 pb-2 mb-2">
-                      <span className="font-black text-xs text-red-400 uppercase tracking-wider">
-                        {category}
-                      </span>
-                      <span className="text-[10px] font-bold text-neutral-400 bg-neutral-800 px-2 py-0.5 rounded-full">
-                        {teams.length} Equipos
-                      </span>
-                    </div>
-                    <div className="flex flex-wrap gap-1.5">
-                      {teams.map((team) => {
-                        const academy = getAcademyBySlug(team);
-                        return (
-                          <button
-                            key={`${category}-${team}`}
-                            onClick={() => {
-                              setSelectedTournament("daeris");
-                              if (MINOR_CATEGORIES.includes(category as MinorCategory)) {
-                                setSelectedCategory(category as MinorCategory);
-                                setSelectedDaerisSub("infantil-1ra");
-                              } else if (category === "Libre") {
-                                setSelectedDaerisSub("libre-parquecarabobo");
-                              } else if (category === "Master 40") {
-                                setSelectedDaerisSub("master50");
-                              } else if (category === "Institucional") {
-                                setSelectedDaerisSub("institucional");
-                              }
-                              setHighlightedTeam(team);
-                              setIsTeamDirectoryOpen(false);
-                            }}
-                            className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-[11px] font-medium bg-neutral-900 border border-neutral-800 text-neutral-200 hover:border-red-500 hover:text-white hover:bg-neutral-800 transition"
-                          >
-                            {academy && (
-                              <div className="w-3.5 h-3.5 shrink-0 flex items-center justify-center">
-                                <AcademyBadge slug={academy.slug} size={14} logoUrl={academy.logoUrl} />
-                              </div>
-                            )}
-                            <span className="truncate max-w-[130px]">{team}</span>
-                          </button>
-                        );
-                      })}
-                    </div>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 max-h-96 overflow-y-auto pr-1">
+                {/* 1. Institucional */}
+                <div className="rounded-xl border border-neutral-800/80 bg-neutral-950/70 p-3">
+                  <div className="flex items-center justify-between border-b border-neutral-800 pb-2 mb-2">
+                    <span className="font-black text-xs text-amber-400 uppercase tracking-wider">
+                      Institucional
+                    </span>
+                    <span className="text-[10px] font-bold text-neutral-400 bg-neutral-800 px-2 py-0.5 rounded-full">
+                      {STANDINGS_INSTITUCIONAL_OFICIAL.length} Equipos
+                    </span>
                   </div>
-                ))}
+                  <div className="flex flex-wrap gap-1.5">
+                    {STANDINGS_INSTITUCIONAL_OFICIAL.map((r) => (
+                      <button
+                        key={`dir-inst-${r.team}`}
+                        onClick={() => {
+                          setSelectedTournament("daeris");
+                          setSelectedDaerisSub("institucional");
+                          setHighlightedTeam(r.team);
+                          setIsTeamDirectoryOpen(false);
+                        }}
+                        className="px-2 py-1 rounded-md text-[11px] font-bold bg-neutral-900 border border-neutral-800 text-neutral-200 hover:border-amber-400 hover:text-white transition"
+                      >
+                        {r.team}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 2. Libre 1ra */}
+                <div className="rounded-xl border border-neutral-800/80 bg-neutral-950/70 p-3">
+                  <div className="flex items-center justify-between border-b border-neutral-800 pb-2 mb-2">
+                    <span className="font-black text-xs text-orange-400 uppercase tracking-wider">
+                      Libre 1ra Div
+                    </span>
+                    <span className="text-[10px] font-bold text-neutral-400 bg-neutral-800 px-2 py-0.5 rounded-full">
+                      {STANDINGS_LIBRE_1RA_OFICIAL.length} Equipos
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {STANDINGS_LIBRE_1RA_OFICIAL.map((r) => (
+                      <button
+                        key={`dir-l1-${r.team}`}
+                        onClick={() => {
+                          setSelectedTournament("daeris");
+                          setSelectedDaerisSub("libre-parquecarabobo");
+                          setHighlightedTeam(r.team);
+                          setIsTeamDirectoryOpen(false);
+                        }}
+                        className="px-2 py-1 rounded-md text-[11px] font-bold bg-neutral-900 border border-neutral-800 text-neutral-200 hover:border-orange-400 hover:text-white transition"
+                      >
+                        {r.team}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 3. Master 50 */}
+                <div className="rounded-xl border border-neutral-800/80 bg-neutral-950/70 p-3">
+                  <div className="flex items-center justify-between border-b border-neutral-800 pb-2 mb-2">
+                    <span className="font-black text-xs text-yellow-400 uppercase tracking-wider">
+                      Master 50
+                    </span>
+                    <span className="text-[10px] font-bold text-neutral-400 bg-neutral-800 px-2 py-0.5 rounded-full">
+                      {STANDINGS_MASTER_50_OFICIAL.length} Equipos
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {STANDINGS_MASTER_50_OFICIAL.map((r) => (
+                      <button
+                        key={`dir-m50-${r.team}`}
+                        onClick={() => {
+                          setSelectedTournament("daeris");
+                          setSelectedDaerisSub("master50");
+                          setHighlightedTeam(r.team);
+                          setIsTeamDirectoryOpen(false);
+                        }}
+                        className="px-2 py-1 rounded-md text-[11px] font-bold bg-neutral-900 border border-neutral-800 text-neutral-200 hover:border-yellow-400 hover:text-white transition"
+                      >
+                        {r.team}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 4. Libre 2da */}
+                <div className="rounded-xl border border-neutral-800/80 bg-neutral-950/70 p-3">
+                  <div className="flex items-center justify-between border-b border-neutral-800 pb-2 mb-2">
+                    <span className="font-black text-xs text-sky-400 uppercase tracking-wider">
+                      Libre 2da (4 Grupos)
+                    </span>
+                    <span className="text-[10px] font-bold text-neutral-400 bg-neutral-800 px-2 py-0.5 rounded-full">
+                      28 Equipos
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {Object.entries(STANDINGS_LIBRE_2DA_GROUPS).map(([grp, rows]) => (
+                      <button
+                        key={`dir-l2-${grp}`}
+                        onClick={() => {
+                          setSelectedTournament("daeris");
+                          setSelectedDaerisSub("libre-2da");
+                          setSelectedGroup(grp);
+                          setIsTeamDirectoryOpen(false);
+                        }}
+                        className="px-2 py-1 rounded-md text-[11px] font-bold bg-sky-950/60 border border-sky-800 text-sky-300 hover:bg-sky-900 transition"
+                      >
+                        {grp} ({rows.length})
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           )}
         </div>
 
         {/* 2. SELECTOR DE TORNEO Y DIVISIONES */}
-        <div className="mb-6 flex flex-col gap-4 rounded-2xl border border-neutral-800 bg-neutral-900/60 p-4 sm:p-5">
+        <div className="mb-6 flex flex-col gap-4 rounded-2xl border border-neutral-800 bg-neutral-900/60 p-3 sm:p-5">
           <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-3 sm:gap-4">
             <div className="flex items-center gap-2 text-neutral-400">
               <Filter className="h-4 w-4 text-red-400" />
@@ -390,7 +479,7 @@ export default function PosicionesPage() {
                     : "bg-neutral-800 text-neutral-400 hover:text-white"
                 }`}
               >
-                Torneo Daeris (Oficial 2026)
+                Torneo Daeris (Tablas Oficiales 2026)
               </button>
               <button
                 onClick={() => {
@@ -408,9 +497,9 @@ export default function PosicionesPage() {
             </div>
           </div>
 
-          {/* Sub-selector de las 6 divisiones de Daeris */}
+          {/* Sub-selector de las divisiones de Daeris */}
           {selectedTournament === "daeris" && (
-            <div className="w-full pt-3 border-t border-neutral-800 flex flex-wrap items-center justify-center sm:justify-start gap-2">
+            <div className="w-full pt-3 border-t border-neutral-800 flex flex-wrap items-center justify-center sm:justify-start gap-1.5 sm:gap-2">
               <span className="text-xs text-neutral-500 font-medium mr-1 w-full sm:w-auto text-center sm:text-left">
                 División:
               </span>
@@ -430,13 +519,62 @@ export default function PosicionesPage() {
                     }`}
                   >
                     <span>{sub.shortName}</span>
+                    {sub.id === "institucional" && <span className="text-[10px] opacity-75 font-bold">OFICIAL</span>}
+                    {sub.id === "master50" && <span className="text-[10px] opacity-75 font-bold">OFICIAL</span>}
+                    {sub.id === "libre-parquecarabobo" && <span className="text-[10px] opacity-75 font-bold">OFICIAL</span>}
+                    {sub.id === "libre-2da" && <span className="text-[10px] opacity-75 font-bold">OFICIAL</span>}
                   </button>
                 );
               })}
             </div>
           )}
 
-          {/* Selector de Categorías si la división seleccionada tiene categorías (Sub-8 a Sub-20) */}
+          {/* Sub-selector de Grupos para Libre 2da División (Grupos A, B, C, D) */}
+          {selectedTournament === "daeris" && currentSub.groups && (
+            <div className="w-full pt-3 border-t border-neutral-800">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-1 mb-2">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="h-3.5 w-3.5 text-sky-400" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-neutral-300">
+                    Grupo de Libre 2da División:
+                  </span>
+                </div>
+                <span className="text-[11px] font-bold text-sky-400 sm:ml-auto">
+                  {selectedGroup} ({currentSub.groups[selectedGroup]?.length || 0} Equipos)
+                </span>
+              </div>
+              <div className="flex flex-wrap justify-center sm:justify-start gap-2">
+                {Object.keys(currentSub.groups).map((grp) => {
+                  const isSelected = selectedGroup === grp;
+                  return (
+                    <button
+                      key={grp}
+                      onClick={() => {
+                        setSelectedGroup(grp);
+                        setHighlightedTeam("");
+                      }}
+                      className={`rounded-lg px-3.5 py-1.5 text-xs font-bold transition inline-flex items-center gap-1.5 ${
+                        isSelected
+                          ? "bg-sky-600 text-white shadow-md shadow-sky-600/30 ring-1 ring-sky-400"
+                          : "bg-neutral-800/90 text-neutral-400 hover:bg-neutral-800 hover:text-white"
+                      }`}
+                    >
+                      <span>{grp}</span>
+                      <span
+                        className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${
+                          isSelected ? "bg-white/20 text-white" : "bg-neutral-700/80 text-neutral-300"
+                        }`}
+                      >
+                        {currentSub.groups?.[grp]?.length || 0}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Selector de Categorías si la división seleccionada tiene categorías formativas (Sub-8 a Sub-20) */}
           {selectedTournament === "daeris" && currentSub.hasCategories && (
             <div className="w-full pt-3 border-t border-neutral-800">
               <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-1 mb-2">
@@ -450,7 +588,7 @@ export default function PosicionesPage() {
                   {selectedCategory} ({getCategoryTeamCount(selectedCategory)} Equipos en esta categoría)
                 </span>
               </div>
-              <div className="flex flex-wrap justify-center sm:justify-start gap-2">
+              <div className="flex flex-wrap justify-center sm:justify-start gap-1.5 sm:gap-2">
                 {MINOR_CATEGORIES.map((cat) => {
                   const isSelected = selectedCategory === cat;
                   const count = getCategoryTeamCount(cat);
@@ -490,7 +628,7 @@ export default function PosicionesPage() {
             <div className="flex items-center gap-2 text-xs text-neutral-400">
               <Trophy className="h-4 w-4 text-amber-400" />
               <span>
-                ¿Deseas publicar la tabla oficial en tus redes sociales?
+                ¿Deseas publicar esta tabla oficial en tus redes sociales?
               </span>
             </div>
             <button
@@ -521,13 +659,21 @@ export default function PosicionesPage() {
           <TournamentOfficialTable
             title={
               selectedTournament === "daeris"
-                ? `TABLA DE POSICIONES · ${currentSub.name}${currentSub.hasCategories ? ` (${selectedCategory.toUpperCase()})` : ""}`
+                ? `TABLA DE POSICIONES · ${currentSub.name}${
+                    currentSub.hasCategories
+                      ? ` (${selectedCategory.toUpperCase()})`
+                      : currentSub.groups
+                      ? ` (${selectedGroup})`
+                      : ""
+                  }`
                 : "TABLA DE POSICIONES · TORNEO DE PRUEBA"
             }
             groupName={
               selectedTournament === "daeris"
                 ? currentSub.hasCategories
                   ? `GRUPO ${selectedCategory.toUpperCase()}`
+                  : currentSub.groups
+                  ? selectedGroup
                   : currentSub.groupName
                 : "GRUPO PRUEBA A"
             }
@@ -550,14 +696,20 @@ export default function PosicionesPage() {
           rows={standingsRows}
           tournamentName={selectedTournament === "daeris" ? "Torneo Daeris" : "Torneo de Prueba"}
           categoryName={
-            selectedTournament === "daeris" && currentSub.hasCategories
-              ? selectedCategory
-              : currentSub.name
+            selectedTournament === "daeris"
+              ? currentSub.hasCategories
+                ? selectedCategory
+                : currentSub.groups
+                ? `${currentSub.shortName} (${selectedGroup})`
+                : currentSub.name
+              : "Torneo de Prueba"
           }
           groupName={
             selectedTournament === "daeris"
               ? currentSub.hasCategories
                 ? `Grupo ${selectedCategory}`
+                : currentSub.groups
+                ? selectedGroup
                 : currentSub.groupName
               : "Grupo Prueba A"
           }
