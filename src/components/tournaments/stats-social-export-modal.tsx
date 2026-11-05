@@ -156,12 +156,13 @@ export function StatsSocialExportModal({
       setIsGenerating(true);
       const dataUrl = await htmlToImage.toPng(flyerRef.current, {
         quality: 1,
-        pixelRatio: 2.2,
+        pixelRatio: 3.2,
         cacheBust: true,
+        backgroundColor: "#000000",
       });
 
       const cleanTitle = customTitle.toLowerCase().replace(/[^a-z0-9]/g, "-");
-      const filename = `estadisticas-${cleanTitle}-${categoryName.toLowerCase()}-${format}.png`;
+      const filename = `estadisticas-${cleanTitle}-${categoryName.toLowerCase()}-${format}-ultra-hd.png`;
 
       const link = document.createElement("a");
       link.download = filename;
@@ -184,13 +185,14 @@ export function StatsSocialExportModal({
       setIsGenerating(true);
       const dataUrl = await htmlToImage.toPng(flyerRef.current, {
         quality: 1,
-        pixelRatio: 2.2,
+        pixelRatio: 3.2,
         cacheBust: true,
+        backgroundColor: "#000000",
       });
 
       const res = await fetch(dataUrl);
       const blob = await res.blob();
-      const file = new File([blob], `estadisticas-${categoryName.toLowerCase()}-${format}.png`, {
+      const file = new File([blob], `estadisticas-${categoryName.toLowerCase()}-${format}-ultra-hd.png`, {
         type: "image/png",
       });
 
@@ -235,9 +237,9 @@ export function StatsSocialExportModal({
                     color: accentColor,
                     borderColor: hexToRgba(accentColor, 0.4),
                   }}
-                  className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full border"
+                  className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full border shadow-sm"
                 >
-                  HD 1080p
+                  Ultra HD 3.2X Pro (1080p+)
                 </span>
               </h3>
               <p className="text-[11px] text-neutral-400">

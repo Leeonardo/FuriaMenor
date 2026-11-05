@@ -53,13 +53,14 @@ export function MatchSocialCardModal({
       setIsGenerating(true);
       const dataUrl = await htmlToImage.toPng(flyerRef.current, {
         quality: 1,
-        pixelRatio: 2, // 2x para resolución retina nítida (1080x1080 o 1080x1920)
+        pixelRatio: 3.2, // Resolución Ultra HD Pro 3.2x (>= 1080p exacto para Instagram y WhatsApp)
         cacheBust: true,
+        backgroundColor: "#0a0a0a",
       });
 
       const cleanHome = homeName.toLowerCase().replace(/\s+/g, "-");
       const cleanAway = awayName.toLowerCase().replace(/\s+/g, "-");
-      const filename = `furia-menor-${cleanHome}-vs-${cleanAway}-${format}.png`;
+      const filename = `furia-menor-${cleanHome}-vs-${cleanAway}-${format}-ultra-hd.png`;
 
       const link = document.createElement("a");
       link.download = filename;
@@ -79,13 +80,14 @@ export function MatchSocialCardModal({
       setIsGenerating(true);
       const dataUrl = await htmlToImage.toPng(flyerRef.current, {
         quality: 1,
-        pixelRatio: 2,
+        pixelRatio: 3.2,
         cacheBust: true,
+        backgroundColor: "#0a0a0a",
       });
 
       const res = await fetch(dataUrl);
       const blob = await res.blob();
-      const file = new File([blob], `partido-${homeName}-vs-${awayName}.png`, {
+      const file = new File([blob], `partido-${homeName}-vs-${awayName}-ultra-hd.png`, {
         type: "image/png",
       });
 

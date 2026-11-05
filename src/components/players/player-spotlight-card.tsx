@@ -117,19 +117,20 @@ export function PlayerSpotlightCard({
     window.open(url, "_blank");
   };
 
-  // Descarga directa del cromo en PNG alta resolución
+  // Descarga directa del cromo en PNG Ultra HD
   const handleDownloadCard = async () => {
     if (!cardRef.current) return;
     try {
       setIsDownloading(true);
       const dataUrl = await htmlToImage.toPng(cardRef.current, {
         quality: 1,
-        pixelRatio: 2.2,
+        pixelRatio: 3.2,
         cacheBust: true,
+        backgroundColor: "#0a0a0a",
       });
 
       const cleanName = player.name.toLowerCase().replace(/[^a-z0-9]/g, "-");
-      const filename = `cromo-furia-menor-${cleanName}.png`;
+      const filename = `cromo-furia-menor-${cleanName}-ultra-hd.png`;
 
       const link = document.createElement("a");
       link.download = filename;

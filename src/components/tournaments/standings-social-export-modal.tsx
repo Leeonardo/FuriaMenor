@@ -148,19 +148,20 @@ export function StandingsSocialExportModal({
 
   if (!isOpen) return null;
 
-  // Descarga en PNG a resolución Retina 2x (1080x1920 o 1080x1080)
+  // Descarga en PNG a resolución Ultra HD Pro 3.2x (1080x1920 o 1080x1080)
   const handleDownloadImage = async () => {
     if (!flyerRef.current) return;
     try {
       setIsGenerating(true);
       const dataUrl = await htmlToImage.toPng(flyerRef.current, {
         quality: 1,
-        pixelRatio: 2.2,
+        pixelRatio: 3.2,
         cacheBust: true,
+        backgroundColor: "#000000",
       });
 
       const cleanTitle = customTitle.toLowerCase().replace(/[^a-z0-9]/g, "-");
-      const filename = `tabla-posiciones-${categoryName.toLowerCase()}-${format}-slide-${activeSlideIndex}.png`;
+      const filename = `tabla-posiciones-${categoryName.toLowerCase()}-${format}-slide-${activeSlideIndex}-ultra-hd.png`;
 
       const link = document.createElement("a");
       link.download = filename;
@@ -184,13 +185,14 @@ export function StandingsSocialExportModal({
       setIsGenerating(true);
       const dataUrl = await htmlToImage.toPng(flyerRef.current, {
         quality: 1,
-        pixelRatio: 2.2,
+        pixelRatio: 3.2,
         cacheBust: true,
+        backgroundColor: "#000000",
       });
 
       const res = await fetch(dataUrl);
       const blob = await res.blob();
-      const file = new File([blob], `tabla-posiciones-${categoryName.toLowerCase()}-${format}.png`, {
+      const file = new File([blob], `tabla-posiciones-${categoryName.toLowerCase()}-${format}-ultra-hd.png`, {
         type: "image/png",
       });
 
@@ -235,9 +237,9 @@ export function StandingsSocialExportModal({
                     color: accentColor,
                     borderColor: hexToRgba(accentColor, 0.4),
                   }}
-                  className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full border"
+                  className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full border shadow-sm"
                 >
-                  HD 1080p
+                  Ultra HD 3.2X Pro (1080p+)
                 </span>
               </h3>
               <p className="text-[11px] text-neutral-400">
