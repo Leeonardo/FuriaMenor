@@ -151,21 +151,29 @@ export function TournamentOfficialTable({
         </div>
       </div>
 
+      {/* Indicador visual de deslizamiento en móvil */}
+      <div className="sm:hidden px-4 py-2 bg-neutral-900/60 border-b border-neutral-800 flex items-center justify-between text-[11px] text-neutral-400">
+        <span className="flex items-center gap-1.5 font-medium">
+          <span className="text-red-400">↔</span> Desliza para ver estadísticas
+        </span>
+        <span className="text-[10px] text-amber-400 font-bold">PTS a la derecha</span>
+      </div>
+
       {/* 2. Tabla de posiciones con estructura reglamentaria y estética moderna */}
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[720px] text-xs sm:text-sm border-collapse text-neutral-200">
+      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-neutral-800 scrollbar-track-transparent">
+        <table className="w-full min-w-[620px] sm:min-w-[720px] text-xs sm:text-sm border-collapse text-neutral-200">
           <thead>
-            <tr className="bg-neutral-900/90 border-b border-neutral-800 text-neutral-400 font-extrabold text-center uppercase tracking-wider text-[11px] sm:text-xs">
-              <th className="py-3 px-3 w-14 text-center">POS</th>
-              <th className="py-3 px-4 text-left">CLUB / EQUIPO</th>
-              <th className="py-3 px-2 w-11">JJ</th>
-              <th className="py-3 px-2 w-11">JG</th>
-              <th className="py-3 px-2 w-11">JE</th>
-              <th className="py-3 px-2 w-11">JP</th>
-              <th className="py-3 px-2 w-12">GA</th>
-              <th className="py-3 px-2 w-12">GE</th>
-              <th className="py-3 px-2 w-14">DIF</th>
-              <th className="py-3 px-3 w-16 text-right text-red-400 font-black">PTS</th>
+            <tr className="bg-neutral-900/95 border-b border-neutral-800 text-neutral-400 font-extrabold text-center uppercase tracking-wider text-[10px] sm:text-xs">
+              <th className="py-3 px-2 sm:px-3 w-12 sm:w-14 text-center sticky left-0 z-20 bg-neutral-900 shadow-[2px_0_4px_-1px_rgba(0,0,0,0.5)]">POS</th>
+              <th className="py-3 px-3 sm:px-4 text-left sticky left-12 sm:left-14 z-20 bg-neutral-900 shadow-[4px_0_8px_-2px_rgba(0,0,0,0.6)] min-w-[150px] sm:min-w-[210px]">CLUB / EQUIPO</th>
+              <th className="py-3 px-1.5 sm:px-2 w-10 sm:w-11">JJ</th>
+              <th className="py-3 px-1.5 sm:px-2 w-10 sm:w-11">JG</th>
+              <th className="py-3 px-1.5 sm:px-2 w-10 sm:w-11">JE</th>
+              <th className="py-3 px-1.5 sm:px-2 w-10 sm:w-11">JP</th>
+              <th className="py-3 px-1.5 sm:px-2 w-11 sm:w-12">GA</th>
+              <th className="py-3 px-1.5 sm:px-2 w-11 sm:w-12">GE</th>
+              <th className="py-3 px-2 w-12 sm:w-14">DIF</th>
+              <th className="py-3 px-2.5 sm:px-3 w-14 sm:w-16 text-right text-red-400 font-black">PTS</th>
               <th className="py-3 px-3 w-28 text-center hidden md:table-cell">FORMA</th>
             </tr>
           </thead>
@@ -201,10 +209,10 @@ export function TournamentOfficialTable({
                       : "border-l-4 border-l-transparent"
                   } ${idx % 2 === 0 ? "bg-neutral-950" : "bg-neutral-900/30"}`}
                 >
-                  <td className="py-3 px-3 text-center font-black">
+                  <td className="py-2.5 sm:py-3 px-2 sm:px-3 text-center font-black sticky left-0 z-10 bg-neutral-950 shadow-[2px_0_4px_-1px_rgba(0,0,0,0.5)]">
                     <div className="flex items-center justify-center gap-1">
                       <span
-                        className={`inline-flex h-6 w-6 items-center justify-center rounded-md text-xs font-black ${
+                        className={`inline-flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-md text-[11px] sm:text-xs font-black ${
                           row.pos === 1
                             ? "bg-amber-400 text-neutral-950 shadow-md shadow-amber-400/30"
                             : row.pos <= 3
@@ -225,10 +233,10 @@ export function TournamentOfficialTable({
                     </div>
                   </td>
 
-                  <td className="py-3 px-4 text-left font-bold text-white">
-                    <div className="flex items-center gap-2.5">
+                  <td className="py-2.5 sm:py-3 px-3 sm:px-4 text-left font-bold text-white sticky left-12 sm:left-14 z-10 bg-neutral-950 shadow-[4px_0_8px_-2px_rgba(0,0,0,0.6)] min-w-[150px] sm:min-w-[210px]">
+                    <div className="flex items-center gap-2 sm:gap-2.5">
                       {/* Escudo Oficial de la Academia / Club */}
-                      <TableTeamShield teamName={row.team} size={24} />
+                      <TableTeamShield teamName={row.team} size={22} />
 
                       {isClassified && (
                         <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shrink-0 shadow-sm shadow-emerald-400/50" />
