@@ -1,5 +1,7 @@
 export type Municipality = "Libertador" | "Chacao" | "Baruta" | "Sucre" | "El Hatillo";
 
+import { OFFICIAL_CLUBS_DATA } from "./official-clubs-data";
+
 export type SportDiscipline = "Fútbol Sala" | "Fútbol Campo" | "Fútbol 7";
 
 export type EntityType = "academia" | "club" | "ambos";
@@ -1349,7 +1351,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-17",
     slug: "nc-sport",
-    entityType: "academia",
+    entityType: "ambos",
     name: "NC Sport",
     officialName: "NC Sport",
     shortName: "NC Sport",
@@ -2394,7 +2396,7 @@ export const academiesData: Academy[] = [
   {
     id: "acad-36",
     slug: "overcoming",
-    entityType: "academia",
+    entityType: "ambos",
     name: "Overcoming",
     officialName: "Overcoming",
     shortName: "Overcoming",
@@ -3600,6 +3602,7 @@ export const academiesData: Academy[] = [
     rosters: {},
     gallery: [],
   },
+  ...OFFICIAL_CLUBS_DATA,
 ];
 
 function stripAccents(str: string): string {
@@ -3637,12 +3640,78 @@ const SPECIAL_TEAM_ALIASES: Record<string, string> = {
   "fratelsa-sport-negro": "fratelsa-sport",
   "fusion-academica-a": "fusion-academica",
   "fusion-academica-b": "fusion-academica",
-  "la-paz-thimat": "la-paz-futsal",
-  "halcones-del-paraiso-fs": "dvo-paraiso",
-  "halcones-del-paraiso": "dvo-paraiso",
+
+  // Torneo Institucional
+  "bdv": "bdv",
+  "banco-de-venezuela": "bdv",
+  "ont": "ont",
+  "oficina-nacional-del-tesoro": "ont",
+  "pdvsa": "pdvsa",
+  "cantv": "cantv",
+  "bcv": "bcv",
+  "banco-central-de-venezuela": "bcv",
+  "cicpc-vehiculos": "cicpc-vehiculos",
+  "cicpc": "cicpc-vehiculos",
+
+  // Torneo Libre 1ra División
+  "hrd": "hrd",
+  "zona-norte": "zona-norte",
+  "sorpresa-fs": "sorpresa-fs",
+  "sorpresa": "sorpresa-fs",
+  "ld-primium": "ld-primium",
+  "los-simbolos": "los-simbolos",
+  "mamera-fs": "mamera-fs",
+  "mamera": "mamera-fs",
+  "superstar": "superstar",
+
+  // Torneo Master 50
+  "la-paz-thimat": "la-paz-thimat",
+  "bator": "bator",
+  "ipsa-c": "ipsa-c",
+  "marquina-domino": "marquina-domino",
+  "los-amigos": "los-amigos",
+  "breemen": "breemen",
+  "la-cuadra-futsal": "la-cuadra-futsal",
+  "la-cuadra": "la-cuadra-futsal",
+
+  // Torneo Libre 2da División
+  "k9-guerreros": "k9-guerreros",
+  "sholo-futsal": "sholo-futsal",
+  "sholo": "sholo-futsal",
+  "tienda-forte": "tienda-forte",
+  "jaen-futsal": "jaen-futsal",
+  "deportivo-paracoto": "deportivo-paracoto",
+  "paracoto": "deportivo-paracoto",
+  "real-union": "real-union",
+  "halcones-del-paraiso-fs": "halcones-del-paraiso-fs",
+  "halcones-del-paraiso": "halcones-del-paraiso-fs",
+  "dvo-tito": "dvo-tito",
+  "deportivo-tito": "dvo-tito",
+  "ebenezer-fsc": "ebenezer-fsc",
+  "ebenezer": "ebenezer-fsc",
+  "rivales-fs": "rivales-fs",
+  "rh-sport-club": "rh-sport-club",
+  "dvo-las-brisas": "dvo-las-brisas",
+  "las-brisas": "dvo-las-brisas",
+  "cartujo": "cartujo",
+  "ovad-futsal": "ovad-futsal",
+  "ovad": "ovad-futsal",
+  "la-vega-fs": "la-vega-fs",
+  "la-vega": "la-vega-fs",
+  "getan": "getan",
   "overcoming-fs": "overcoming",
-  "rh-sport-club": "rh-futsal",
-  "atletico-nacional": "nacional",
+  "js-futsal": "js-futsal",
+  "arcano-fc": "arcano-fc",
+  "botafogo": "botafogo",
+  "cordillera-andina-fc": "cordillera-andina-fc",
+  "cordillera-andina": "cordillera-andina-fc",
+  "atletico-nacional": "atletico-nacional",
+  "nacional": "atletico-nacional",
+  "las-torres": "las-torres",
+  "pizzeria-12": "pizzeria-12",
+  "jogo-bonito-fs": "jogo-bonito-fs",
+  "jogo-bonito": "jogo-bonito-fs",
+  "los-guaros": "los-guaros",
 };
 
 /**
@@ -3686,6 +3755,31 @@ export function getAcademyBySlug(slugOrId: string): Academy | undefined {
     const aClean = a.name.toLowerCase();
     return clean.includes(aClean) || aClean.includes(clean);
   });
+}
+
+/**
+ * Acceso centralizado por ID único inmutable de club o academia.
+ * Garantiza que cualquier actualización a nivel de club se refleje
+ * en todas las tablas, fixtures y expedientes automáticamente.
+ */
+export function getClubOrAcademyById(id: string): Academy | undefined {
+  if (!id) return undefined;
+  const clean = id.trim().toLowerCase();
+  return academiesData.find((a) => a.id.toLowerCase() === clean || a.slug.toLowerCase() === clean);
+}
+
+/**
+ * Retorna todos los clubes que compiten en torneos libres, master o fútbol 7
+ */
+export function getAllClubs(): Academy[] {
+  return academiesData.filter((a) => a.entityType === "club" || a.entityType === "ambos");
+}
+
+/**
+ * Retorna todas las academias formativas (Sub-6 a Sub-20)
+ */
+export function getAllAcademias(): Academy[] {
+  return academiesData.filter((a) => a.entityType === "academia" || a.entityType === "ambos");
 }
 
 /**

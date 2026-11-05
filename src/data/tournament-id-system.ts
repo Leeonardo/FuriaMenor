@@ -139,3 +139,23 @@ export interface TeamProfile {
   venue: string;
   roster: TeamPlayerItem[];
 }
+
+import { getAcademyBySlug, getClubOrAcademyById, type Academy } from "./academies-data";
+
+/**
+ * Obtiene el ID canónico inmutable de un club o academia
+ * ej. "BDV" -> "club-bdv", "La Paz Futsal" -> "acad-10"
+ */
+export function getCanonicalClubId(teamNameOrSlug: string): string {
+  const club = getAcademyBySlug(teamNameOrSlug);
+  return club ? club.id : `club-${teamNameOrSlug.toLowerCase().replace(/[^a-z0-9]/g, "-")}`;
+}
+
+/**
+ * Resuelve la información canónica de un club o academia por cualquier identificador.
+ * Al cambiar cualquier dato en academiesData / official-clubs-data,
+ * se propaga automáticamente a todos los componentes que usen esta función.
+ */
+export function resolveCanonicalClub(teamNameOrSlug: string): Academy | undefined {
+  return getAcademyBySlug(teamNameOrSlug) || getClubOrAcademyById(teamNameOrSlug);
+}

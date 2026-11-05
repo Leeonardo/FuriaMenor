@@ -23,6 +23,8 @@ export interface OfficialTableRow {
   status: "clasificado" | "eliminado" | "normal";
   form?: FormResult[];
   trend?: "up" | "down" | "same";
+  clubId?: string;
+  clubSlug?: string;
 }
 
 interface TournamentOfficialTableProps {
@@ -37,8 +39,8 @@ interface TournamentOfficialTableProps {
 }
 
 // Escudo oficial o monograma de respaldo
-function TableTeamShield({ teamName, size = 22 }: { teamName: string; size?: number }) {
-  const academy = getAcademyBySlug(teamName);
+function TableTeamShield({ teamName, clubSlug, size = 22 }: { teamName: string; clubSlug?: string; size?: number }) {
+  const academy = getAcademyBySlug(clubSlug || teamName);
 
   if (academy) {
     return (
@@ -183,7 +185,7 @@ export function TournamentOfficialTable({
               const isClassified = row.pos <= qualificationCutoff && !isEliminated;
               const teamSlug = row.team.toLowerCase().replace(/\s+/g, "-");
               const catParam = currentCategory ? `?cat=${currentCategory}` : "";
-              const academy = getAcademyBySlug(row.team);
+              const academy = getAcademyBySlug(row.clubSlug || row.team);
               const targetHref = academy
                 ? `/academias/${academy.slug}`
                 : baseTournamentPath
@@ -236,7 +238,7 @@ export function TournamentOfficialTable({
                   <td className="py-2.5 sm:py-3 px-3 sm:px-4 text-left font-bold text-white sticky left-12 sm:left-14 z-10 bg-neutral-950 shadow-[4px_0_8px_-2px_rgba(0,0,0,0.6)] min-w-[150px] sm:min-w-[210px]">
                     <div className="flex items-center gap-2 sm:gap-2.5">
                       {/* Escudo Oficial de la Academia / Club */}
-                      <TableTeamShield teamName={row.team} size={22} />
+                      <TableTeamShield teamName={row.team} clubSlug={row.clubSlug} size={22} />
 
                       {isClassified && (
                         <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shrink-0 shadow-sm shadow-emerald-400/50" />
