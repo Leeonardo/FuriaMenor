@@ -735,3 +735,246 @@ export function filterPlayerStats(
     goalsPerMatch,
   };
 }
+
+// ==============================================================================
+// 10. GESTIÓN ESTRICTA DE USUARIOS, DELEGADOS Y ÁRBITROS (REGLAS DE NEGOCIO)
+// ==============================================================================
+
+export const INITIAL_SYSTEM_USERS: AppUser[] = [
+  {
+    id: 'user-admin-01',
+    email: 'admin@furiamenor.com',
+    fullName: 'Carlos Quintana',
+    role: 'admin_general',
+    phone: '+58 412-9998877',
+    cedula: 'V-15.420.300',
+    createdAt: '2026-09-01T08:00:00Z',
+  },
+  {
+    id: 'user-delegado-01',
+    email: 'eudis.toro@lapazfutsal.com',
+    fullName: 'Eudis Toro',
+    role: 'delegado',
+    clubId: 'la-paz-futsal',
+    clubName: 'La Paz Futsal',
+    phone: '+58 414-2345678',
+    cedula: 'V-18.750.410',
+    createdAt: '2026-09-10T10:00:00Z',
+  },
+  {
+    id: 'user-arbitro-01',
+    email: 'arbitro.colina@colegioarbitros.com',
+    fullName: 'Prof. José Colina',
+    role: 'arbitro',
+    phone: '+58 416-5554321',
+    cedula: 'V-16.890.112',
+    colegioArbitros: 'Colegio de Árbitros de Futsal del Distrito Capital',
+    createdAt: '2026-09-15T14:00:00Z',
+  },
+  {
+    id: 'user-arbitro-02',
+    email: 'ramon.rondon@colegioarbitros.com',
+    fullName: 'Prof. Ramón Rondón',
+    role: 'arbitro',
+    phone: '+58 414-7771234',
+    cedula: 'V-14.230.998',
+    colegioArbitros: 'Comisión Arbitral Furia Menor',
+    createdAt: '2026-10-01T11:00:00Z',
+  },
+];
+
+export function getStoredUsers(): AppUser[] {
+  if (typeof window === 'undefined') return INITIAL_SYSTEM_USERS;
+  try {
+    const raw = localStorage.getItem(`${STORAGE_PREFIX}users_v1`);
+    if (!raw) {
+      localStorage.setItem(`${STORAGE_PREFIX}users_v1`, JSON.stringify(INITIAL_SYSTEM_USERS));
+      return INITIAL_SYSTEM_USERS;
+    }
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : INITIAL_SYSTEM_USERS;
+  } catch {
+    return INITIAL_SYSTEM_USERS;
+  }
+}
+
+export function saveStoredUsers(users: AppUser[]): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(`${STORAGE_PREFIX}users_v1`, JSON.stringify(users));
+  } catch {}
+}
+
+/**
+ * REGLA 2: Verifica si un club ya cuenta con un delegado oficial asignado.
+ */
+export function getClubDelegado(clubId: string, usersList?: AppUser[]): AppUser | undefined {
+  const users = usersList || getStoredUsers();
+  const cleanClubId = (clubId || '').trim().toLowerCase();
+  return users.find((u) => u.role === 'delegado' && (u.clubId || '').toLowerCase() === cleanClubId);
+}
+
+export function isClubDelegadoAssigned(
+  clubId: string,
+  usersList?: AppUser[]
+): { assigned: boolean; delegate?: AppUser } {
+  const delegate = getClubDelegado(clubId, usersList);
+  return {
+    assigned: !!delegate,
+    delegate,
+  };
+}
+
+/**
+ * REGLA 1 & 2: Registro público de delegados con restricción estricta de rol y de unicidad por club.
+ */
+export function registerPublicDelegado(input: {
+  email: string;
+  fullName: string;
+  clubId: string;
+  phone?: string;
+  cedula?: string;
+  attemptedRole?: string;
+}): { success: boolean; user?: AppUser; message: string } {
+  const { email, fullName, clubId, phone, cedula, attemptedRole } = input;
+
+  // 1. RESTRICCIÓN DE REGISTRO PÚBLICO (Rol Delegado)
+  // Bloquear por código cualquier intento de auto-asignarse el rol de 'admin' o 'arbitro'
+  if (
+    attemptedRole &&
+    attemptedRole !== 'delegado' &&
+    ['admin', 'admin_general', 'arbitro', 'arbitro_general', 'superadmin'].includes(
+      attemptedRole.toLowerCase().trim()
+    )
+  ) {
+    return {
+      success: false,
+      message: `Violación de seguridad: El formulario de registro público no permite auto-asignarse el rol '${attemptedRole}'. Todos los usuarios del portal público se registran exclusivamente como 'delegado' de club.`,
+    };
+  }
+
+  // Validaciones básicas de campos
+  const cleanEmail = (email || '').trim().toLowerCase();
+  const cleanFullName = (fullName || '').trim();
+  const cleanClubId = (clubId || '').trim();
+
+  if (!cleanEmail || !cleanFullName || !cleanClubId) {
+    return {
+      success: false,
+      message: 'Todos los campos obligatorios deben ser completados (Nombre, Correo y Club).',
+    };
+  }
+
+  const users = getStoredUsers();
+
+  // Verificar si el correo ya existe
+  const emailExists = users.some((u) => u.email.toLowerCase() === cleanEmail);
+  if (emailExists) {
+    return {
+      success: false,
+      message: 'El correo electrónico suministrado ya se encuentra registrado en la plataforma.',
+    };
+  }
+
+  // 2. UN SOLO DELEGADO POR CLUB
+  // Asegurar que un club solo pueda tener vinculado a un único usuario con el rol de 'delegado'.
+  const clubCheck = isClubDelegadoAssigned(cleanClubId, users);
+  if (clubCheck.assigned && clubCheck.delegate) {
+    const clubObj = DB_CLUBS.find((c) => c.id === cleanClubId);
+    const clubName = clubObj?.name || cleanClubId;
+    return {
+      success: false,
+      message: `El club "${clubName}" ya cuenta con un delegado oficial registrado (${clubCheck.delegate.fullName}). Por normativa estricta, cada club solo puede tener un único delegado autorizado. Si necesitas reasignar este acceso, contacta a la directiva de la liga.`,
+    };
+  }
+
+  // Hallar nombre oficial del club
+  const clubData = DB_CLUBS.find((c) => c.id === cleanClubId);
+  const resolvedClubName = clubData?.name || cleanClubId;
+
+  // Forzar incondicionalmente el rol 'delegado'
+  const newDelegado: AppUser = {
+    id: `user-delegado-${Date.now()}`,
+    email: cleanEmail,
+    fullName: cleanFullName,
+    role: 'delegado',
+    clubId: cleanClubId,
+    clubName: resolvedClubName,
+    phone: phone || '',
+    cedula: cedula || '',
+    createdAt: new Date().toISOString(),
+  };
+
+  const updatedUsers = [...users, newDelegado];
+  saveStoredUsers(updatedUsers);
+
+  return {
+    success: true,
+    user: newDelegado,
+    message: `¡Registro exitoso! Has sido acreditado como delegado oficial de ${resolvedClubName}.`,
+  };
+}
+
+/**
+ * REGLA 3: Creación exclusiva de árbitros por el Administrador General.
+ */
+export function adminCreateArbitro(
+  actingUserRole: UserRole,
+  input: {
+    email: string;
+    fullName: string;
+    phone?: string;
+    cedula?: string;
+    colegioArbitros?: string;
+  }
+): { success: boolean; user?: AppUser; message: string } {
+  // 3. CREACIÓN EXCLUSIVA DE ÁRBITROS POR EL ADMIN
+  if (actingUserRole !== 'admin_general') {
+    return {
+      success: false,
+      message:
+        'Acceso no autorizado: Solo los usuarios con rol de Administrador General pueden crear o dar de alta usuarios con el rol de árbitro.',
+    };
+  }
+
+  const cleanEmail = (input.email || '').trim().toLowerCase();
+  const cleanFullName = (input.fullName || '').trim();
+
+  if (!cleanEmail || !cleanFullName) {
+    return {
+      success: false,
+      message: 'El nombre completo y correo electrónico del árbitro son obligatorios.',
+    };
+  }
+
+  const users = getStoredUsers();
+
+  if (users.some((u) => u.email.toLowerCase() === cleanEmail)) {
+    return {
+      success: false,
+      message: `El correo electrónico ${cleanEmail} ya se encuentra registrado en el sistema.`,
+    };
+  }
+
+  const newArbitro: AppUser = {
+    id: `user-arbitro-${Date.now()}`,
+    email: cleanEmail,
+    fullName: cleanFullName,
+    role: 'arbitro',
+    phone: input.phone || '',
+    cedula: input.cedula || '',
+    colegioArbitros:
+      input.colegioArbitros || 'Colegio de Árbitros del Distrito Capital',
+    createdAt: new Date().toISOString(),
+  };
+
+  const updatedUsers = [...users, newArbitro];
+  saveStoredUsers(updatedUsers);
+
+  return {
+    success: true,
+    user: newArbitro,
+    message: `Árbitro "${cleanFullName}" creado y habilitado exitosamente por la administración.`,
+  };
+}
+

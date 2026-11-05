@@ -14,6 +14,8 @@ export interface AppUser {
   clubName?: string;
   phone?: string;
   cedula?: string;
+  colegioArbitros?: string; // Colegio o asociación arbitral (solo para árbitros)
+  createdAt?: string;
 }
 
 export interface DBClub {

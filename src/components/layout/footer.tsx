@@ -102,7 +102,8 @@ export function Footer() {
                 <Phone className="h-4 w-4 text-red-400" />
                 <span>+58 (000) 000-0000</span>
               </li>
-              <li><Link href="/admin" className="transition hover:text-white text-xs text-neutral-500 pt-2 block">Acceso Administrativo</Link></li>
+              <li><Link href="/registro" className="transition hover:text-white text-xs text-red-400 font-bold pt-2 block">+ Registrar Delegado de Club</Link></li>
+              <li><Link href="/admin" className="transition hover:text-white text-xs text-neutral-500 pt-1 block">Acceso Administrativo</Link></li>
             </ul>
           </div>
         </div>

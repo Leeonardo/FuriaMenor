@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -27,6 +27,9 @@ export function Header() {
             <span className="sm:hidden">Furia Menor · Futsal Caracas</span>
           </div>
           <div className="flex items-center gap-4 text-xs">
+            <Link href="/registro" className="text-red-400 font-bold hover:text-red-300 transition">
+              + Registrar Delegado
+            </Link>
             <Link href="/admin" className="text-neutral-400 transition hover:text-white">
               Panel Administrativo
             </Link>
@@ -98,7 +101,14 @@ export function Header() {
                 {item.label}
               </Link>
             ))}
-            <div className="pt-2 border-t border-neutral-800/80">
+            <div className="pt-2 border-t border-neutral-800/80 space-y-1">
+              <Link
+                href="/registro"
+                onClick={() => setMobileOpen(false)}
+                className="block rounded-lg px-3 py-2 text-xs font-bold text-red-400 hover:text-red-300"
+              >
+                + Registrar Delegado de Club
+              </Link>
               <Link
                 href="/admin"
                 onClick={() => setMobileOpen(false)}

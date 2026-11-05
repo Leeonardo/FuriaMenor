@@ -318,6 +318,22 @@ export default function AdminLoginPage() {
             </button>
           </form>
 
+          {/* Enlace de Registro Público para Delegados */}
+          <div className="pt-3 border-t border-neutral-800 text-center space-y-2">
+            <p className="text-xs text-neutral-400">
+              ¿Eres delegado de un club nuevo?{" "}
+              <Link
+                href="/registro"
+                className="font-black text-red-400 hover:text-red-300 underline underline-offset-4 transition"
+              >
+                Regístrate como Delegado
+              </Link>
+            </p>
+            <p className="text-[10px] text-neutral-500">
+              * Nota: Cuentas de árbitro son creadas exclusivamente por el Admin General.
+            </p>
+          </div>
+
           <div className="pt-2 text-center">
             <Link
               href="/"

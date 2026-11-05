@@ -38,6 +38,9 @@ import {
   Eye,
   ShieldCheck,
   Clock,
+  UserCheck,
+  Smartphone,
+  AlertTriangle,
 } from "lucide-react";
 
 interface AdminGeneralViewProps {
@@ -95,6 +98,80 @@ export function AdminGeneralView({
   const [status, setStatus] = useState<DBMatch["status"]>("programado");
   const [refereeName, setRefereeName] = useState("Prof. José Colina");
   const [refereeNotes, setRefereeNotes] = useState("");
+
+  // Estados para la gestión exclusiva de Árbitros (Regla 3)
+  const [referees, setReferees] = useState<AppUser[]>([
+    {
+      id: "user-arbitro-01",
+      email: "arbitro.colina@colegioarbitros.com",
+      fullName: "Prof. José Colina",
+      role: "arbitro",
+      phone: "+58 416-5554321",
+      cedula: "V-16.890.112",
+      colegioArbitros: "Colegio de Árbitros de Futsal del Distrito Capital",
+      createdAt: "2026-09-15T14:00:00Z",
+    },
+    {
+      id: "user-arbitro-02",
+      email: "ramon.rondon@colegioarbitros.com",
+      fullName: "Prof. Ramón Rondón",
+      role: "arbitro",
+      phone: "+58 414-7771234",
+      cedula: "V-14.230.998",
+      colegioArbitros: "Comisión Arbitral Furia Menor",
+      createdAt: "2026-10-01T11:00:00Z",
+    },
+  ]);
+  const [newRefName, setNewRefName] = useState("");
+  const [newRefEmail, setNewRefEmail] = useState("");
+  const [newRefPhone, setNewRefPhone] = useState("");
+  const [newRefCedula, setNewRefCedula] = useState("");
+  const [newRefColegio, setNewRefColegio] = useState("Colegio de Árbitros de Futsal del Distrito Capital");
+  const [refLoading, setRefLoading] = useState(false);
+  const [refFeedback, setRefFeedback] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  const handleCreateArbitro = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setRefFeedback(null);
+    setRefLoading(true);
+
+    try {
+      const res = await fetch("/api/admin/arbitros", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName: newRefName,
+          email: newRefEmail,
+          phone: newRefPhone,
+          cedula: newRefCedula,
+          colegioArbitros: newRefColegio,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        setReferees((prev) => [data.arbitro, ...prev]);
+        setRefFeedback({ type: "success", text: data.message || "Árbitro oficial acreditado con éxito." });
+        setNewRefName("");
+        setNewRefEmail("");
+        setNewRefPhone("");
+        setNewRefCedula("");
+      } else {
+        setRefFeedback({
+          type: "error",
+          text: data.message || "Error al crear el árbitro. Verifica permisos de administrador.",
+        });
+      }
+    } catch {
+      setRefFeedback({
+        type: "error",
+        text: "Error de comunicación con el endpoint de árbitros.",
+      });
+    } finally {
+      setRefLoading(false);
+    }
+  };
 
   // Tabla de posiciones recalculada en tiempo real
   const currentStandings: DBStandingsRow[] = useMemo(() => {
@@ -561,7 +638,212 @@ export function AdminGeneralView({
         </div>
       </section>
 
-      {/* 5. MODAL DE EDICIÓN / PROGRAMACIÓN DE PARTIDO */}
+      {/* 5. GESTIÓN EXCLUSIVA DE ÁRBITROS POR EL ADMIN (REGLA 3) */}
+      <section className="rounded-3xl border border-neutral-800 bg-neutral-900/60 p-6 sm:p-7 shadow-xl space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-800 pb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="h-8 w-8 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center">
+              <Smartphone className="h-4 w-4" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm sm:text-base font-extrabold text-white uppercase tracking-wider">
+                  Colegio de Árbitros & Jueces de Cancha
+                </h3>
+                <span className="hidden sm:inline-flex rounded-full bg-red-600/20 border border-red-500/30 px-2.5 py-0.5 text-[10px] font-black text-red-400">
+                  Exclusivo Admin
+                </span>
+              </div>
+              <p className="text-xs text-neutral-400">
+                Acreditación oficial protegida por Middleware. Solo el Administrador General puede crear usuarios con el rol de 'árbitro'.
+              </p>
+            </div>
+          </div>
+
+          <span className="text-xs text-amber-400 bg-amber-950/40 border border-amber-500/30 px-3 py-1 rounded-xl self-start sm:self-auto font-mono font-bold">
+            {referees.length} Árbitros Habilitados
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Formulario de Alta de Árbitro */}
+          <div className="lg:col-span-5 rounded-2xl border border-neutral-800 bg-neutral-950/80 p-5 space-y-4">
+            <div className="flex items-center justify-between border-b border-neutral-800/80 pb-2.5">
+              <span className="text-xs font-black uppercase tracking-wider text-neutral-200 flex items-center gap-1.5">
+                <UserCheck className="h-4 w-4 text-amber-400" />
+                <span>Acreditar Nuevo Árbitro Oficial</span>
+              </span>
+              <span className="text-[10px] text-neutral-500">Rol: arbitro</span>
+            </div>
+
+            <form onSubmit={handleCreateArbitro} className="space-y-3 text-xs">
+              <div>
+                <label className="block text-[11px] font-bold text-neutral-400 mb-1">
+                  Nombre Completo y Título <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={newRefName}
+                  onChange={(e) => setNewRefName(e.target.value)}
+                  placeholder="Ej. Prof. Williams Morales"
+                  className="w-full rounded-xl border border-neutral-700 bg-neutral-900 px-3 py-2 text-white focus:border-amber-500 focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2.5">
+                <div>
+                  <label className="block text-[11px] font-bold text-neutral-400 mb-1">
+                    Cédula de Identidad
+                  </label>
+                  <input
+                    type="text"
+                    value={newRefCedula}
+                    onChange={(e) => setNewRefCedula(e.target.value)}
+                    placeholder="V-14.890.300"
+                    className="w-full rounded-xl border border-neutral-700 bg-neutral-900 px-3 py-2 text-white focus:border-amber-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-neutral-400 mb-1">
+                    Teléfono Móvil
+                  </label>
+                  <input
+                    type="text"
+                    value={newRefPhone}
+                    onChange={(e) => setNewRefPhone(e.target.value)}
+                    placeholder="+58 412-1234567"
+                    className="w-full rounded-xl border border-neutral-700 bg-neutral-900 px-3 py-2 text-white focus:border-amber-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-neutral-400 mb-1">
+                  Correo Electrónico Oficial <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={newRefEmail}
+                  onChange={(e) => setNewRefEmail(e.target.value)}
+                  placeholder="arbitro.morales@colegioarbitros.com"
+                  className="w-full rounded-xl border border-neutral-700 bg-neutral-900 px-3 py-2 text-white focus:border-amber-500 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-neutral-400 mb-1">
+                  Colegio o Asociación Arbitral
+                </label>
+                <select
+                  value={newRefColegio}
+                  onChange={(e) => setNewRefColegio(e.target.value)}
+                  className="w-full rounded-xl border border-neutral-700 bg-neutral-900 px-3 py-2 text-white focus:border-amber-500 focus:outline-none"
+                >
+                  <option value="Colegio de Árbitros de Futsal del Distrito Capital">
+                    Colegio de Árbitros de Futsal del Distrito Capital
+                  </option>
+                  <option value="Comisión Arbitral Oficial Furia Menor">
+                    Comisión Arbitral Oficial Furia Menor
+                  </option>
+                  <option value="Colegio de Árbitros del Estado Miranda">
+                    Colegio de Árbitros del Estado Miranda
+                  </option>
+                  <option value="Juez de Mesa / Cronometrista Federado">
+                    Juez de Mesa / Cronometrista Federado
+                  </option>
+                </select>
+              </div>
+
+              {refFeedback && (
+                <div
+                  className={`rounded-xl p-2.5 text-[11px] flex items-start gap-2 ${
+                    refFeedback.type === "success"
+                      ? "border border-emerald-500/40 bg-emerald-950/40 text-emerald-300"
+                      : "border border-red-500/40 bg-red-950/40 text-red-300"
+                  }`}
+                >
+                  {refFeedback.type === "success" ? (
+                    <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+                  ) : (
+                    <AlertTriangle className="h-4 w-4 text-red-400 shrink-0 mt-0.5" />
+                  )}
+                  <span>{refFeedback.text}</span>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={refLoading}
+                className="w-full rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 py-2.5 font-black text-black shadow-lg shadow-amber-500/20 transition disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
+              >
+                <span>{refLoading ? "Acreditando..." : "Crear y Habilitar Árbitro"}</span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </button>
+            </form>
+          </div>
+
+          {/* Listado de Árbitros Oficiales Registrados */}
+          <div className="lg:col-span-7 space-y-3">
+            <span className="text-xs font-black uppercase tracking-wider text-neutral-400 block mb-1">
+              Padrón de Árbitros Habilitados para Asignación en Cancha
+            </span>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {referees.map((ref) => {
+                const assignedMatchesCount = matches.filter(
+                  (m) => m.refereeName?.toLowerCase() === ref.fullName.toLowerCase()
+                ).length;
+
+                return (
+                  <div
+                    key={ref.id}
+                    className="rounded-2xl border border-neutral-800 bg-neutral-950/90 p-4 space-y-3 hover:border-neutral-700 transition"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs font-black text-white">{ref.fullName}</span>
+                          <span className="rounded-full bg-emerald-500/20 text-emerald-400 px-1.5 py-0.2 text-[9px] font-bold">
+                            Activo
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-neutral-400 mt-0.5 font-mono">{ref.email}</p>
+                      </div>
+                      <div className="h-7 w-7 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+                        <Smartphone className="h-3.5 w-3.5" />
+                      </div>
+                    </div>
+
+                    <div className="space-y-1 text-[10px] text-neutral-400 pt-2 border-t border-neutral-800/80">
+                      <p className="truncate">
+                        <strong className="text-neutral-300">Colegio:</strong>{" "}
+                        {ref.colegioArbitros || "Distrito Capital"}
+                      </p>
+                      <p>
+                        <strong className="text-neutral-300">Cédula:</strong>{" "}
+                        {ref.cedula || "No indicada"} ·{" "}
+                        <strong className="text-neutral-300">Tel:</strong> {ref.phone || "No indicado"}
+                      </p>
+                      <div className="flex items-center justify-between pt-1 text-[10px]">
+                        <span className="text-amber-400 font-bold">
+                          {assignedMatchesCount > 0
+                            ? `${assignedMatchesCount} partidos asignados`
+                            : "Disponible para designación"}
+                        </span>
+                        <span className="text-neutral-500 font-mono">Rol: arbitro</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. MODAL DE EDICIÓN / PROGRAMACIÓN DE PARTIDO */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm animate-in fade-in">
           <div className="w-full max-w-lg rounded-3xl border border-neutral-800 bg-neutral-900 p-6 shadow-2xl space-y-4">
