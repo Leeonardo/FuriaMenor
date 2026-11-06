@@ -23,18 +23,25 @@ export default async function SubTournamentPosicionesPage({ params, searchParams
     notFound();
   }
 
-  const { standings, activeCategory } = getSubTournamentData(tournament, categoryParam);
+  const {
+    standings,
+    activeCategory,
+    groups: categoryGroups,
+    qualificationRule,
+    qualificationCutoff,
+  } = getSubTournamentData(tournament, categoryParam);
   const basePath = `/torneos/daeris/${tournament.slug}`;
 
-  // Si el torneo tiene múltiples grupos (ej. Libre 2da División con 4 grupos A, B, C, D)
+  // Si el torneo o la categoría tiene múltiples grupos (ej. Libre 2da o Sub-10 a Sub-16 en Infantil 2da)
+  const effectiveGroups = categoryGroups || tournament.groups;
   let activeGroupName = tournament.groupName;
   let rowsToDisplay = standings;
 
-  if (tournament.groups) {
-    const availableGroups = Object.keys(tournament.groups);
+  if (effectiveGroups) {
+    const availableGroups = Object.keys(effectiveGroups);
     const matchedGroup = availableGroups.find((g) => g.toUpperCase() === groupParam) || availableGroups[0];
     activeGroupName = matchedGroup;
-    rowsToDisplay = tournament.groups[matchedGroup] || standings;
+    rowsToDisplay = effectiveGroups[matchedGroup] || standings;
   }
 
   return (
@@ -42,29 +49,30 @@ export default async function SubTournamentPosicionesPage({ params, searchParams
       <div className="border-b border-neutral-800 pb-4">
         <h2 className="text-2xl font-black text-white flex items-center gap-2">
           <Trophy className="h-6 w-6 text-amber-400" />
-          Tabla de Posiciones Oficial {activeCategory && `· ${activeCategory}`} {tournament.groups && `· ${activeGroupName}`}
+          Tabla de Posiciones Oficial {activeCategory && `· ${activeCategory}`} {effectiveGroups && `· ${activeGroupName}`}
         </h2>
         <p className="text-sm text-neutral-400 mt-1">
           Planilla oficial de clasificación correspondiente a {tournament.name}{" "}
           {activeCategory && `(Categoría ${activeCategory})`}
-          {tournament.groups && `(${activeGroupName})`}. Haz clic en el nombre de cualquier equipo para ver su perfil o estadísticas.
+          {effectiveGroups && `(${activeGroupName})`}. Haz clic en el nombre de cualquier equipo para ver su perfil o estadísticas.
         </p>
       </div>
 
       {/* Selector de Grupos si aplica */}
-      {tournament.groups && (
+      {effectiveGroups && (
         <div className="bg-neutral-900/80 border border-neutral-800 rounded-2xl p-4">
           <div className="flex items-center gap-2 text-xs font-bold text-neutral-400 uppercase tracking-wider mb-3">
             <Layers className="h-4 w-4 text-emerald-400" />
             <span>Grupos de Competencia (Fase Regular):</span>
           </div>
           <div className="flex flex-wrap gap-2">
-            {Object.keys(tournament.groups).map((groupKey) => {
+            {Object.keys(effectiveGroups).map((groupKey) => {
               const isSelected = groupKey.toUpperCase() === activeGroupName.toUpperCase();
+              const catQuery = activeCategory ? `&cat=${encodeURIComponent(activeCategory)}` : "";
               return (
                 <Link
                   key={groupKey}
-                  href={`${basePath}/posiciones?grupo=${encodeURIComponent(groupKey)}`}
+                  href={`${basePath}/posiciones?grupo=${encodeURIComponent(groupKey)}${catQuery}`}
                   className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all ${
                     isSelected
                       ? "bg-gradient-to-r from-emerald-500 to-green-600 text-black shadow-lg shadow-emerald-500/20 scale-105"
@@ -88,10 +96,10 @@ export default async function SubTournamentPosicionesPage({ params, searchParams
 
       <div className="max-w-4xl mx-auto">
         <TournamentOfficialTable
-          title={`TABLA DE POSICIONES · ${tournament.name}${activeCategory ? ` (${activeCategory.toUpperCase()})` : ""}`}
-          groupName={activeCategory ? `GRUPO ${activeCategory.toUpperCase()}` : activeGroupName}
-          qualificationRule={tournament.qualificationRule}
-          qualificationCutoff={tournament.qualificationCutoff}
+          title={`TABLA DE POSICIONES · ${tournament.name}${activeCategory ? ` (${activeCategory.toUpperCase()}${effectiveGroups ? ` · ${activeGroupName}` : ""})` : ""}`}
+          groupName={effectiveGroups ? activeGroupName : activeCategory ? `GRUPO ${activeCategory.toUpperCase()}` : activeGroupName}
+          qualificationRule={qualificationRule || tournament.qualificationRule}
+          qualificationCutoff={qualificationCutoff ?? tournament.qualificationCutoff}
           rows={rowsToDisplay}
           baseTournamentPath={basePath}
           currentCategory={activeCategory || undefined}

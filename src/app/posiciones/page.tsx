@@ -33,6 +33,7 @@ import {
   STANDINGS_MASTER_50_OFICIAL,
   STANDINGS_LIBRE_2DA_GROUPS,
   OFFICIAL_MINOR_1RA_STANDINGS,
+  OFFICIAL_MINOR_2DA_STANDINGS,
 } from "@/data/official-standings-tables";
 import {
   getStoredMatches,
@@ -129,16 +130,31 @@ export default function PosicionesPage() {
       });
     });
 
-    // 6. Categorías Menores Formativas de 2da División
-    Object.entries(OFFICIAL_TEAMS_2DA_DIV).forEach(([cat, teams]) => {
-      teams.forEach((t) => {
-        list.push({
-          teamName: t,
-          category: cat,
-          divisionId: "infantil-2da",
-          divisionName: "Infantil 2da Div",
+    // 6. Categorías Menores Formativas de 2da División Oficiales
+    Object.entries(OFFICIAL_MINOR_2DA_STANDINGS).forEach(([cat, data]) => {
+      if (data.groups) {
+        Object.entries(data.groups).forEach(([grpName, rows]) => {
+          rows.forEach((r) => {
+            list.push({
+              teamName: r.team,
+              category: cat,
+              divisionId: "infantil-2da",
+              divisionName: `Infantil 2da (${cat} · ${grpName})`,
+              groupName: grpName,
+            });
+          });
         });
-      });
+      } else {
+        data.standings.forEach((r) => {
+          list.push({
+            teamName: r.team,
+            category: cat,
+            divisionId: "infantil-2da",
+            divisionName: `Infantil 2da (${cat})`,
+            groupName: "GRUPO U",
+          });
+        });
+      }
     });
 
     return list;
@@ -183,6 +199,8 @@ export default function PosicionesPage() {
 
     // 2. Torneos con categorías formativas (Sub-8 a Sub-20)
     if (currentSub.hasCategories && currentSub.categoryData) {
+      const activePayload = currentSub.categoryData[selectedCategory];
+
       // Comprobar si hay partidos finalizados en vivo
       const targetCatObj = DB_CATEGORIES.find((c) => c.name === selectedCategory);
       const catId = targetCatObj?.id || `cat-${selectedCategory.toLowerCase()}`;
@@ -203,12 +221,17 @@ export default function PosicionesPage() {
             ge: row.goalsAgainst,
             dif: row.goalDifference,
             pts: row.points,
-            status: idx < (currentSub.qualificationCutoff || 8) ? "clasificado" : "normal",
+            status: idx < (activePayload?.qualificationCutoff ?? currentSub.qualificationCutoff ?? 8) ? "clasificado" : "normal",
           }));
         }
       }
 
-      return currentSub.categoryData[selectedCategory]?.standings || currentSub.standings;
+      // Si la categoría menor activa tiene múltiples grupos (ej. Sub-10 a Sub-16 en 2da Div)
+      if (activePayload?.groups) {
+        return activePayload.groups[selectedGroup] || activePayload.standings;
+      }
+
+      return activePayload?.standings || currentSub.standings;
     }
 
     // 3. Tablas directas (Institucional, Master 50, Libre 1ra)
@@ -224,6 +247,12 @@ export default function PosicionesPage() {
       return OFFICIAL_TEAMS_1RA_DIV[cat]?.length || OFFICIAL_TEAMS_BY_CATEGORY[cat]?.length || 0;
     }
     if (selectedDaerisSub === "infantil-2da") {
+      if (OFFICIAL_MINOR_2DA_STANDINGS[cat]) {
+        if (OFFICIAL_MINOR_2DA_STANDINGS[cat].groups) {
+          return Object.values(OFFICIAL_MINOR_2DA_STANDINGS[cat].groups!).reduce((sum, g) => sum + g.length, 0);
+        }
+        return OFFICIAL_MINOR_2DA_STANDINGS[cat].standings.length;
+      }
       return OFFICIAL_TEAMS_2DA_DIV[cat]?.length || OFFICIAL_TEAMS_BY_CATEGORY[cat]?.length || 0;
     }
     return OFFICIAL_TEAMS_BY_CATEGORY[cat]?.length || 0;
@@ -567,6 +596,7 @@ export default function PosicionesPage() {
                     {sub.id === "libre-parquecarabobo" && <span className="text-[10px] opacity-75 font-bold">OFICIAL</span>}
                     {sub.id === "libre-2da" && <span className="text-[10px] opacity-75 font-bold">OFICIAL</span>}
                     {sub.id === "infantil-1ra" && <span className="text-[10px] opacity-75 font-bold">OFICIAL</span>}
+                    {sub.id === "infantil-2da" && <span className="text-[10px] opacity-75 font-bold">OFICIAL</span>}
                   </button>
                 );
               })}
@@ -636,7 +666,9 @@ export default function PosicionesPage() {
                 {MINOR_CATEGORIES.map((cat) => {
                   const isSelected = selectedCategory === cat;
                   const count = getCategoryTeamCount(cat);
-                  const isOfficial = selectedDaerisSub === "infantil-1ra" && !!OFFICIAL_MINOR_1RA_STANDINGS[cat];
+                  const isOfficial =
+                    (selectedDaerisSub === "infantil-1ra" && !!OFFICIAL_MINOR_1RA_STANDINGS[cat]) ||
+                    (selectedDaerisSub === "infantil-2da" && !!OFFICIAL_MINOR_2DA_STANDINGS[cat]);
                   return (
                     <button
                       key={cat}
@@ -667,6 +699,51 @@ export default function PosicionesPage() {
                   );
                 })}
               </div>
+
+              {/* Si la categoría infantil activa tiene múltiples grupos (ej. Grupo A y B en Sub-10 a Sub-16 de 2da Div) */}
+              {activeCategoryPayload?.groups && (
+                <div className="w-full mt-3 pt-3 border-t border-neutral-800/80">
+                  <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-1 mb-2">
+                    <div className="flex items-center gap-2">
+                      <Layers className="h-3.5 w-3.5 text-blue-400" />
+                      <span className="text-xs font-bold uppercase tracking-wider text-neutral-300">
+                        Grupo de {selectedCategory} ({currentSub.shortName}):
+                      </span>
+                    </div>
+                    <span className="text-[11px] font-bold text-blue-400 sm:ml-auto">
+                      {selectedGroup} ({activeCategoryPayload.groups[selectedGroup]?.length || 0} Equipos)
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap justify-center sm:justify-start gap-2">
+                    {Object.keys(activeCategoryPayload.groups).map((grp) => {
+                      const isSelected = selectedGroup === grp;
+                      return (
+                        <button
+                          key={grp}
+                          onClick={() => {
+                            setSelectedGroup(grp);
+                            setHighlightedTeam("");
+                          }}
+                          className={`rounded-lg px-3.5 py-1.5 text-xs font-bold transition inline-flex items-center gap-1.5 ${
+                            isSelected
+                              ? "bg-blue-600 text-white shadow-md shadow-blue-600/30 ring-1 ring-blue-400"
+                              : "bg-neutral-800/90 text-neutral-400 hover:bg-neutral-800 hover:text-white"
+                          }`}
+                        >
+                          <span>{grp}</span>
+                          <span
+                            className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${
+                              isSelected ? "bg-white/20 text-white" : "bg-neutral-700/80 text-neutral-300"
+                            }`}
+                          >
+                            {activeCategoryPayload.groups?.[grp]?.length || 0}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -711,7 +788,7 @@ export default function PosicionesPage() {
               selectedTournament === "daeris"
                 ? `TABLA DE POSICIONES · ${currentSub.name}${
                     currentSub.hasCategories
-                      ? ` (${selectedCategory.toUpperCase()})`
+                      ? ` (${selectedCategory.toUpperCase()}${activeCategoryPayload?.groups ? ` · ${selectedGroup}` : ""})`
                       : currentSub.groups
                       ? ` (${selectedGroup})`
                       : ""
@@ -720,7 +797,9 @@ export default function PosicionesPage() {
             }
             groupName={
               selectedTournament === "daeris"
-                ? currentSub.hasCategories
+                ? activeCategoryPayload?.groups
+                  ? selectedGroup
+                  : currentSub.hasCategories
                   ? `GRUPO ${selectedCategory.toUpperCase()}`
                   : currentSub.groups
                   ? selectedGroup
@@ -744,7 +823,7 @@ export default function PosicionesPage() {
           categoryName={
             selectedTournament === "daeris"
               ? currentSub.hasCategories
-                ? selectedCategory
+                ? `${selectedCategory}${activeCategoryPayload?.groups ? ` (${selectedGroup})` : ""}`
                 : currentSub.groups
                 ? `${currentSub.shortName} (${selectedGroup})`
                 : currentSub.name
@@ -752,7 +831,9 @@ export default function PosicionesPage() {
           }
           groupName={
             selectedTournament === "daeris"
-              ? currentSub.hasCategories
+              ? activeCategoryPayload?.groups
+                ? selectedGroup
+                : currentSub.hasCategories
                 ? `Grupo ${selectedCategory}`
                 : currentSub.groups
                 ? selectedGroup

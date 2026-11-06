@@ -3742,6 +3742,24 @@ const SPECIAL_TEAM_ALIASES: Record<string, string> = {
   "inter-plaza": "inter-plaza",
   "el-plan": "el-plan",
   "ragnarok": "ragnarok",
+
+  // Torneo Infantil 2da División
+  "black-bulls": "black-bulls",
+  "electrofive": "electrofive",
+  "ceftf": "ceftf",
+  "academia-winners": "academia-winners",
+  "winners": "academia-winners",
+  "falg": "falg",
+  "foro-libertador": "foro-libertador",
+  "espartanos-futsal-curita": "espartanos-cutira",
+  "espartano-futsal-cutira": "espartanos-cutira",
+  "intocable-fc": "intocable",
+  "dvo-paracoto-fc": "deportivo-paracoto",
+  "deportivo-paracotos-fc": "deportivo-paracoto",
+  "fuerza-vinotinto-(a)": "fuerza-vinotinto",
+  "fuerza-vinotinto-b": "fuerza-vinotinto",
+  "funvibra-b": "funvibra",
+  "ricardinho-a": "ricardinho",
 };
 
 /**

@@ -231,3 +231,180 @@ export const OFFICIAL_MINOR_1RA_STANDINGS: Record<string, { standings: OfficialT
   "Sub-18": { standings: STANDINGS_SUB18_1RA_OFICIAL, rule: SUB18_1RA_RULE, cutoff: 2 },
   "Sub-20": { standings: STANDINGS_SUB20_1RA_OFICIAL, rule: SUB20_1RA_RULE, cutoff: 2 },
 };
+
+// =============================================================================
+// TABLAS OFICIALES CATEGORÍAS FORMATIVAS (2DA DIVISIÓN ASCENSO)
+// =============================================================================
+
+// 1. SUB 8 (2DA DIVISIÓN) · GRUPO U (Imagen 3)
+export const STANDINGS_SUB8_2DA_OFICIAL: OfficialTableRow[] = [
+  { pos: 1, team: "FUSION ACADEMICA", jj: 10, jg: 7, je: 1, jp: 2, ga: 36, ge: 18, dif: 18, pts: 22, status: "clasificado", clubId: "acad-08", clubSlug: "fusion-academica" },
+  { pos: 2, team: "FUTCONEXION (B)", jj: 9, jg: 6, je: 1, jp: 2, ga: 34, ge: 20, dif: 14, pts: 19, status: "clasificado", clubId: "acad-32", clubSlug: "futconexion" },
+  { pos: 3, team: "DVO MANAURE", jj: 11, jg: 6, je: 0, jp: 5, ga: 21, ge: 23, dif: -2, pts: 18, status: "clasificado", clubId: "acad-24", clubSlug: "dvo-manaure" },
+  { pos: 4, team: "UNION LIBERTADOR", jj: 8, jg: 5, je: 1, jp: 2, ga: 36, ge: 13, dif: 23, pts: 16, status: "clasificado", clubId: "acad-23", clubSlug: "union-libertador" },
+  { pos: 5, team: "FRATELSA SPORT NEGRO", jj: 6, jg: 5, je: 0, jp: 1, ga: 31, ge: 6, dif: 25, pts: 15, status: "clasificado", clubId: "acad-09", clubSlug: "fratelsa-sport" },
+  { pos: 6, team: "LA LADERA (A)", jj: 7, jg: 4, je: 1, jp: 2, ga: 28, ge: 12, dif: 16, pts: 13, status: "clasificado", clubId: "acad-14", clubSlug: "la-ladera" },
+  { pos: 7, team: "FUTCONEXION (A)", jj: 8, jg: 4, je: 1, jp: 3, ga: 24, ge: 17, dif: 7, pts: 13, status: "clasificado", clubId: "acad-32", clubSlug: "futconexion" },
+  { pos: 8, team: "LA LADERA (B)", jj: 7, jg: 3, je: 1, jp: 3, ga: 22, ge: 17, dif: 5, pts: 10, status: "clasificado", clubId: "acad-14", clubSlug: "la-ladera" },
+  { pos: 9, team: "DEPORTIVO PARACOTOS FC", jj: 5, jg: 3, je: 1, jp: 1, ga: 11, ge: 8, dif: 3, pts: 10, status: "normal", clubId: "club-deportivo-paracoto", clubSlug: "deportivo-paracoto" },
+  { pos: 10, team: "DVO JC", jj: 5, jg: 3, je: 0, jp: 2, ga: 17, ge: 11, dif: 6, pts: 9, status: "normal", clubId: "acad-26", clubSlug: "dvo-jc" },
+  { pos: 11, team: "FRATELSA SPORT BLANCO", jj: 6, jg: 2, je: 1, jp: 3, ga: 16, ge: 8, dif: 8, pts: 7, status: "normal", clubId: "acad-09", clubSlug: "fratelsa-sport" },
+  { pos: 12, team: "FRATELSA SPORT AMARILLO", jj: 4, jg: 2, je: 0, jp: 2, ga: 14, ge: 14, dif: 0, pts: 6, status: "normal", clubId: "acad-09", clubSlug: "fratelsa-sport" },
+  { pos: 13, team: "FUNVIBRA", jj: 5, jg: 1, je: 0, jp: 4, ga: 11, ge: 20, dif: -9, pts: 3, status: "normal", clubId: "acad-25", clubSlug: "funvibra" },
+  { pos: 14, team: "FUERZA VINOTINTO", jj: 7, jg: 1, je: 0, jp: 6, ga: 10, ge: 33, dif: -23, pts: 3, status: "normal", clubId: "acad-16", clubSlug: "fuerza-vinotinto" },
+  { pos: 15, team: "HOGAR CANARIO", jj: 14, jg: 0, je: 0, jp: 14, ga: 0, ge: 98, dif: -98, pts: 0, status: "eliminado", clubId: "acad-13", clubSlug: "hogar-canario" },
+];
+
+// 2. SUB 10 (2DA DIVISIÓN) · GRUPO A & GRUPO B (Imagen 2)
+export const STANDINGS_SUB10_2DA_GRUPO_A: OfficialTableRow[] = [
+  { pos: 1, team: "ACADEMIA WINNERS", jj: 7, jg: 5, je: 1, jp: 1, ga: 29, ge: 7, dif: 22, pts: 16, status: "clasificado", clubId: "acad-09", clubSlug: "academia-winners" },
+  { pos: 2, team: "FUNVIBRA", jj: 6, jg: 5, je: 0, jp: 1, ga: 34, ge: 15, dif: 19, pts: 15, status: "clasificado", clubId: "acad-25", clubSlug: "funvibra" },
+  { pos: 3, team: "FALG", jj: 5, jg: 3, je: 2, jp: 0, ga: 17, ge: 9, dif: 8, pts: 11, status: "clasificado", clubId: "acad-35", clubSlug: "falg" },
+  { pos: 4, team: "LA PAZ FUTSAL", jj: 6, jg: 3, je: 1, jp: 2, ga: 18, ge: 15, dif: 3, pts: 10, status: "clasificado", clubId: "acad-15", clubSlug: "la-paz-futsal" },
+  { pos: 5, team: "DVO MIRADOR", jj: 6, jg: 2, je: 2, jp: 2, ga: 20, ge: 16, dif: 4, pts: 8, status: "clasificado", clubId: "acad-22", clubSlug: "dvo-mirador" },
+  { pos: 6, team: "INTER DE CARACAS", jj: 5, jg: 1, je: 2, jp: 2, ga: 9, ge: 18, dif: -9, pts: 5, status: "clasificado", clubId: "acad-02", clubSlug: "inter-caracas" },
+  { pos: 7, team: "REAL LIBERTAD", jj: 5, jg: 0, je: 1, jp: 4, ga: 5, ge: 21, dif: -16, pts: 1, status: "clasificado", clubId: "acad-21", clubSlug: "real-libertad" },
+  { pos: 8, team: "FUSION ACADEMICA B", jj: 5, jg: 0, je: 1, jp: 4, ga: 5, ge: 22, dif: -17, pts: 1, status: "clasificado", clubId: "acad-08", clubSlug: "fusion-academica" },
+  { pos: 9, team: "FRATELSA SPORT", jj: 2, jg: 0, je: 0, jp: 2, ga: 0, ge: 10, dif: -10, pts: 0, status: "normal", clubId: "acad-09", clubSlug: "fratelsa-sport" },
+];
+
+export const STANDINGS_SUB10_2DA_GRUPO_B: OfficialTableRow[] = [
+  { pos: 1, team: "UNION LIBERTADOR", jj: 8, jg: 7, je: 1, jp: 0, ga: 41, ge: 13, dif: 28, pts: 22, status: "clasificado", clubId: "acad-23", clubSlug: "union-libertador" },
+  { pos: 2, team: "LA LADERA", jj: 7, jg: 6, je: 0, jp: 1, ga: 31, ge: 12, dif: 19, pts: 18, status: "clasificado", clubId: "acad-14", clubSlug: "la-ladera" },
+  { pos: 3, team: "HOGAR CANARIO", jj: 8, jg: 5, je: 1, jp: 2, ga: 24, ge: 15, dif: 9, pts: 16, status: "clasificado", clubId: "acad-13", clubSlug: "hogar-canario" },
+  { pos: 4, team: "TETSU FUTSAL", jj: 7, jg: 3, je: 1, jp: 3, ga: 13, ge: 16, dif: -3, pts: 10, status: "clasificado", clubId: "acad-21", clubSlug: "tetsu-futsal" },
+  { pos: 5, team: "FUSION ACADEMICA A", jj: 5, jg: 2, je: 2, jp: 1, ga: 15, ge: 10, dif: 5, pts: 8, status: "clasificado", clubId: "acad-08", clubSlug: "fusion-academica" },
+  { pos: 6, team: "DVO MANAURE", jj: 8, jg: 2, je: 1, jp: 5, ga: 22, ge: 21, dif: 1, pts: 7, status: "clasificado", clubId: "acad-24", clubSlug: "dvo-manaure" },
+  { pos: 7, team: "INTOCABLE FC", jj: 6, jg: 1, je: 0, jp: 5, ga: 7, ge: 24, dif: -17, pts: 3, status: "clasificado", clubId: "acad-27", clubSlug: "intocable" },
+  { pos: 8, team: "DVO PARACOTO FC", jj: 6, jg: 0, je: 0, jp: 6, ga: 3, ge: 31, dif: -28, pts: 0, status: "clasificado", clubId: "club-deportivo-paracoto", clubSlug: "deportivo-paracoto" },
+  { pos: 9, team: "BLACK BULLS", jj: 8, jg: 2, je: 0, jp: 6, ga: 12, ge: 26, dif: -14, pts: 6, status: "eliminado", clubId: "club-black-bulls", clubSlug: "black-bulls" },
+];
+
+// 3. SUB 12 (2DA DIVISIÓN) · GRUPO A & GRUPO B (Imagen 1)
+export const STANDINGS_SUB12_2DA_GRUPO_A: OfficialTableRow[] = [
+  { pos: 1, team: "INTOCABLE FC", jj: 8, jg: 5, je: 1, jp: 2, ga: 30, ge: 16, dif: 14, pts: 16, status: "clasificado", clubId: "acad-27", clubSlug: "intocable" },
+  { pos: 2, team: "RICARDINHO", jj: 7, jg: 5, je: 1, jp: 1, ga: 22, ge: 9, dif: 13, pts: 16, status: "clasificado", clubId: "acad-19", clubSlug: "ricardinho" },
+  { pos: 3, team: "FALG", jj: 6, jg: 5, je: 1, jp: 0, ga: 19, ge: 9, dif: 10, pts: 16, status: "clasificado", clubId: "acad-35", clubSlug: "falg" },
+  { pos: 4, team: "HOGAR CANARIO", jj: 8, jg: 3, je: 4, jp: 1, ga: 21, ge: 11, dif: 10, pts: 13, status: "clasificado", clubId: "acad-13", clubSlug: "hogar-canario" },
+  { pos: 5, team: "ELITE CARACAS", jj: 8, jg: 3, je: 2, jp: 3, ga: 15, ge: 15, dif: 0, pts: 11, status: "clasificado", clubId: "acad-30", clubSlug: "elite-caracas" },
+  { pos: 6, team: "DVO MANAURE", jj: 8, jg: 3, je: 1, jp: 4, ga: 21, ge: 18, dif: 3, pts: 10, status: "clasificado", clubId: "acad-24", clubSlug: "dvo-manaure" },
+  { pos: 7, team: "FUERZA VINOTINTO (A)", jj: 8, jg: 2, je: 2, jp: 4, ga: 17, ge: 23, dif: -6, pts: 8, status: "clasificado", clubId: "acad-16", clubSlug: "fuerza-vinotinto" },
+  { pos: 8, team: "LA PAZ FUTSAL", jj: 7, jg: 1, je: 0, jp: 6, ga: 6, ge: 20, dif: -14, pts: 3, status: "clasificado", clubId: "acad-15", clubSlug: "la-paz-futsal" },
+  { pos: 9, team: "CARICUAO", jj: 8, jg: 1, je: 0, jp: 7, ga: 8, ge: 45, dif: -37, pts: 3, status: "eliminado", clubId: "acad-06", clubSlug: "gladiadores-caricuao" },
+];
+
+export const STANDINGS_SUB12_2DA_GRUPO_B: OfficialTableRow[] = [
+  { pos: 1, team: "DVO MIRADOR", jj: 7, jg: 6, je: 0, jp: 1, ga: 28, ge: 8, dif: 20, pts: 18, status: "clasificado", clubId: "acad-22", clubSlug: "dvo-mirador" },
+  { pos: 2, team: "GUATIRE FUTSAL", jj: 6, jg: 5, je: 0, jp: 1, ga: 24, ge: 13, dif: 11, pts: 15, status: "clasificado", clubId: "acad-10", clubSlug: "guatire-futsal" },
+  { pos: 3, team: "FORO LIBERTADOR", jj: 7, jg: 4, je: 1, jp: 2, ga: 23, ge: 10, dif: 13, pts: 13, status: "clasificado", clubId: "acad-33", clubSlug: "foro-libertador" },
+  { pos: 4, team: "UNION LIBERTADOR", jj: 4, jg: 3, je: 1, jp: 0, ga: 14, ge: 3, dif: 11, pts: 10, status: "clasificado", clubId: "acad-23", clubSlug: "union-libertador" },
+  { pos: 5, team: "LA LADERA", jj: 6, jg: 3, je: 0, jp: 3, ga: 14, ge: 13, dif: 1, pts: 9, status: "clasificado", clubId: "acad-14", clubSlug: "la-ladera" },
+  { pos: 6, team: "FUSION ACADEMICA", jj: 7, jg: 3, je: 0, jp: 4, ga: 11, ge: 15, dif: -4, pts: 9, status: "clasificado", clubId: "acad-08", clubSlug: "fusion-academica" },
+  { pos: 7, team: "FUNVIBRA", jj: 5, jg: 1, je: 1, jp: 3, ga: 14, ge: 13, dif: 1, pts: 4, status: "clasificado", clubId: "acad-25", clubSlug: "funvibra" },
+  { pos: 8, team: "DVO PARACOTO FC", jj: 6, jg: 1, je: 1, jp: 4, ga: 11, ge: 16, dif: -5, pts: 4, status: "clasificado", clubId: "club-deportivo-paracoto", clubSlug: "deportivo-paracoto" },
+  { pos: 9, team: "FUERZA VINOTINTO B", jj: 8, jg: 0, je: 0, jp: 8, ga: 1, ge: 49, dif: -48, pts: 0, status: "eliminado", clubId: "acad-16", clubSlug: "fuerza-vinotinto" },
+];
+
+// 4. SUB 14 (2DA DIVISIÓN) · GRUPO A & GRUPO B (Imagen 5)
+export const STANDINGS_SUB14_2DA_GRUPO_A: OfficialTableRow[] = [
+  { pos: 1, team: "HOGAR CANARIO", jj: 8, jg: 6, je: 2, jp: 0, ga: 31, ge: 7, dif: 24, pts: 20, status: "clasificado", clubId: "acad-13", clubSlug: "hogar-canario" },
+  { pos: 2, team: "FORO LIBERTADOR", jj: 7, jg: 6, je: 0, jp: 1, ga: 22, ge: 9, dif: 13, pts: 18, status: "clasificado", clubId: "acad-33", clubSlug: "foro-libertador" },
+  { pos: 3, team: "FUERZA VINOTINTO", jj: 7, jg: 4, je: 0, jp: 3, ga: 19, ge: 9, dif: 10, pts: 12, status: "clasificado", clubId: "acad-16", clubSlug: "fuerza-vinotinto" },
+  { pos: 4, team: "LA LADERA", jj: 5, jg: 3, je: 1, jp: 2, ga: 8, ge: 4, dif: 4, pts: 10, status: "clasificado", clubId: "acad-14", clubSlug: "la-ladera" },
+  { pos: 5, team: "DVO PARACOTO FC", jj: 6, jg: 2, je: 0, jp: 4, ga: 8, ge: 14, dif: -6, pts: 6, status: "clasificado", clubId: "club-deportivo-paracoto", clubSlug: "deportivo-paracoto" },
+  { pos: 6, team: "LA PAZ FUTSAL", jj: 7, jg: 2, je: 0, jp: 5, ga: 6, ge: 12, dif: -6, pts: 6, status: "clasificado", clubId: "acad-15", clubSlug: "la-paz-futsal" },
+  { pos: 7, team: "ELECTROFIVE", jj: 7, jg: 2, je: 0, jp: 5, ga: 10, ge: 19, dif: -9, pts: 6, status: "clasificado", clubId: "club-electrofive", clubSlug: "electrofive" },
+  { pos: 8, team: "DVO JC", jj: 5, jg: 2, je: 0, jp: 3, ga: 5, ge: 15, dif: -10, pts: 6, status: "clasificado", clubId: "acad-26", clubSlug: "dvo-jc" },
+  { pos: 9, team: "FUNVIBRA B", jj: 4, jg: 1, je: 1, jp: 2, ga: 6, ge: 7, dif: -1, pts: 4, status: "normal", clubId: "acad-25", clubSlug: "funvibra" },
+  { pos: 10, team: "BLACK BULLS", jj: 9, jg: 3, je: 0, jp: 6, ga: 11, ge: 30, dif: -19, pts: 9, status: "eliminado", clubId: "club-black-bulls", clubSlug: "black-bulls" },
+];
+
+export const STANDINGS_SUB14_2DA_GRUPO_B: OfficialTableRow[] = [
+  { pos: 1, team: "RICARDINHO", jj: 6, jg: 5, je: 0, jp: 1, ga: 19, ge: 10, dif: 9, pts: 15, status: "clasificado", clubId: "acad-19", clubSlug: "ricardinho" },
+  { pos: 2, team: "FUNVIBRA A", jj: 6, jg: 4, je: 1, jp: 1, ga: 22, ge: 7, dif: 15, pts: 13, status: "clasificado", clubId: "acad-25", clubSlug: "funvibra" },
+  { pos: 3, team: "DVO MANAURE", jj: 6, jg: 4, je: 1, jp: 1, ga: 17, ge: 8, dif: 9, pts: 13, status: "clasificado", clubId: "acad-24", clubSlug: "dvo-manaure" },
+  { pos: 4, team: "ESPARTANO FUTSAL CUTIRA", jj: 6, jg: 4, je: 0, jp: 2, ga: 15, ge: 11, dif: 4, pts: 12, status: "clasificado", clubId: "acad-07", clubSlug: "espartanos-futsal" },
+  { pos: 5, team: "DVO MIRADOR", jj: 6, jg: 2, je: 2, jp: 2, ga: 4, ge: 13, dif: -9, pts: 8, status: "clasificado", clubId: "acad-22", clubSlug: "dvo-mirador" },
+  { pos: 6, team: "INTOCABLE FC", jj: 6, jg: 2, je: 1, jp: 3, ga: 11, ge: 19, dif: -8, pts: 7, status: "clasificado", clubId: "acad-27", clubSlug: "intocable" },
+  { pos: 7, team: "UNION LIBERTADOR", jj: 5, jg: 2, je: 0, jp: 3, ga: 10, ge: 15, dif: -5, pts: 6, status: "clasificado", clubId: "acad-23", clubSlug: "union-libertador" },
+  { pos: 8, team: "ELITE CARACAS", jj: 7, jg: 1, je: 0, jp: 6, ga: 13, ge: 23, dif: -10, pts: 3, status: "clasificado", clubId: "acad-30", clubSlug: "elite-caracas" },
+  { pos: 9, team: "FUSION ACADEMICA", jj: 6, jg: 0, je: 0, jp: 5, ga: 16, ge: 17, dif: -1, pts: 0, status: "normal", clubId: "acad-08", clubSlug: "fusion-academica" },
+];
+
+// 5. SUB 16 (2DA DIVISIÓN) · GRUPO A & GRUPO B (Imagen 4)
+export const STANDINGS_SUB16_2DA_GRUPO_A: OfficialTableRow[] = [
+  { pos: 1, team: "FUERZA VINOTINTO", jj: 7, jg: 5, je: 0, jp: 2, ga: 32, ge: 18, dif: 14, pts: 15, status: "clasificado", clubId: "acad-16", clubSlug: "fuerza-vinotinto" },
+  { pos: 2, team: "DVO JC", jj: 5, jg: 5, je: 0, jp: 0, ga: 17, ge: 6, dif: 11, pts: 15, status: "clasificado", clubId: "acad-26", clubSlug: "dvo-jc" },
+  { pos: 3, team: "UNION LIBERTADOR", jj: 6, jg: 4, je: 0, jp: 2, ga: 21, ge: 12, dif: 9, pts: 12, status: "clasificado", clubId: "acad-23", clubSlug: "union-libertador" },
+  { pos: 4, team: "CEFTF", jj: 8, jg: 4, je: 0, jp: 4, ga: 21, ge: 14, dif: 7, pts: 12, status: "clasificado", clubId: "club-ceftf", clubSlug: "ceftf" },
+  { pos: 5, team: "ALI PRIMERA", jj: 6, jg: 4, je: 0, jp: 2, ga: 19, ge: 14, dif: 5, pts: 12, status: "clasificado", clubId: "acad-12", clubSlug: "ali-primera" },
+  { pos: 6, team: "LA LADERA", jj: 6, jg: 3, je: 0, jp: 3, ga: 12, ge: 16, dif: -4, pts: 9, status: "clasificado", clubId: "acad-14", clubSlug: "la-ladera" },
+  { pos: 7, team: "DVO MIRADOR", jj: 8, jg: 3, je: 0, jp: 5, ga: 20, ge: 27, dif: -7, pts: 9, status: "clasificado", clubId: "acad-22", clubSlug: "dvo-mirador" },
+  { pos: 8, team: "ESPARTANOS FUTSAL", jj: 6, jg: 2, je: 0, jp: 4, ga: 17, ge: 11, dif: 6, pts: 6, status: "clasificado", clubId: "acad-07", clubSlug: "espartanos-futsal" },
+  { pos: 9, team: "RICARDINHO B", jj: 6, jg: 1, je: 0, jp: 5, ga: 11, ge: 27, dif: -16, pts: 3, status: "normal", clubId: "acad-19", clubSlug: "ricardinho" },
+  { pos: 10, team: "GLADIADORES CARICUAO", jj: 6, jg: 1, je: 0, jp: 5, ga: 5, ge: 29, dif: -24, pts: 3, status: "normal", clubId: "acad-06", clubSlug: "gladiadores-caricuao" },
+];
+
+export const STANDINGS_SUB16_2DA_GRUPO_B: OfficialTableRow[] = [
+  { pos: 1, team: "RICARDINHO A", jj: 8, jg: 5, je: 1, jp: 2, ga: 23, ge: 13, dif: 10, pts: 16, status: "clasificado", clubId: "acad-19", clubSlug: "ricardinho" },
+  { pos: 2, team: "FORO LIBERTADOR", jj: 7, jg: 4, je: 1, jp: 2, ga: 26, ge: 13, dif: 13, pts: 13, status: "clasificado", clubId: "acad-33", clubSlug: "foro-libertador" },
+  { pos: 3, team: "ESPARTANOS FUTSAL CURITA", jj: 7, jg: 3, je: 3, jp: 1, ga: 17, ge: 12, dif: 5, pts: 12, status: "clasificado", clubId: "acad-07", clubSlug: "espartanos-futsal" },
+  { pos: 4, team: "HOGAR CANARIO", jj: 6, jg: 3, je: 2, jp: 1, ga: 19, ge: 11, dif: 8, pts: 11, status: "clasificado", clubId: "acad-13", clubSlug: "hogar-canario" },
+  { pos: 5, team: "DVO MANAURE", jj: 6, jg: 3, je: 1, jp: 2, ga: 22, ge: 19, dif: 3, pts: 10, status: "clasificado", clubId: "acad-24", clubSlug: "dvo-manaure" },
+  { pos: 6, team: "LA PAZ FUTSAL", jj: 7, jg: 2, je: 3, jp: 2, ga: 13, ge: 15, dif: -2, pts: 9, status: "clasificado", clubId: "acad-15", clubSlug: "la-paz-futsal" },
+  { pos: 7, team: "ELITE CARACAS", jj: 7, jg: 2, je: 1, jp: 3, ga: 16, ge: 21, dif: -5, pts: 7, status: "clasificado", clubId: "acad-30", clubSlug: "elite-caracas" },
+  { pos: 8, team: "FUNVIBRA", jj: 6, jg: 0, je: 2, jp: 4, ga: 19, ge: 31, dif: -12, pts: 2, status: "clasificado", clubId: "acad-25", clubSlug: "funvibra" },
+  { pos: 9, team: "DVO PARACOTO FC", jj: 5, jg: 0, je: 0, jp: 5, ga: 3, ge: 27, dif: -24, pts: 0, status: "normal", clubId: "club-deportivo-paracoto", clubSlug: "deportivo-paracoto" },
+];
+
+export const OFFICIAL_MINOR_2DA_STANDINGS: Record<
+  string,
+  {
+    standings: OfficialTableRow[];
+    rule: string;
+    cutoff: number;
+    groups?: Record<string, OfficialTableRow[]>;
+  }
+> = {
+  "Sub-8": {
+    standings: STANDINGS_SUB8_2DA_OFICIAL,
+    rule: "CLASIFICAN LOS 8 PRIMEROS",
+    cutoff: 8,
+  },
+  "Sub-10": {
+    standings: STANDINGS_SUB10_2DA_GRUPO_A,
+    rule: "CLASIFICAN LOS 8 PRIMEROS DE CADA GRUPO",
+    cutoff: 8,
+    groups: {
+      "GRUPO A": STANDINGS_SUB10_2DA_GRUPO_A,
+      "GRUPO B": STANDINGS_SUB10_2DA_GRUPO_B,
+    },
+  },
+  "Sub-12": {
+    standings: STANDINGS_SUB12_2DA_GRUPO_A,
+    rule: "CLASIFICAN LOS 8 PRIMEROS DE CADA GRUPO",
+    cutoff: 8,
+    groups: {
+      "GRUPO A": STANDINGS_SUB12_2DA_GRUPO_A,
+      "GRUPO B": STANDINGS_SUB12_2DA_GRUPO_B,
+    },
+  },
+  "Sub-14": {
+    standings: STANDINGS_SUB14_2DA_GRUPO_A,
+    rule: "CLASIFICAN LOS 8 PRIMEROS DE CADA GRUPO",
+    cutoff: 8,
+    groups: {
+      "GRUPO A": STANDINGS_SUB14_2DA_GRUPO_A,
+      "GRUPO B": STANDINGS_SUB14_2DA_GRUPO_B,
+    },
+  },
+  "Sub-16": {
+    standings: STANDINGS_SUB16_2DA_GRUPO_A,
+    rule: "CLASIFICAN LOS 8 PRIMEROS DE CADA GRUPO",
+    cutoff: 8,
+    groups: {
+      "GRUPO A": STANDINGS_SUB16_2DA_GRUPO_A,
+      "GRUPO B": STANDINGS_SUB16_2DA_GRUPO_B,
+    },
+  },
+};

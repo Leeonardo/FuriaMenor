@@ -686,4 +686,41 @@ export const OFFICIAL_CLUBS_DATA: Academy[] = [
     secondaryColor: "#0f172a",
     tournamentName: "Torneo Sub 20 1ra División",
   }),
+
+  // ===========================================================================
+  // 7. CLUBES PARTICIPANTES EN TORNEO INFANTIL 2DA DIVISIÓN
+  // ===========================================================================
+  createOfficialClub({
+    id: "club-black-bulls",
+    slug: "black-bulls",
+    name: "Black Bulls",
+    officialName: "Black Bulls Fútbol Sala Club",
+    shortName: "Black Bulls",
+    zoneDetail: "Caracas",
+    primaryColor: "#000000",
+    secondaryColor: "#dc2626",
+    tournamentName: "Torneo Infantil 2da División",
+  }),
+  createOfficialClub({
+    id: "club-electrofive",
+    slug: "electrofive",
+    name: "Electrofive",
+    officialName: "Electrofive Futsal Club",
+    shortName: "Electrofive",
+    zoneDetail: "Caracas",
+    primaryColor: "#eab308",
+    secondaryColor: "#1d4ed8",
+    tournamentName: "Torneo Infantil 2da División",
+  }),
+  createOfficialClub({
+    id: "club-ceftf",
+    slug: "ceftf",
+    name: "CEFTF",
+    officialName: "Centro de Entrenamiento y Formación de Talento Futsal (CEFTF)",
+    shortName: "CEFTF",
+    zoneDetail: "Caracas",
+    primaryColor: "#0284c7",
+    secondaryColor: "#ffffff",
+    tournamentName: "Torneo Infantil 2da División",
+  }),
 ];

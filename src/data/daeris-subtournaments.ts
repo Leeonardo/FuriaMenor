@@ -27,6 +27,7 @@ import {
   STANDINGS_LIBRE_2DA_GRUPO_A,
   LIBRE_2DA_RULE,
   OFFICIAL_MINOR_1RA_STANDINGS,
+  OFFICIAL_MINOR_2DA_STANDINGS,
 } from "@/data/official-standings-tables";
 import { OFFICIAL_MINOR_1RA_SCORERS } from "@/data/official-scorers-data";
 
@@ -47,6 +48,7 @@ export interface CategoryPayload {
   teams: TeamProfile[];
   qualificationRule?: string;
   qualificationCutoff?: number;
+  groups?: Record<string, OfficialTableRow[]>;
 }
 
 export interface DaerisSubTournament {
@@ -104,6 +106,8 @@ function buildCategoryPayload(
   const officialMinor =
     tournamentSlug.includes("1ra") && OFFICIAL_MINOR_1RA_STANDINGS[category]
       ? OFFICIAL_MINOR_1RA_STANDINGS[category]
+      : tournamentSlug.includes("2da") && OFFICIAL_MINOR_2DA_STANDINGS[category]
+      ? OFFICIAL_MINOR_2DA_STANDINGS[category]
       : null;
 
   const officialScorers =
@@ -115,6 +119,7 @@ function buildCategoryPayload(
     standings: officialMinor ? officialMinor.standings : createCategoryStandings(category, prefix, tournamentSlug),
     qualificationRule: officialMinor ? officialMinor.rule : undefined,
     qualificationCutoff: officialMinor ? officialMinor.cutoff : undefined,
+    groups: (officialMinor as any)?.groups,
     topScorers: officialScorers,
     leastConceded: createGenericKeepers(prefix, category),
     matches: matchesToUse,
@@ -390,6 +395,9 @@ export function getSubTournamentData(
   matches: TournamentMatchItem[];
   teams: TeamProfile[];
   activeCategory: MinorCategory | null;
+  qualificationRule?: string;
+  qualificationCutoff?: number;
+  groups?: Record<string, OfficialTableRow[]>;
 } {
   if (tournament.hasCategories && tournament.categoryData) {
     let chosenCat: MinorCategory = "Sub-12";
@@ -410,6 +418,9 @@ export function getSubTournamentData(
       matches: payload.matches,
       teams: payload.teams,
       activeCategory: chosenCat,
+      qualificationRule: payload.qualificationRule || tournament.qualificationRule,
+      qualificationCutoff: payload.qualificationCutoff ?? tournament.qualificationCutoff,
+      groups: payload.groups,
     };
   }
 
@@ -420,6 +431,9 @@ export function getSubTournamentData(
     matches: tournament.matches,
     teams: tournament.teams,
     activeCategory: null,
+    qualificationRule: tournament.qualificationRule,
+    qualificationCutoff: tournament.qualificationCutoff,
+    groups: tournament.groups,
   };
 }
 
