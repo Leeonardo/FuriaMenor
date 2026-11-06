@@ -1,8 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
-import { Goal, Shield, Filter, ArrowLeft, ShieldCheck, Sparkles, Award } from "lucide-react";
+import {
+  Goal,
+  Shield,
+  Filter,
+  ArrowLeft,
+  ShieldCheck,
+  Sparkles,
+  Award,
+  AlertTriangle,
+  DollarSign,
+  Search,
+  AlertCircle,
+  FileText,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { daerisSubList, DaerisSubId } from "@/data/daeris-subtournaments";
 import {
@@ -15,6 +28,11 @@ import { StatsSocialExportModal, StatItem } from "@/components/tournaments/stats
 import { CrackDeLaJornadaShowcase } from "@/components/players/player-spotlight-card";
 import { getAcademyBySlug } from "@/data/academies-data";
 import { AcademyBadge } from "@/components/academies/academy-badge";
+import { OFFICIAL_MINOR_1RA_SCORERS } from "@/data/official-scorers-data";
+import {
+  OFFICIAL_DISCIPLINARY_DATA,
+  OfficialDisciplinaryItem,
+} from "@/data/official-disciplinary-data";
 
 function StatTeamShield({ teamName, size = 18 }: { teamName: string; size?: number }) {
   const academy = getAcademyBySlug(teamName);
@@ -54,6 +72,10 @@ export default function EstadisticasPage() {
   const [isExportModalOpen, setIsExportModalOpen] = useState<boolean>(false);
   const [exportStatType, setExportStatType] = useState<"goles" | "porteros">("goles");
 
+  // Estado para la sección de amonestados y sanciones oficiales
+  const [discCategory, setDiscCategory] = useState<string>("all");
+  const [discSearch, setDiscSearch] = useState<string>("");
+
   const currentSub = daerisSubList.find((s) => s.id === selectedDaerisSub) || daerisSubList[0];
 
   let scorers = currentSub.topScorers;
@@ -66,6 +88,30 @@ export default function EstadisticasPage() {
     scorers = currentSub.categoryData[selectedCategory]?.topScorers || currentSub.topScorers;
     keepers = currentSub.categoryData[selectedCategory]?.leastConceded || currentSub.leastConceded;
   }
+
+  // Filtrado reactivo de la tabla de sanciones
+  const filteredDisciplinary = useMemo(() => {
+    return OFFICIAL_DISCIPLINARY_DATA.filter((item) => {
+      const matchCat = discCategory === "all" || item.category === discCategory;
+      const q = discSearch.toLowerCase().trim();
+      const matchQ =
+        !q ||
+        item.player.toLowerCase().includes(q) ||
+        item.team.toLowerCase().includes(q) ||
+        item.category.toLowerCase().includes(q);
+      return matchCat && matchQ;
+    });
+  }, [discCategory, discSearch]);
+
+  const discStats = useMemo(() => {
+    const totalCount = filteredDisciplinary.length;
+    const suspendedCount = filteredDisciplinary.filter((d) => d.isSuspended).length;
+    const totalDollars = filteredDisciplinary.reduce((acc, curr) => {
+      const val = parseInt(curr.amount.replace(/[^0-9]/g, ""), 10) || 0;
+      return acc + val;
+    }, 0);
+    return { totalCount, suspendedCount, totalDollars };
+  }, [filteredDisciplinary]);
 
   const openExportModal = (type: "goles" | "porteros") => {
     setExportStatType(type);
@@ -191,19 +237,27 @@ export default function EstadisticasPage() {
                 </span>
               </div>
               <div className="flex flex-wrap justify-center sm:justify-start gap-2">
-                {MINOR_CATEGORIES.map((cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => setSelectedCategory(cat)}
-                    className={`rounded-lg px-3 py-1.5 text-xs font-bold transition ${
-                      selectedCategory === cat
-                        ? "bg-red-600 text-white shadow-md shadow-red-600/30 ring-1 ring-red-400"
-                        : "bg-neutral-800/90 text-neutral-400 hover:bg-neutral-800 hover:text-white"
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                ))}
+                {MINOR_CATEGORIES.map((cat) => {
+                  const isOfficial = selectedDaerisSub === "infantil-1ra" && !!OFFICIAL_MINOR_1RA_SCORERS[cat];
+                  return (
+                    <button
+                      key={cat}
+                      onClick={() => setSelectedCategory(cat)}
+                      className={`rounded-lg px-3 py-1.5 text-xs font-bold transition inline-flex items-center gap-1.5 ${
+                        selectedCategory === cat
+                          ? "bg-red-600 text-white shadow-md shadow-red-600/30 ring-1 ring-red-400"
+                          : "bg-neutral-800/90 text-neutral-400 hover:bg-neutral-800 hover:text-white"
+                      }`}
+                    >
+                      <span>{cat}</span>
+                      {isOfficial && (
+                        <span className="text-[9px] px-1 py-0.2 rounded bg-amber-400/20 text-amber-300 border border-amber-400/30 font-black">
+                          OFICIAL
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -397,6 +451,188 @@ export default function EstadisticasPage() {
                 </tbody>
               </table>
             </div>
+          </div>
+        </div>
+
+        {/* 3. REPORTE OFICIAL DE AMONESTADOS, SANCIONES & FAIR PLAY */}
+        <div className="mt-10 rounded-3xl border border-neutral-800 bg-neutral-900/70 p-4 sm:p-6 shadow-2xl">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-neutral-800 pb-5 mb-6">
+            <div className="flex items-center gap-3.5">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-400 border border-amber-500/30 shadow-inner">
+                <AlertCircle className="h-6 w-6" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-xl sm:text-2xl font-black text-white">
+                    Reporte Oficial de Amonestados & Sanciones
+                  </h2>
+                  <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30">
+                    Oficial Daeris 2026
+                  </span>
+                </div>
+                <p className="text-xs sm:text-sm text-neutral-400 mt-0.5">
+                  Registro oficial de tarjetas amarillas, rojas, multas arancelarias en divisas ($) y suspensiones disciplinarias de 1ra División.
+                </p>
+              </div>
+            </div>
+
+            {/* Métricas rápidas */}
+            <div className="flex flex-wrap items-center gap-2 self-stretch sm:self-auto">
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-neutral-950 border border-neutral-800 text-xs">
+                <FileText className="h-3.5 w-3.5 text-neutral-400" />
+                <span className="text-neutral-400">Total Casos:</span>
+                <strong className="text-white font-mono">{discStats.totalCount}</strong>
+              </div>
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-neutral-950 border border-neutral-800 text-xs">
+                <DollarSign className="h-3.5 w-3.5 text-amber-400" />
+                <span className="text-neutral-400">Arancel Total:</span>
+                <strong className="text-amber-400 font-mono">${discStats.totalDollars}</strong>
+              </div>
+              {discStats.suspendedCount > 0 && (
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-950/60 border border-red-500/40 text-xs text-red-300 font-bold animate-pulse">
+                  <AlertTriangle className="h-3.5 w-3.5 text-red-400" />
+                  <span>{discStats.suspendedCount} Suspendidos</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Filtros de Categoría y Buscador */}
+          <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 mb-6 bg-neutral-950/70 p-3 sm:p-4 rounded-2xl border border-neutral-800/80">
+            {/* Selector de Categorías de Sanción */}
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="text-xs text-neutral-400 font-semibold mr-1">Categoría:</span>
+              {["all", "Sub-10", "Sub-12", "Sub-14", "Sub-16", "Sub-18", "Sub-20"].map((cat) => {
+                const isSelected = discCategory === cat;
+                const count =
+                  cat === "all"
+                    ? OFFICIAL_DISCIPLINARY_DATA.length
+                    : OFFICIAL_DISCIPLINARY_DATA.filter((d) => d.category === cat).length;
+                return (
+                  <button
+                    key={`disc-cat-${cat}`}
+                    onClick={() => setDiscCategory(cat)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
+                      isSelected
+                        ? "bg-amber-500 text-neutral-950 shadow-md shadow-amber-500/30"
+                        : "bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-700"
+                    }`}
+                  >
+                    <span>{cat === "all" ? "Todas" : cat}</span>
+                    <span
+                      className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${
+                        isSelected ? "bg-black/20 text-neutral-950" : "bg-neutral-800 text-neutral-300"
+                      }`}
+                    >
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Buscador reactivo */}
+            <div className="relative w-full lg:w-72">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-neutral-500">
+                <Search className="h-3.5 w-3.5" />
+              </div>
+              <input
+                type="text"
+                value={discSearch}
+                onChange={(e) => setDiscSearch(e.target.value)}
+                placeholder="Buscar jugador, DT o equipo..."
+                className="w-full rounded-xl border border-neutral-800 bg-neutral-900/90 py-2 pl-9 pr-3 text-xs text-white placeholder-neutral-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 transition"
+              />
+            </div>
+          </div>
+
+          {/* Tabla de Amonestados */}
+          <div className="overflow-x-auto rounded-2xl border border-neutral-800 bg-neutral-950/60">
+            <table className="w-full text-left text-xs sm:text-sm">
+              <thead>
+                <tr className="border-b border-neutral-800 bg-neutral-900/80 text-neutral-400 font-bold uppercase text-[11px] tracking-wider">
+                  <th className="py-3 px-3 sm:px-4">#</th>
+                  <th className="py-3 px-3 sm:px-4">Atleta / Funcionario</th>
+                  <th className="py-3 px-3 sm:px-4">Categoría</th>
+                  <th className="py-3 px-3 sm:px-4">Equipo / Club</th>
+                  <th className="py-3 px-3 sm:px-4 text-center">Rol</th>
+                  <th className="py-3 px-3 sm:px-4 text-center">Arancel</th>
+                  <th className="py-3 px-3 sm:px-4 text-right">Estatus Disciplinario</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-neutral-800/60">
+                {filteredDisciplinary.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="py-8 text-center text-xs text-neutral-500">
+                      No se encontraron registros de sanciones bajo los filtros seleccionados.
+                    </td>
+                  </tr>
+                ) : (
+                  filteredDisciplinary.map((item, idx) => {
+                    const isSusp = item.isSuspended;
+                    return (
+                      <tr
+                        key={item.id}
+                        className={`transition hover:bg-neutral-800/40 ${
+                          isSusp ? "bg-red-950/20" : ""
+                        }`}
+                      >
+                        <td className="py-3 px-3 sm:px-4 font-mono text-neutral-500 font-semibold">
+                          {idx + 1}
+                        </td>
+                        <td className="py-3 px-3 sm:px-4 font-bold text-white">
+                          <div className="flex items-center gap-2">
+                            <span>{item.player}</span>
+                            {isSusp && (
+                              <span className="w-2 h-2 rounded-full bg-red-500 animate-ping inline-block" />
+                            )}
+                          </div>
+                        </td>
+                        <td className="py-3 px-3 sm:px-4">
+                          <span className="px-2 py-0.5 rounded-md bg-neutral-800 text-neutral-300 font-bold text-[10px] border border-neutral-700">
+                            {item.category}
+                          </span>
+                        </td>
+                        <td className="py-3 px-3 sm:px-4">
+                          <div className="flex items-center gap-2 text-neutral-200 font-medium">
+                            <StatTeamShield teamName={item.team} size={20} />
+                            <span className="truncate max-w-[180px]">{item.team}</span>
+                          </div>
+                        </td>
+                        <td className="py-3 px-3 sm:px-4 text-center">
+                          <span
+                            className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                              item.role === "Jugador"
+                                ? "bg-sky-500/10 text-sky-400 border border-sky-500/20"
+                                : "bg-purple-500/10 text-purple-400 border border-purple-500/20"
+                            }`}
+                          >
+                            {item.role}
+                          </span>
+                        </td>
+                        <td className="py-3 px-3 sm:px-4 text-center">
+                          <span className="font-mono font-black text-amber-400 bg-amber-400/10 border border-amber-400/20 px-2 py-0.5 rounded-lg text-xs">
+                            {item.amount}
+                          </span>
+                        </td>
+                        <td className="py-3 px-3 sm:px-4 text-right">
+                          {isSusp ? (
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-600/30 text-red-300 border border-red-500/60 font-black text-[11px] shadow-sm shadow-red-900/50">
+                              <AlertTriangle className="h-3.5 w-3.5 text-red-400 shrink-0" />
+                              <span>{item.suspensionNotice || "SUSPENDIDO"}</span>
+                            </span>
+                          ) : (
+                            <span className="text-[11px] text-neutral-400 font-semibold bg-neutral-900 px-2 py-0.5 rounded border border-neutral-800">
+                              Multa por Amonestación
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
 

@@ -474,7 +474,7 @@ export default function PosicionesPage() {
                       Infantil 1ra Div
                     </span>
                     <span className="text-[10px] font-bold text-neutral-400 bg-neutral-800 px-2 py-0.5 rounded-full">
-                      5 Categorías
+                      {Object.keys(OFFICIAL_MINOR_1RA_STANDINGS).length} Categorías
                     </span>
                   </div>
                   <div className="flex flex-wrap gap-1.5">

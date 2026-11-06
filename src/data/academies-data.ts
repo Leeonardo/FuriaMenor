@@ -3734,6 +3734,14 @@ const SPECIAL_TEAM_ALIASES: Record<string, string> = {
   "la-ladera-(b)": "la-ladera",
   "fenix-sport": "fenix-fs",
   "rh-sport": "rh-sport-club",
+
+  // Torneo Sub 20 1ra División
+  "barnije": "barnije",
+  "money-wayy": "money-wayy",
+  "moneywayy": "money-wayy",
+  "inter-plaza": "inter-plaza",
+  "el-plan": "el-plan",
+  "ragnarok": "ragnarok",
 };
 
 /**

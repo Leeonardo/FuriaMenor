@@ -28,6 +28,7 @@ import {
   LIBRE_2DA_RULE,
   OFFICIAL_MINOR_1RA_STANDINGS,
 } from "@/data/official-standings-tables";
+import { OFFICIAL_MINOR_1RA_SCORERS } from "@/data/official-scorers-data";
 
 export type DaerisSubId =
   | "institucional"
@@ -105,11 +106,16 @@ function buildCategoryPayload(
       ? OFFICIAL_MINOR_1RA_STANDINGS[category]
       : null;
 
+  const officialScorers =
+    tournamentSlug.includes("1ra") && OFFICIAL_MINOR_1RA_SCORERS[category]
+      ? OFFICIAL_MINOR_1RA_SCORERS[category]
+      : createGenericScorers(prefix, category);
+
   return {
     standings: officialMinor ? officialMinor.standings : createCategoryStandings(category, prefix, tournamentSlug),
     qualificationRule: officialMinor ? officialMinor.rule : undefined,
     qualificationCutoff: officialMinor ? officialMinor.cutoff : undefined,
-    topScorers: createGenericScorers(prefix, category),
+    topScorers: officialScorers,
     leastConceded: createGenericKeepers(prefix, category),
     matches: matchesToUse,
     teams: createGenericTeamProfiles(tournamentSlug, tournamentName, category, tournamentCode),

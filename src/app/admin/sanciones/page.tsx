@@ -6,6 +6,7 @@ import Link from "next/link";
 import { AlertTriangle, ShieldAlert, ArrowLeft, Plus, Minus } from "lucide-react";
 import { CATEGORIES, MODALITIES, modalityLabels, type Category, type Modality } from "@/data/daeris";
 import { torneoDaerisMatches } from "@/data/daeris/calendario";
+import { OFFICIAL_DISCIPLINARY_DATA } from "@/data/official-disciplinary-data";
 
 const DIVISIONS = ["1era División", "2da División"] as const;
 type Division = (typeof DIVISIONS)[number];
@@ -77,11 +78,14 @@ export default function SancionesPage() {
     }
   };
 
-  // Mock suspensiones
-  const suspensiones = [
-    { jugador: "M. Rojas", equipo: "TETSU FUTSAL", motivo: "Acumulación de 3 tarjetas amarillas", estado: "Suspendido para la próxima fecha" },
-    { jugador: "L. Vargas", equipo: "LA PAZ FUTSAL", motivo: "Tarjeta roja directa", estado: "Suspendido para la próxima fecha" },
-  ];
+  // Suspensiones oficiales de la liga Daeris
+  const suspensiones = OFFICIAL_DISCIPLINARY_DATA.filter((d) => d.isSuspended).map((s) => ({
+    jugador: s.player,
+    equipo: s.team,
+    categoria: s.category,
+    motivo: `${s.suspensionNotice || "Suspensión Disciplinaria"} (Multa: ${s.amount})`,
+    estado: "Suspensión Activa (No Habilitado)",
+  }));
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100">

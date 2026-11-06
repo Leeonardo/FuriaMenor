@@ -204,10 +204,30 @@ export const STANDINGS_SUB10_1RA_OFICIAL: OfficialTableRow[] = [
 
 export const SUB10_1RA_RULE = "CLASIFICAN LOS 2 PRIMEROS A SEMI FINAL Y JUEGO EXTRA ENTRE 3ER LUGAR VS 6TO Y 4TO LUGAR VS 5TO LUGAR";
 
+// =============================================================================
+// 10. TABLA DE POSICIONES CATEGORÍA SUB 20 1RA DIVISIÓN · GRUPO A (Imagen 2)
+// Clasifican los 2 primeros a Semifinal y juego extra entre 3er lugar vs 6to y 4to vs 5to.
+// =============================================================================
+export const STANDINGS_SUB20_1RA_OFICIAL: OfficialTableRow[] = [
+  { pos: 1, team: "BARNIJE", jj: 9, jg: 8, je: 1, jp: 0, ga: 53, ge: 15, dif: 38, pts: 25, status: "clasificado", clubId: "club-barnije", clubSlug: "barnije" },
+  { pos: 2, team: "REAL ESPERANZA", jj: 9, jg: 8, je: 0, jp: 1, ga: 44, ge: 6, dif: 38, pts: 24, status: "clasificado", clubId: "acad-18", clubSlug: "real-esperanza" },
+  { pos: 3, team: "GUERREROS DEL VALLE", jj: 9, jg: 7, je: 1, jp: 1, ga: 45, ge: 16, dif: 29, pts: 22, status: "normal", clubId: "acad-11", clubSlug: "guerreros-del-valle" },
+  { pos: 4, team: "UNION LIBERTADOR", jj: 9, jg: 5, je: 1, jp: 3, ga: 37, ge: 17, dif: 20, pts: 16, status: "normal", clubId: "acad-23", clubSlug: "union-libertador" },
+  { pos: 5, team: "MONEY WAYY", jj: 9, jg: 5, je: 0, jp: 4, ga: 40, ge: 18, dif: 22, pts: 15, status: "normal", clubId: "club-money-wayy", clubSlug: "money-wayy" },
+  { pos: 6, team: "CLUB PALACE", jj: 9, jg: 4, je: 0, jp: 5, ga: 39, ge: 30, dif: 9, pts: 12, status: "normal", clubId: "club-palace", clubSlug: "club-palace" },
+  { pos: 7, team: "INTER PLAZA", jj: 9, jg: 3, je: 0, jp: 6, ga: 25, ge: 55, dif: -30, pts: 9, status: "eliminado", clubId: "club-inter-plaza", clubSlug: "inter-plaza" },
+  { pos: 8, team: "CARICUAO", jj: 9, jg: 2, je: 1, jp: 6, ga: 20, ge: 55, dif: -35, pts: 7, status: "eliminado", clubId: "acad-06", clubSlug: "gladiadores-caricuao" },
+  { pos: 9, team: "EL PLAN", jj: 9, jg: 0, je: 0, jp: 9, ga: 0, ge: 77, dif: -77, pts: 0, status: "eliminado", clubId: "club-el-plan", clubSlug: "el-plan" },
+  { pos: 10, team: "RAGNAROK", jj: 9, jg: 0, je: 0, jp: 9, ga: 1, ge: 77, dif: -76, pts: 0, status: "eliminado", clubId: "club-ragnarok", clubSlug: "ragnarok" },
+];
+
+export const SUB20_1RA_RULE = "CLASIFICAN LOS 2 PRIMEROS A SEMI FINAL Y JUEGO EXTRA ENTRE 3ER LUGAR VS 6TO Y 4TO LUGAR VS 5TO LUGAR";
+
 export const OFFICIAL_MINOR_1RA_STANDINGS: Record<string, { standings: OfficialTableRow[]; rule: string; cutoff: number }> = {
   "Sub-10": { standings: STANDINGS_SUB10_1RA_OFICIAL, rule: SUB10_1RA_RULE, cutoff: 2 },
   "Sub-12": { standings: STANDINGS_SUB12_1RA_OFICIAL, rule: SUB12_1RA_RULE, cutoff: 8 },
   "Sub-14": { standings: STANDINGS_SUB14_1RA_OFICIAL, rule: SUB14_1RA_RULE, cutoff: 8 },
   "Sub-16": { standings: STANDINGS_SUB16_1RA_OFICIAL, rule: SUB16_1RA_RULE, cutoff: 8 },
   "Sub-18": { standings: STANDINGS_SUB18_1RA_OFICIAL, rule: SUB18_1RA_RULE, cutoff: 2 },
+  "Sub-20": { standings: STANDINGS_SUB20_1RA_OFICIAL, rule: SUB20_1RA_RULE, cutoff: 2 },
 };
