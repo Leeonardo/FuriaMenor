@@ -77,18 +77,18 @@ export const DEMO_USERS: Record<UserRole, AppUser> = {
 // 2. CATEGORÍAS FORMATIVAS OFICIALES (TEMPORADA 2026)
 // ==============================================================================
 export const DB_CATEGORIES: DBCategory[] = [
-  { id: 'cat-sub-6',  name: 'Sub-6',  discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2020, maxBirthYear: 2021, matchDurationMinutes: 30, registrationDeadline: '2026-11-20' },
-  { id: 'cat-sub-8',  name: 'Sub-8',  discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2018, maxBirthYear: 2019, matchDurationMinutes: 35, registrationDeadline: '2026-11-15' },
-  { id: 'cat-sub-10', name: 'Sub-10', discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2016, maxBirthYear: 2017, matchDurationMinutes: 40, registrationDeadline: '2026-10-31' },
-  { id: 'cat-sub-12', name: 'Sub-12', discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2014, maxBirthYear: 2015, matchDurationMinutes: 40, registrationDeadline: '2026-10-25' },
-  { id: 'cat-sub-14', name: 'Sub-14', discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2012, maxBirthYear: 2013, matchDurationMinutes: 45, registrationDeadline: '2026-11-30' },
-  { id: 'cat-sub-16', name: 'Sub-16', discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2010, maxBirthYear: 2011, matchDurationMinutes: 50, registrationDeadline: '2026-10-20' },
-  { id: 'cat-sub-18', name: 'Sub-18', discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2008, maxBirthYear: 2009, matchDurationMinutes: 50, registrationDeadline: '2026-11-25' },
-  { id: 'cat-sub-20', name: 'Sub-20', discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2006, maxBirthYear: 2007, matchDurationMinutes: 50, registrationDeadline: '2026-11-30' },
-  { id: 'cat-libre',  name: 'Libre',  discipline: 'Fútbol Sala', division: 'Libre Adultos', minBirthYear: 1980, maxBirthYear: 2008, matchDurationMinutes: 50, registrationDeadline: '2026-11-30' },
-  { id: 'cat-master-40', name: 'Master 40', discipline: 'Fútbol Sala', division: 'Master +40', minBirthYear: 1960, maxBirthYear: 1986, matchDurationMinutes: 45, registrationDeadline: '2026-11-30' },
-  { id: 'cat-master-50', name: 'Master 50', discipline: 'Fútbol Sala', division: 'Master +50', minBirthYear: 1950, maxBirthYear: 1976, matchDurationMinutes: 45, registrationDeadline: '2026-11-30' },
-  { id: 'cat-institucional', name: 'Institucional', discipline: 'Fútbol 7', division: 'Fútbol 7', minBirthYear: 1970, maxBirthYear: 2008, matchDurationMinutes: 50, registrationDeadline: '2026-11-30' },
+  { id: 'cat-sub-6',  name: 'Sub-6',  discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2020, maxBirthYear: 2021, matchDurationMinutes: 30, registrationDeadline: '2026-12-31' },
+  { id: 'cat-sub-8',  name: 'Sub-8',  discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2018, maxBirthYear: 2019, matchDurationMinutes: 35, registrationDeadline: '2026-12-31' },
+  { id: 'cat-sub-10', name: 'Sub-10', discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2016, maxBirthYear: 2017, matchDurationMinutes: 40, registrationDeadline: '2026-12-31' },
+  { id: 'cat-sub-12', name: 'Sub-12', discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2014, maxBirthYear: 2015, matchDurationMinutes: 40, registrationDeadline: '2026-12-31' },
+  { id: 'cat-sub-14', name: 'Sub-14', discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2012, maxBirthYear: 2013, matchDurationMinutes: 45, registrationDeadline: '2026-12-31' },
+  { id: 'cat-sub-16', name: 'Sub-16', discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2010, maxBirthYear: 2011, matchDurationMinutes: 50, registrationDeadline: '2026-12-31' },
+  { id: 'cat-sub-18', name: 'Sub-18', discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2008, maxBirthYear: 2009, matchDurationMinutes: 50, registrationDeadline: '2026-12-31' },
+  { id: 'cat-sub-20', name: 'Sub-20', discipline: 'Fútbol Sala', division: '1era División', minBirthYear: 2006, maxBirthYear: 2007, matchDurationMinutes: 50, registrationDeadline: '2026-12-31' },
+  { id: 'cat-libre',  name: 'Libre',  discipline: 'Fútbol Sala', division: 'Libre Adultos', minBirthYear: 1980, maxBirthYear: 2008, matchDurationMinutes: 50, registrationDeadline: '2026-12-31' },
+  { id: 'cat-master-40', name: 'Master 40', discipline: 'Fútbol Sala', division: 'Master +40', minBirthYear: 1960, maxBirthYear: 1986, matchDurationMinutes: 45, registrationDeadline: '2026-12-31' },
+  { id: 'cat-master-50', name: 'Master 50', discipline: 'Fútbol Sala', division: 'Master +50', minBirthYear: 1950, maxBirthYear: 1976, matchDurationMinutes: 45, registrationDeadline: '2026-12-31' },
+  { id: 'cat-institucional', name: 'Institucional', discipline: 'Fútbol 7', division: 'Fútbol 7', minBirthYear: 1970, maxBirthYear: 2008, matchDurationMinutes: 50, registrationDeadline: '2026-12-31' },
 ];
 
 // ==============================================================================
@@ -638,10 +638,10 @@ export function canDelegateModifyPlayer(
   const frozenStatus = isCategoryRosterFrozen(categoryId, categoriesList);
 
   if (role === 'admin_general') {
-    // Admin nivel dios siempre tiene permisos de corrección
+    // Admin nivel dios siempre tiene permisos de corrección total
     return {
       allowed: true,
-      isFrozen: frozenStatus.isFrozen,
+      isFrozen: false,
       deadlineFormatted: frozenStatus.deadlineFormatted,
     };
   }
@@ -655,18 +655,10 @@ export function canDelegateModifyPlayer(
     };
   }
 
-  if (frozenStatus.isFrozen) {
-    return {
-      allowed: false,
-      reason: `Roster Congelado: El período de fichajes para ${frozenStatus.categoryName} cerró oficialmente el ${frozenStatus.deadlineFormatted}. Por reglamento de Transparencia Total, no se permiten nuevas inscripciones, modificaciones ni desincorporaciones para delegados.`,
-      isFrozen: true,
-      deadlineFormatted: frozenStatus.deadlineFormatted,
-    };
-  }
-
+  // Delegados tienen permiso de edición y gestión de atletas de su plantilla
   return {
     allowed: true,
-    isFrozen: false,
+    isFrozen: frozenStatus.isFrozen,
     deadlineFormatted: frozenStatus.deadlineFormatted,
   };
 }

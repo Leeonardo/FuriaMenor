@@ -123,12 +123,6 @@ export function DelegadoView({
 
   // Abrir modal para crear
   const handleOpenCreateModal = () => {
-    if (selectedCategory !== "all" && isSelectedCategoryFrozen) {
-      setFrozenAlert(
-        `Roster Congelado: El período de inscripciones para ${activeFrozenStatus?.categoryName} cerró oficialmente el ${activeFrozenStatus?.deadlineFormatted}. Por política de Transparencia Total, el roster está blindado y publicado para dominio público.`
-      );
-      return;
-    }
     setFrozenAlert(null);
     setEditingPlayerId(null);
     setFirstName("");
@@ -147,13 +141,6 @@ export function DelegadoView({
 
   // Abrir modal para editar
   const handleOpenEditModal = (player: DBPlayer) => {
-    const frozen = isCategoryRosterFrozen(player.categoryId);
-    if (frozen.isFrozen) {
-      setFrozenAlert(
-        `Roster Congelado: El período de modificaciones para la categoría ${player.categoryName} cerró oficialmente el ${frozen.deadlineFormatted}. El expediente se encuentra auditado y publicado; no puede ser alterado por el delegado.`
-      );
-      return;
-    }
     setFrozenAlert(null);
     setEditingPlayerId(player.id);
     setFirstName(player.firstName);
@@ -173,15 +160,8 @@ export function DelegadoView({
     setIsModalOpen(true);
   };
 
-  // Eliminar atleta con validación de congelamiento
+  // Eliminar atleta con confirmación
   const handleDeletePlayerWithCheck = (player: DBPlayer) => {
-    const frozen = isCategoryRosterFrozen(player.categoryId);
-    if (frozen.isFrozen) {
-      setFrozenAlert(
-        `Roster Congelado: No se pueden desincorporar atletas de la categoría ${player.categoryName} porque el período cerró el ${frozen.deadlineFormatted}. Toda la nómina es de dominio público.`
-      );
-      return;
-    }
     if (confirm(`¿Estás seguro de desincorporar a ${player.firstName} ${player.lastName} del plantel de ${player.categoryName}?`)) {
       onDeletePlayer(player.id);
     }
@@ -190,12 +170,6 @@ export function DelegadoView({
   // Guardar fichaje
   const handleSubmitPlayer = (e: React.FormEvent) => {
     e.preventDefault();
-
-    const frozen = isCategoryRosterFrozen(categoryId);
-    if (frozen.isFrozen) {
-      alert(`Operación Denegada: El período de fichajes para ${frozen.categoryName} cerró el ${frozen.deadlineFormatted}. Roster congelado bajo el reglamento de Transparencia Total.`);
-      return;
-    }
 
     if (!ageValidation.isValid) {
       alert(`Error en el fichaje: ${ageValidation.message}`);

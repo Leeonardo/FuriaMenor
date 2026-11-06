@@ -8,6 +8,7 @@ import {
   DBCategory,
   DBStandingsRow,
   AppUser,
+  PlayerStatus,
 } from "@/types/auth-roles";
 import {
   calculateStandingsForCategory,
@@ -41,7 +42,11 @@ import {
   UserCheck,
   Smartphone,
   AlertTriangle,
+  Trash2,
+  UserPlus,
+  BarChart3,
 } from "lucide-react";
+import { PlayerStatsModal } from "./player-stats-modal";
 
 interface AdminGeneralViewProps {
   user: AppUser;
@@ -51,6 +56,9 @@ interface AdminGeneralViewProps {
   matches: DBMatch[];
   onUpdateMatch: (match: DBMatch) => void;
   onAddMatch: (match: DBMatch) => void;
+  onUpdatePlayer?: (player: DBPlayer) => void;
+  onDeletePlayer?: (playerId: string) => void;
+  onAddPlayer?: (player: DBPlayer) => void;
 }
 
 export function AdminGeneralView({
@@ -61,6 +69,9 @@ export function AdminGeneralView({
   matches,
   onUpdateMatch,
   onAddMatch,
+  onUpdatePlayer,
+  onDeletePlayer,
+  onAddPlayer,
 }: AdminGeneralViewProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>("cat-sub-12");
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -84,6 +95,139 @@ export function AdminGeneralView({
       saveStoredCategories(updated);
       return updated;
     });
+  };
+
+  // Estados para Control Maestro de Atletas (Admin General)
+  const [playerClubFilter, setPlayerClubFilter] = useState<string>("all");
+  const [playerCategoryFilter, setPlayerCategoryFilter] = useState<string>("all");
+  const [playerSearchQuery, setPlayerSearchQuery] = useState<string>("");
+  const [isPlayerModalOpen, setIsPlayerModalOpen] = useState(false);
+  const [editingPlayer, setEditingPlayer] = useState<DBPlayer | null>(null);
+  const [selectedPlayerForStats, setSelectedPlayerForStats] = useState<DBPlayer | null>(null);
+
+  // Formulario de edición/creación de atleta (Admin)
+  const [pFirstName, setPFirstName] = useState("");
+  const [pLastName, setPLastName] = useState("");
+  const [pIdType, setPIdType] = useState<"V" | "E" | "P">("V");
+  const [pIdNumber, setPIdNumber] = useState("");
+  const [pBirthDate, setPBirthDate] = useState("2014-05-10");
+  const [pClubId, setPClubId] = useState("");
+  const [pCategoryId, setPCategoryId] = useState("cat-sub-12");
+  const [pJerseyNumber, setPJerseyNumber] = useState(10);
+  const [pPosition, setPPosition] = useState<DBPlayer["position"]>("Ala");
+  const [pStatus, setPStatus] = useState<PlayerStatus>("activo");
+
+  // Atletas filtrados para el panel maestro
+  const filteredAdminPlayers = useMemo(() => {
+    return players.filter((p) => {
+      const matchClub = playerClubFilter === "all" || p.clubId === playerClubFilter;
+      const matchCat = playerCategoryFilter === "all" || p.categoryId === playerCategoryFilter;
+      const q = playerSearchQuery.toLowerCase().trim();
+      const matchQuery =
+        !q ||
+        p.firstName.toLowerCase().includes(q) ||
+        p.lastName.toLowerCase().includes(q) ||
+        p.idNumber.toLowerCase().includes(q) ||
+        p.clubName.toLowerCase().includes(q) ||
+        String(p.jerseyNumber).includes(q);
+
+      return matchClub && matchCat && matchQuery;
+    });
+  }, [players, playerClubFilter, playerCategoryFilter, playerSearchQuery]);
+
+  const handleOpenEditPlayer = (p: DBPlayer) => {
+    setEditingPlayer(p);
+    setPFirstName(p.firstName);
+    setPLastName(p.lastName);
+    setPIdType(p.idType);
+    setPIdNumber(p.idNumber);
+    setPBirthDate(p.birthDate);
+    setPClubId(p.clubId);
+    setPCategoryId(p.categoryId);
+    setPJerseyNumber(p.jerseyNumber);
+    setPPosition(p.position);
+    setPStatus(p.status);
+    setIsPlayerModalOpen(true);
+  };
+
+  const handleOpenCreatePlayer = () => {
+    setEditingPlayer(null);
+    setPFirstName("");
+    setPLastName("");
+    setPIdType("V");
+    setPIdNumber("");
+    setPBirthDate("2014-05-10");
+    setPClubId(playerClubFilter !== "all" ? playerClubFilter : clubs[0]?.id || "la-paz-futsal");
+    setPCategoryId(playerCategoryFilter !== "all" ? playerCategoryFilter : "cat-sub-12");
+    setPJerseyNumber(10);
+    setPPosition("Ala");
+    setPStatus("activo");
+    setIsPlayerModalOpen(true);
+  };
+
+  const handleDeletePlayerAdmin = (p: DBPlayer) => {
+    if (confirm(`¿Confirmas la eliminación definitiva del atleta ${p.firstName} ${p.lastName} (${p.clubName} - ${p.categoryName})? Esta acción desincorpora su registro de la base de datos.`)) {
+      if (onDeletePlayer) {
+        onDeletePlayer(p.id);
+      }
+    }
+  };
+
+  const handleSavePlayerAdmin = (e: React.FormEvent) => {
+    e.preventDefault();
+    const clubObj = clubs.find((c) => c.id === pClubId) || clubs[0];
+    const catObj = categories.find((c) => c.id === pCategoryId) || categories[0];
+    const birthYear = new Date(pBirthDate).getFullYear();
+
+    if (editingPlayer) {
+      const updated: DBPlayer = {
+        ...editingPlayer,
+        firstName: pFirstName,
+        lastName: pLastName,
+        idType: pIdType,
+        idNumber: pIdNumber,
+        birthDate: pBirthDate,
+        birthYear,
+        clubId: pClubId,
+        clubName: clubObj?.name || pClubId,
+        categoryId: pCategoryId,
+        categoryName: catObj?.name || "Sub-12",
+        jerseyNumber: pJerseyNumber,
+        position: pPosition,
+        status: pStatus,
+        carnetNumber: editingPlayer.carnetNumber || `FM-26-${clubObj?.slug.toUpperCase().slice(0, 3)}-${catObj?.name.replace("-", "")}-${pJerseyNumber}`,
+      };
+      if (onUpdatePlayer) {
+        onUpdatePlayer(updated);
+      }
+    } else {
+      const created: DBPlayer = {
+        id: `pl-${Date.now()}`,
+        firstName: pFirstName,
+        lastName: pLastName,
+        idType: pIdType,
+        idNumber: pIdNumber,
+        birthDate: pBirthDate,
+        birthYear,
+        clubId: pClubId,
+        clubName: clubObj?.name || pClubId,
+        categoryId: pCategoryId,
+        categoryName: catObj?.name || "Sub-12",
+        jerseyNumber: pJerseyNumber,
+        position: pPosition,
+        status: pStatus,
+        carnetNumber: `FM-26-${clubObj?.slug.toUpperCase().slice(0, 3)}-${catObj?.name.replace("-", "")}-${pJerseyNumber}`,
+        enrolledTournaments: ["infantil-1ra-division"],
+        photoUrl: "/placeholder-player.png",
+        createdAt: new Date().toISOString(),
+      };
+      if (onAddPlayer) {
+        onAddPlayer(created);
+      } else if (onUpdatePlayer) {
+        onUpdatePlayer(created);
+      }
+    }
+    setIsPlayerModalOpen(false);
   };
 
   // Formulario de edición de partido
@@ -638,7 +782,289 @@ export function AdminGeneralView({
         </div>
       </section>
 
-      {/* 5. GESTIÓN EXCLUSIVA DE ÁRBITROS POR EL ADMIN (REGLA 3) */}
+      {/* 5. GESTIÓN INTEGRAL DE PLANTILLAS Y ATLETAS DE CLUBES (CONTROL MAESTRO ADMIN) */}
+      <section className="rounded-3xl border border-neutral-800 bg-neutral-900/60 p-6 sm:p-7 shadow-xl space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-800 pb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="h-8 w-8 rounded-xl bg-red-600/20 border border-red-500/30 text-red-400 flex items-center justify-center">
+              <Users className="h-4 w-4" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm sm:text-base font-extrabold text-white uppercase tracking-wider">
+                  Gestión Integral de Plantillas y Atletas de Clubes
+                </h3>
+                <span className="rounded-full bg-red-500/20 text-red-400 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider border border-red-500/30">
+                  Control Total
+                </span>
+              </div>
+              <p className="text-xs text-neutral-400 mt-0.5">
+                Edición de fichas, corrección de dorsales, reasignación de categorías y desincorporación inmediata para cualquier club.
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={handleOpenCreatePlayer}
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-xs font-black text-white hover:bg-red-500 transition shadow-lg shadow-red-600/20 shrink-0"
+          >
+            <UserPlus className="h-3.5 w-3.5" />
+            <span>Fichar Nuevo Atleta</span>
+          </button>
+        </div>
+
+        {/* Barra de Filtros */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {/* Selector de Club */}
+          <div>
+            <label className="block text-[10px] uppercase font-bold text-neutral-400 mb-1">
+              Filtrar por Club / Academia
+            </label>
+            <select
+              value={playerClubFilter}
+              onChange={(e) => setPlayerClubFilter(e.target.value)}
+              className="w-full rounded-xl border border-neutral-800 bg-neutral-950 px-3 py-2 text-xs text-white focus:border-red-500 focus:outline-none"
+            >
+              <option value="all">Todos los Clubes ({clubs.length})</option>
+              {clubs.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Selector de Categoría */}
+          <div>
+            <label className="block text-[10px] uppercase font-bold text-neutral-400 mb-1">
+              Filtrar por Categoría
+            </label>
+            <select
+              value={playerCategoryFilter}
+              onChange={(e) => setPlayerCategoryFilter(e.target.value)}
+              className="w-full rounded-xl border border-neutral-800 bg-neutral-950 px-3 py-2 text-xs text-white focus:border-red-500 focus:outline-none"
+            >
+              <option value="all">Todas las Categorías ({categories.length})</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name} ({cat.division})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Búsqueda por Texto */}
+          <div>
+            <label className="block text-[10px] uppercase font-bold text-neutral-400 mb-1">
+              Buscar Atleta
+            </label>
+            <div className="relative">
+              <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-neutral-500" />
+              <input
+                type="text"
+                value={playerSearchQuery}
+                onChange={(e) => setPlayerSearchQuery(e.target.value)}
+                placeholder="Nombre, cédula o dorsal..."
+                className="w-full rounded-xl border border-neutral-800 bg-neutral-950 pl-8 pr-3 py-2 text-xs text-white placeholder-neutral-500 focus:border-red-500 focus:outline-none"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Resumen de resultados */}
+        <div className="flex items-center justify-between text-xs text-neutral-400 px-1">
+          <span>
+            Mostrando <strong className="text-white">{filteredAdminPlayers.length}</strong> atletas federados
+          </span>
+          {(playerClubFilter !== "all" || playerCategoryFilter !== "all" || playerSearchQuery) && (
+            <button
+              onClick={() => {
+                setPlayerClubFilter("all");
+                setPlayerCategoryFilter("all");
+                setPlayerSearchQuery("");
+              }}
+              className="text-red-400 hover:underline text-[11px] font-bold"
+            >
+              Limpiar filtros
+            </button>
+          )}
+        </div>
+
+        {/* VISTA MÓVIL: Tarjetas de Atletas */}
+        <div className="block md:hidden space-y-3">
+          {filteredAdminPlayers.length === 0 ? (
+            <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-8 text-center text-xs text-neutral-500">
+              No se encontraron atletas con los filtros seleccionados.
+            </div>
+          ) : (
+            filteredAdminPlayers.map((player) => (
+              <div
+                key={player.id}
+                className="rounded-2xl border border-neutral-800 bg-neutral-950/90 p-4 space-y-3 hover:border-neutral-700 transition"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="h-10 w-10 rounded-xl bg-neutral-900 border border-neutral-800 flex items-center justify-center font-mono font-black text-amber-400 text-sm shrink-0">
+                      #{player.jerseyNumber}
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-white leading-tight">
+                        {player.firstName} {player.lastName}
+                      </h4>
+                      <p className="text-[11px] text-neutral-400 font-mono mt-0.5">
+                        {player.idType}-{player.idNumber || "Sin Cédula"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-[9px] font-black uppercase tracking-wider shrink-0 ${
+                      player.status === "activo"
+                        ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                        : player.status === "suspendido"
+                        ? "bg-red-500/20 text-red-400 border border-red-500/30"
+                        : "bg-neutral-800 text-neutral-400"
+                    }`}
+                  >
+                    {player.status}
+                  </span>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-neutral-300">
+                  <span className="rounded-lg bg-neutral-900 px-2 py-0.5 border border-neutral-800 font-bold text-white">
+                    {player.clubName}
+                  </span>
+                  <span className="rounded-lg bg-neutral-900 px-2 py-0.5 border border-neutral-800 font-mono text-amber-400">
+                    {player.categoryName}
+                  </span>
+                  <span className="rounded-lg bg-neutral-900 px-2 py-0.5 border border-neutral-800 text-neutral-400">
+                    {player.position}
+                  </span>
+                </div>
+
+                <div className="pt-2 border-t border-neutral-800/80 flex items-center gap-2">
+                  <button
+                    onClick={() => setSelectedPlayerForStats(player)}
+                    className="flex-1 rounded-xl border border-red-500/30 bg-red-600/15 py-1.5 text-red-400 hover:bg-red-600 hover:text-white transition flex items-center justify-center gap-1 text-xs font-bold"
+                  >
+                    <BarChart3 className="h-3 w-3" />
+                    <span>Expediente</span>
+                  </button>
+
+                  <button
+                    onClick={() => handleOpenEditPlayer(player)}
+                    className="rounded-xl border border-neutral-700 bg-neutral-900 px-3 py-1.5 text-neutral-300 hover:text-white hover:border-neutral-500 transition text-xs font-bold flex items-center gap-1"
+                  >
+                    <Edit className="h-3 w-3" />
+                    <span>Editar</span>
+                  </button>
+
+                  <button
+                    onClick={() => handleDeletePlayerAdmin(player)}
+                    className="rounded-xl border border-neutral-800 bg-neutral-900 px-3 py-1.5 text-neutral-500 hover:text-red-400 hover:border-red-500/40 transition"
+                    title="Eliminar atleta"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* VISTA ESCRITORIO: Tabla Completa de Atletas */}
+        <div className="hidden md:block overflow-x-auto rounded-2xl border border-neutral-800 bg-neutral-950">
+          <table className="w-full text-left text-xs">
+            <thead className="border-b border-neutral-800 bg-neutral-900 text-[10px] uppercase tracking-wider text-neutral-400">
+              <tr>
+                <th className="py-3 px-3 text-center w-12 font-black text-amber-400">DORSAL</th>
+                <th className="py-3 px-4 font-black text-white">ATLETA</th>
+                <th className="py-3 px-3 font-black text-neutral-300">CÉDULA / FICHA</th>
+                <th className="py-3 px-3 font-black text-neutral-300">CLUB / ACADEMIA</th>
+                <th className="py-3 px-3 font-black text-neutral-300">CATEGORÍA</th>
+                <th className="py-3 px-3 font-black text-neutral-300">POSICIÓN</th>
+                <th className="py-3 px-3 text-center font-black text-neutral-300">ESTATUS</th>
+                <th className="py-3 px-4 text-right font-black text-neutral-300">ACCIONES</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-neutral-900">
+              {filteredAdminPlayers.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="py-10 text-center text-neutral-500">
+                    No se encontraron atletas federados con los filtros aplicados.
+                  </td>
+                </tr>
+              ) : (
+                filteredAdminPlayers.map((player) => (
+                  <tr key={player.id} className="hover:bg-neutral-900/50 transition">
+                    <td className="py-3 px-3 text-center font-mono font-black text-amber-400">
+                      #{player.jerseyNumber}
+                    </td>
+                    <td className="py-3 px-4 font-bold text-white">
+                      {player.firstName} {player.lastName}
+                    </td>
+                    <td className="py-3 px-3 font-mono text-neutral-400">
+                      {player.idType}-{player.idNumber || "Sin Cédula"}
+                    </td>
+                    <td className="py-3 px-3 font-semibold text-neutral-200">
+                      {player.clubName}
+                    </td>
+                    <td className="py-3 px-3 font-mono text-amber-400/90">
+                      {player.categoryName}
+                    </td>
+                    <td className="py-3 px-3 text-neutral-400">
+                      {player.position}
+                    </td>
+                    <td className="py-3 px-3 text-center">
+                      <span
+                        className={`inline-block rounded-full px-2 py-0.5 text-[9px] font-black uppercase tracking-wider ${
+                          player.status === "activo"
+                            ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                            : player.status === "suspendido"
+                            ? "bg-red-500/20 text-red-400 border border-red-500/30"
+                            : "bg-neutral-800 text-neutral-400"
+                        }`}
+                      >
+                        {player.status}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-right">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button
+                          onClick={() => setSelectedPlayerForStats(player)}
+                          className="rounded-lg border border-red-500/30 bg-red-600/15 px-2 py-1 text-red-400 hover:bg-red-600 hover:text-white transition flex items-center gap-1 text-[11px] font-bold"
+                          title="Ver expediente y estadísticas"
+                        >
+                          <BarChart3 className="h-3 w-3" />
+                          <span>Expediente</span>
+                        </button>
+
+                        <button
+                          onClick={() => handleOpenEditPlayer(player)}
+                          className="rounded-lg border border-neutral-800 p-1 text-neutral-300 hover:text-white hover:border-neutral-600 transition"
+                          title="Editar datos del atleta"
+                        >
+                          <Edit className="h-3.5 w-3.5" />
+                        </button>
+
+                        <button
+                          onClick={() => handleDeletePlayerAdmin(player)}
+                          className="rounded-lg border border-neutral-800 p-1 text-neutral-500 hover:text-red-400 hover:border-red-500/40 transition"
+                          title="Eliminar atleta definitivamente"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* 6. GESTIÓN EXCLUSIVA DE ÁRBITROS POR EL ADMIN (REGLA 3) */}
       <section className="rounded-3xl border border-neutral-800 bg-neutral-900/60 p-6 sm:p-7 shadow-xl space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-800 pb-4">
           <div className="flex items-center gap-2.5">
@@ -1044,6 +1470,218 @@ export function AdminGeneralView({
             : null
         }
       />
+
+      {/* 7. MODAL DE EDICIÓN / FICHAJE DE ATLETA (ADMIN TOTAL) */}
+      {isPlayerModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm animate-in fade-in overflow-y-auto">
+          <div className="w-full max-w-lg rounded-3xl border border-neutral-800 bg-neutral-900 p-6 sm:p-7 shadow-2xl space-y-4 my-6">
+            <div className="flex items-center justify-between border-b border-neutral-800 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-xl bg-red-600/20 text-red-400 border border-red-500/30 flex items-center justify-center">
+                  <UserPlus className="h-4 w-4" />
+                </div>
+                <div>
+                  <h3 className="text-base font-black text-white">
+                    {editingPlayer ? "Editar Ficha de Atleta (Control Maestro)" : "Fichar Nuevo Atleta (Admin Total)"}
+                  </h3>
+                  <p className="text-[11px] text-neutral-400">
+                    Modificación con jerarquía máxima sobre la base de datos de atletas.
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsPlayerModalOpen(false)}
+                className="text-neutral-500 hover:text-white text-lg font-bold p-1"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSavePlayerAdmin} className="space-y-4 text-xs">
+              {/* Nombres y Apellidos */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-bold text-neutral-400 mb-1">Nombres</label>
+                  <input
+                    type="text"
+                    required
+                    value={pFirstName}
+                    onChange={(e) => setPFirstName(e.target.value)}
+                    placeholder="Ej: Daniel Jesús"
+                    className="w-full rounded-xl border border-neutral-700 bg-neutral-950 px-3 py-2 text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-neutral-400 mb-1">Apellidos</label>
+                  <input
+                    type="text"
+                    required
+                    value={pLastName}
+                    onChange={(e) => setPLastName(e.target.value)}
+                    placeholder="Ej: González Pérez"
+                    className="w-full rounded-xl border border-neutral-700 bg-neutral-950 px-3 py-2 text-white"
+                  />
+                </div>
+              </div>
+
+              {/* Asignación de Club y Categoría */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-bold text-neutral-400 mb-1">Club / Academia</label>
+                  <select
+                    value={pClubId}
+                    onChange={(e) => setPClubId(e.target.value)}
+                    className="w-full rounded-xl border border-neutral-700 bg-neutral-950 px-3 py-2 text-white"
+                  >
+                    {clubs.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-neutral-400 mb-1">Categoría</label>
+                  <select
+                    value={pCategoryId}
+                    onChange={(e) => setPCategoryId(e.target.value)}
+                    className="w-full rounded-xl border border-neutral-700 bg-neutral-950 px-3 py-2 text-white"
+                  >
+                    {categories.map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.name} ({cat.division})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Identificación (Cédula) */}
+              <div className="grid grid-cols-3 gap-2">
+                <div>
+                  <label className="block text-[11px] font-bold text-neutral-400 mb-1">Tipo</label>
+                  <select
+                    value={pIdType}
+                    onChange={(e) => setPIdType(e.target.value as "V" | "E" | "P")}
+                    className="w-full rounded-xl border border-neutral-700 bg-neutral-950 px-2 py-2 text-white"
+                  >
+                    <option value="V">V- (Venezolano)</option>
+                    <option value="E">E- (Extranjero)</option>
+                    <option value="P">P- (Pasaporte)</option>
+                  </select>
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-[11px] font-bold text-neutral-400 mb-1">Número de Cédula</label>
+                  <input
+                    type="text"
+                    required
+                    value={pIdNumber}
+                    onChange={(e) => setPIdNumber(e.target.value)}
+                    placeholder="Ej: 32456789"
+                    className="w-full rounded-xl border border-neutral-700 bg-neutral-950 px-3 py-2 text-white font-mono"
+                  />
+                </div>
+              </div>
+
+              {/* Fecha de Nacimiento, Dorsal y Posición */}
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-[11px] font-bold text-neutral-400 mb-1">F. Nacimiento</label>
+                  <input
+                    type="date"
+                    required
+                    value={pBirthDate}
+                    onChange={(e) => setPBirthDate(e.target.value)}
+                    className="w-full rounded-xl border border-neutral-700 bg-neutral-950 px-2 py-2 text-white text-[11px]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-neutral-400 mb-1">Dorsal (#)</label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={99}
+                    required
+                    value={pJerseyNumber}
+                    onChange={(e) => setPJerseyNumber(Number(e.target.value))}
+                    className="w-full rounded-xl border border-neutral-700 bg-neutral-950 px-3 py-2 text-white font-mono font-bold text-center"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-neutral-400 mb-1">Posición</label>
+                  <select
+                    value={pPosition}
+                    onChange={(e) => setPPosition(e.target.value as DBPlayer["position"])}
+                    className="w-full rounded-xl border border-neutral-700 bg-neutral-950 px-2 py-2 text-white"
+                  >
+                    <option value="Portero">Portero</option>
+                    <option value="Cierre">Cierre</option>
+                    <option value="Ala">Ala</option>
+                    <option value="Pívot">Pívot</option>
+                    <option value="Defensa">Defensa</option>
+                    <option value="Medio">Medio</option>
+                    <option value="Delantero">Delantero</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Estatus del Atleta */}
+              <div>
+                <label className="block text-[11px] font-bold text-neutral-400 mb-1">Estatus Federativo</label>
+                <div className="grid grid-cols-4 gap-2">
+                  {(["activo", "inactivo", "suspendido", "lesionado"] as const).map((st) => (
+                    <button
+                      key={st}
+                      type="button"
+                      onClick={() => setPStatus(st)}
+                      className={`rounded-xl border py-2 text-center text-xs font-bold capitalize transition ${
+                        pStatus === st
+                          ? st === "activo"
+                            ? "border-emerald-500 bg-emerald-950 text-emerald-300 font-black"
+                            : st === "suspendido"
+                            ? "border-red-500 bg-red-950 text-red-300 font-black"
+                            : st === "lesionado"
+                            ? "border-amber-500 bg-amber-950 text-amber-300 font-black"
+                            : "border-neutral-500 bg-neutral-800 text-white font-black"
+                          : "border-neutral-800 bg-neutral-950 text-neutral-400 hover:text-white"
+                      }`}
+                    >
+                      {st}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Botones de Acción */}
+              <div className="pt-3 border-t border-neutral-800 flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsPlayerModalOpen(false)}
+                  className="rounded-xl border border-neutral-800 px-4 py-2 font-bold text-neutral-400 hover:text-white"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="rounded-xl bg-red-600 px-5 py-2 font-black text-white hover:bg-red-500 shadow-lg shadow-red-600/30 transition"
+                >
+                  {editingPlayer ? "Guardar Cambios del Atleta" : "Registrar y Fichar Atleta"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DE EXPEDIENTE INDIVIDUAL DEL ATLETA */}
+      {selectedPlayerForStats && (
+        <PlayerStatsModal
+          isOpen={!!selectedPlayerForStats}
+          onClose={() => setSelectedPlayerForStats(null)}
+          player={selectedPlayerForStats}
+          onUpdatePlayer={onUpdatePlayer || (() => {})}
+        />
+      )}
     </div>
   );
 }

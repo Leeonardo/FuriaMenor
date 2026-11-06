@@ -273,6 +273,9 @@ export default function AdminPage() {
             matches={matches}
             onUpdateMatch={handleUpdateMatch}
             onAddMatch={handleAddMatch}
+            onUpdatePlayer={handleUpdatePlayer}
+            onDeletePlayer={handleDeletePlayer}
+            onAddPlayer={handleAddPlayer}
           />
         )}
 

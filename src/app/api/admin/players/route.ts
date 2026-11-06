@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { player, userRole = "delegado" } = body;
+    const { player } = body;
 
     if (!player || !player.categoryId) {
       return NextResponse.json(
@@ -61,23 +61,9 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    if (userRole === "delegado") {
-      const frozenCheck = isCategoryRosterFrozen(player.categoryId);
-      if (frozenCheck.isFrozen) {
-        return NextResponse.json(
-          {
-            error: `Roster Congelado: El período de modificaciones para la categoría ${frozenCheck.categoryName} cerró el ${frozenCheck.deadlineFormatted}. El expediente se encuentra auditado y bloqueado para delegados.`,
-            isFrozen: true,
-            deadline: frozenCheck.deadlineFormatted,
-          },
-          { status: 403 }
-        );
-      }
-    }
-
     return NextResponse.json({
       success: true,
-      message: "Atleta actualizado correctamente.",
+      message: "Atleta actualizado correctamente en el sistema.",
       player,
     });
   } catch (error) {
@@ -93,27 +79,12 @@ export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const categoryId = searchParams.get("categoryId");
-    const userRole = searchParams.get("role") || "delegado";
 
     if (!categoryId) {
       return NextResponse.json(
         { error: "Parámetro categoryId requerido." },
         { status: 400 }
       );
-    }
-
-    if (userRole === "delegado") {
-      const frozenCheck = isCategoryRosterFrozen(categoryId);
-      if (frozenCheck.isFrozen) {
-        return NextResponse.json(
-          {
-            error: `Roster Congelado: No se pueden desincorporar atletas de ${frozenCheck.categoryName} posterior a la fecha límite (${frozenCheck.deadlineFormatted}).`,
-            isFrozen: true,
-            deadline: frozenCheck.deadlineFormatted,
-          },
-          { status: 403 }
-        );
-      }
     }
 
     return NextResponse.json({
