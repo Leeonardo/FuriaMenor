@@ -19,6 +19,8 @@ import {
 import {
   STANDINGS_INSTITUCIONAL_OFICIAL,
   INSTITUCIONAL_RULE,
+  STANDINGS_FUTBOL7_OFICIAL,
+  FUTBOL7_RULE,
   STANDINGS_LIBRE_1RA_OFICIAL,
   LIBRE_1RA_RULE,
   STANDINGS_MASTER_50_OFICIAL,
@@ -29,7 +31,10 @@ import {
   OFFICIAL_MINOR_1RA_STANDINGS,
   OFFICIAL_MINOR_2DA_STANDINGS,
 } from "@/data/official-standings-tables";
-import { OFFICIAL_MINOR_1RA_SCORERS } from "@/data/official-scorers-data";
+import {
+  OFFICIAL_MINOR_1RA_SCORERS,
+  OFFICIAL_MINOR_2DA_SCORERS,
+} from "@/data/official-scorers-data";
 
 export type DaerisSubId =
   | "institucional"
@@ -113,6 +118,8 @@ function buildCategoryPayload(
   const officialScorers =
     tournamentSlug.includes("1ra") && OFFICIAL_MINOR_1RA_SCORERS[category]
       ? OFFICIAL_MINOR_1RA_SCORERS[category]
+      : tournamentSlug.includes("2da") && OFFICIAL_MINOR_2DA_SCORERS[category]
+      ? OFFICIAL_MINOR_2DA_SCORERS[category]
       : createGenericScorers(prefix, category);
 
   return {
@@ -198,11 +205,11 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
     categoryLabel: "Modalidad Fútbol 7",
     badgeKey: "futbol7",
     venue: "Cancha Zona Rental & Cancha Guacamaya, Caracas",
-    teamsCount: 10,
-    status: "En Curso",
-    groupName: "GRUPO F7 ÚNICO",
-    qualificationRule: "CLASIFICAN LOS 8 PRIMEROS DE CADA GRUPO",
-    qualificationCutoff: 8,
+    teamsCount: 5,
+    status: "Fase Regular",
+    groupName: "GRUPO U",
+    qualificationRule: FUTBOL7_RULE,
+    qualificationCutoff: 4,
     hasCategories: false,
     description: "Competición oficial de fútbol 7 en césped sintético en Zona Rental y La Guacamaya.",
     accent: {
@@ -211,7 +218,7 @@ export const daerisSubTournaments: Record<DaerisSubId, DaerisSubTournament> = {
       text: "text-emerald-400",
     },
     matches: FUTBOL7_MATCHES_NOV_2026,
-    standings: createCategoryStandings("Libre"),
+    standings: STANDINGS_FUTBOL7_OFICIAL,
     topScorers: createGenericScorers("Equipo", "Libre"),
     leastConceded: createGenericKeepers("Equipo", "Libre"),
     teams: createGenericTeamProfiles("futbol-7-institucional", "Fútbol 7 Institucional", "Fútbol 7", "DAE"),

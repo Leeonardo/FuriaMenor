@@ -3744,6 +3744,10 @@ const SPECIAL_TEAM_ALIASES: Record<string, string> = {
   "ragnarok": "ragnarok",
 
   // Torneo Infantil 2da División
+  "polar-fc": "polar-fc",
+  "polar": "polar-fc",
+  "banco-del-tesoro": "banco-del-tesoro",
+  "banco-tesoro": "banco-del-tesoro",
   "black-bulls": "black-bulls",
   "electrofive": "electrofive",
   "ceftf": "ceftf",

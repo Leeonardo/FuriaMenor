@@ -73,6 +73,7 @@ export default function EstadisticasPage() {
   const [exportStatType, setExportStatType] = useState<"goles" | "porteros">("goles");
 
   // Estado para la sección de amonestados y sanciones oficiales
+  const [discDivision, setDiscDivision] = useState<string>("all");
   const [discCategory, setDiscCategory] = useState<string>("all");
   const [discSearch, setDiscSearch] = useState<string>("");
 
@@ -92,6 +93,11 @@ export default function EstadisticasPage() {
   // Filtrado reactivo de la tabla de sanciones
   const filteredDisciplinary = useMemo(() => {
     return OFFICIAL_DISCIPLINARY_DATA.filter((item) => {
+      const matchDiv =
+        discDivision === "all" ||
+        (discDivision === "1ra"
+          ? !item.division || item.division === "1ra División"
+          : item.division === "2da División");
       const matchCat = discCategory === "all" || item.category === discCategory;
       const q = discSearch.toLowerCase().trim();
       const matchQ =
@@ -99,9 +105,9 @@ export default function EstadisticasPage() {
         item.player.toLowerCase().includes(q) ||
         item.team.toLowerCase().includes(q) ||
         item.category.toLowerCase().includes(q);
-      return matchCat && matchQ;
+      return matchDiv && matchCat && matchQ;
     });
-  }, [discCategory, discSearch]);
+  }, [discDivision, discCategory, discSearch]);
 
   const discStats = useMemo(() => {
     const totalCount = filteredDisciplinary.length;
@@ -497,31 +503,37 @@ export default function EstadisticasPage() {
             </div>
           </div>
 
-          {/* Filtros de Categoría y Buscador */}
-          <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 mb-6 bg-neutral-950/70 p-3 sm:p-4 rounded-2xl border border-neutral-800/80">
-            {/* Selector de Categorías de Sanción */}
-            <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-xs text-neutral-400 font-semibold mr-1">Categoría:</span>
-              {["all", "Sub-10", "Sub-12", "Sub-14", "Sub-16", "Sub-18", "Sub-20"].map((cat) => {
-                const isSelected = discCategory === cat;
+          {/* Filtros de División, Categoría y Buscador */}
+          <div className="flex flex-col gap-3 mb-6 bg-neutral-950/70 p-3 sm:p-4 rounded-2xl border border-neutral-800/80">
+            {/* Fila 1: Filtro de División */}
+            <div className="flex flex-wrap items-center gap-1.5 pb-2 border-b border-neutral-800/80">
+              <span className="text-xs text-neutral-400 font-semibold mr-1">División:</span>
+              {[
+                { id: "all", label: "Todas las Divisiones" },
+                { id: "1ra", label: "1ra División (Élite)" },
+                { id: "2da", label: "2da División (Ascenso)" },
+              ].map((div) => {
+                const isSelected = discDivision === div.id;
                 const count =
-                  cat === "all"
+                  div.id === "all"
                     ? OFFICIAL_DISCIPLINARY_DATA.length
-                    : OFFICIAL_DISCIPLINARY_DATA.filter((d) => d.category === cat).length;
+                    : OFFICIAL_DISCIPLINARY_DATA.filter((d) =>
+                        div.id === "1ra" ? !d.division || d.division === "1ra División" : d.division === "2da División"
+                      ).length;
                 return (
                   <button
-                    key={`disc-cat-${cat}`}
-                    onClick={() => setDiscCategory(cat)}
+                    key={`disc-div-${div.id}`}
+                    onClick={() => setDiscDivision(div.id)}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
                       isSelected
-                        ? "bg-amber-500 text-neutral-950 shadow-md shadow-amber-500/30"
-                        : "bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-700"
+                        ? "bg-red-600 text-white shadow-md shadow-red-600/30"
+                        : "bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-white"
                     }`}
                   >
-                    <span>{cat === "all" ? "Todas" : cat}</span>
+                    <span>{div.label}</span>
                     <span
                       className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${
-                        isSelected ? "bg-black/20 text-neutral-950" : "bg-neutral-800 text-neutral-300"
+                        isSelected ? "bg-white/20 text-white" : "bg-neutral-800 text-neutral-400"
                       }`}
                     >
                       {count}
@@ -531,18 +543,67 @@ export default function EstadisticasPage() {
               })}
             </div>
 
-            {/* Buscador reactivo */}
-            <div className="relative w-full lg:w-72">
-              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-neutral-500">
-                <Search className="h-3.5 w-3.5" />
+            {/* Fila 2: Selector de Categorías y Buscador */}
+            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
+              {/* Selector de Categorías de Sanción */}
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="text-xs text-neutral-400 font-semibold mr-1">Categoría:</span>
+                {["all", "Sub-10", "Sub-12", "Sub-14", "Sub-16", "Sub-18", "Sub-20"].map((cat) => {
+                  const isSelected = discCategory === cat;
+                  const count =
+                    cat === "all"
+                      ? OFFICIAL_DISCIPLINARY_DATA.filter((d) =>
+                          discDivision === "all"
+                            ? true
+                            : discDivision === "1ra"
+                            ? !d.division || d.division === "1ra División"
+                            : d.division === "2da División"
+                        ).length
+                      : OFFICIAL_DISCIPLINARY_DATA.filter(
+                          (d) =>
+                            d.category === cat &&
+                            (discDivision === "all"
+                              ? true
+                              : discDivision === "1ra"
+                              ? !d.division || d.division === "1ra División"
+                              : d.division === "2da División")
+                        ).length;
+                  return (
+                    <button
+                      key={`disc-cat-${cat}`}
+                      onClick={() => setDiscCategory(cat)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
+                        isSelected
+                          ? "bg-amber-500 text-neutral-950 shadow-md shadow-amber-500/30"
+                          : "bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-700"
+                      }`}
+                    >
+                      <span>{cat === "all" ? "Todas" : cat}</span>
+                      <span
+                        className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${
+                          isSelected ? "bg-black/20 text-neutral-950" : "bg-neutral-800 text-neutral-300"
+                        }`}
+                      >
+                        {count}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
-              <input
-                type="text"
-                value={discSearch}
-                onChange={(e) => setDiscSearch(e.target.value)}
-                placeholder="Buscar jugador, DT o equipo..."
-                className="w-full rounded-xl border border-neutral-800 bg-neutral-900/90 py-2 pl-9 pr-3 text-xs text-white placeholder-neutral-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 transition"
-              />
+
+              {/* Buscador reactivo */}
+              <div className="relative w-full lg:w-72">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-neutral-500">
+                  <Search className="h-3.5 w-3.5" />
+                </div>
+                <input
+                  type="text"
+                  value={discSearch}
+                  onChange={(e) => setDiscSearch(e.target.value)}
+                  placeholder="Buscar jugador, DT o equipo..."
+                  className="w-full rounded-xl border border-neutral-800 bg-neutral-900/90 py-2 pl-9 pr-3 text-xs text-white placeholder-neutral-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 transition"
+                />
+              </div>
             </div>
           </div>
 
@@ -589,9 +650,16 @@ export default function EstadisticasPage() {
                           </div>
                         </td>
                         <td className="py-3 px-3 sm:px-4">
-                          <span className="px-2 py-0.5 rounded-md bg-neutral-800 text-neutral-300 font-bold text-[10px] border border-neutral-700">
-                            {item.category}
-                          </span>
+                          <div className="flex flex-col gap-0.5">
+                            <span className="px-2 py-0.5 rounded-md bg-neutral-800 text-neutral-300 font-bold text-[10px] border border-neutral-700 w-fit">
+                              {item.category}
+                            </span>
+                            {item.division && (
+                              <span className="text-[9px] text-blue-400 font-bold">
+                                {item.division}
+                              </span>
+                            )}
+                          </div>
                         </td>
                         <td className="py-3 px-3 sm:px-4">
                           <div className="flex items-center gap-2 text-neutral-200 font-medium">

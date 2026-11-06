@@ -151,6 +151,54 @@ export const OFFICIAL_CLUBS_DATA: Academy[] = [
   }),
 
   // ===========================================================================
+  // 1.1 TORNEO INSTITUCIONAL FÚTBOL 7
+  // ===========================================================================
+  createOfficialClub({
+    id: "club-polar-fc",
+    slug: "polar-fc",
+    name: "Polar FC",
+    officialName: "Empresas Polar Fútbol 7",
+    shortName: "Polar FC",
+    zoneDetail: "Los Cortijos de Lourdes · Sede Polar",
+    primaryColor: "#1d4ed8",
+    secondaryColor: "#ffffff",
+    tournamentName: "Torneo Institucional Fútbol 7",
+  }),
+  createOfficialClub({
+    id: "club-cnpb",
+    slug: "cnpb",
+    name: "CNPB",
+    officialName: "Cuerpo Nacional de Policía Bolivariana F7",
+    shortName: "CNPB",
+    zoneDetail: "Caracas Distrito Capital",
+    primaryColor: "#1e3a8a",
+    secondaryColor: "#fbbf24",
+    tournamentName: "Torneo Institucional Fútbol 7",
+  }),
+  createOfficialClub({
+    id: "club-operaciones-fc",
+    slug: "operaciones-fc",
+    name: "Operaciones FC",
+    officialName: "Operaciones F7 Club",
+    shortName: "Operaciones FC",
+    zoneDetail: "Zona Rental Plaza Venezuela",
+    primaryColor: "#059669",
+    secondaryColor: "#000000",
+    tournamentName: "Torneo Institucional Fútbol 7",
+  }),
+  createOfficialClub({
+    id: "club-banco-del-tesoro",
+    slug: "banco-del-tesoro",
+    name: "Banco del Tesoro",
+    officialName: "Banco del Tesoro Fútbol 7",
+    shortName: "Banco del Tesoro",
+    zoneDetail: "Av. Urdaneta · Torre Banco del Tesoro",
+    primaryColor: "#dc2626",
+    secondaryColor: "#facc15",
+    tournamentName: "Torneo Institucional Fútbol 7",
+  }),
+
+  // ===========================================================================
   // 2. TORNEO LIBRE 1RA DIVISIÓN
   // ===========================================================================
   createOfficialClub({

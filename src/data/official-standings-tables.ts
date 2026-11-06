@@ -24,6 +24,20 @@ export const STANDINGS_INSTITUCIONAL_OFICIAL: OfficialTableRow[] = [
 export const INSTITUCIONAL_RULE = "CLASIFICAN LOS 2 PRIMEROS A SEMI FINAL Y JUEGO EXTRA ENTRE 3ER LUGAR VS 6TO LUGAR";
 
 // =============================================================================
+// 1.1 TABLA DE POSICIONES CATEGORÍA INSTITUCIONAL FÚTBOL 7 · GRUPO U
+// Clasifican los 4 primeros.
+// =============================================================================
+export const STANDINGS_FUTBOL7_OFICIAL: OfficialTableRow[] = [
+  { pos: 1, team: "POLAR FC", jj: 3, jg: 2, je: 1, jp: 0, ga: 18, ge: 2, dif: 16, pts: 7, status: "clasificado", clubId: "club-polar-fc", clubSlug: "polar-fc" },
+  { pos: 2, team: "CNPB", jj: 3, jg: 2, je: 1, jp: 0, ga: 15, ge: 9, dif: 6, pts: 7, status: "clasificado", clubId: "club-cnpb", clubSlug: "cnpb" },
+  { pos: 3, team: "OPERACIONES FC", jj: 2, jg: 1, je: 0, jp: 1, ga: 7, ge: 11, dif: -4, pts: 3, status: "clasificado", clubId: "club-operaciones-fc", clubSlug: "operaciones-fc" },
+  { pos: 4, team: "CICPC VEHICULOS", jj: 0, jg: 0, je: 0, jp: 0, ga: 0, ge: 0, dif: 0, pts: 0, status: "clasificado", clubId: "club-cicpc-vehiculos", clubSlug: "cicpc-vehiculos" },
+  { pos: 5, team: "BANCO DEL TESORO", jj: 2, jg: 0, je: 0, jp: 2, ga: 5, ge: 15, dif: -10, pts: 0, status: "eliminado", clubId: "club-banco-del-tesoro", clubSlug: "banco-del-tesoro" },
+];
+
+export const FUTBOL7_RULE = "CLASIFICAN LOS 4 PRIMEROS";
+
+// =============================================================================
 // 2. TABLA DE POSICIONES CATEGORÍA LIBRE 1RA DIVISIÓN · GRUPO U (Imagen 2)
 // Clasifican los 2 primeros a Semifinal y juego extra entre 3er lugar vs 6to lugar.
 // =============================================================================

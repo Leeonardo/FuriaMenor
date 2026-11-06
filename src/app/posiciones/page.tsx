@@ -29,6 +29,7 @@ import {
 } from "@/data/generic-tournament-data";
 import {
   STANDINGS_INSTITUCIONAL_OFICIAL,
+  STANDINGS_FUTBOL7_OFICIAL,
   STANDINGS_LIBRE_1RA_OFICIAL,
   STANDINGS_MASTER_50_OFICIAL,
   STANDINGS_LIBRE_2DA_GROUPS,
@@ -79,6 +80,17 @@ export default function PosicionesPage() {
         category: "Institucional",
         divisionId: "institucional",
         divisionName: "Institucional",
+        groupName: "GRUPO U",
+      });
+    });
+
+    // 1.1 Fútbol 7 Institucional Oficial
+    STANDINGS_FUTBOL7_OFICIAL.forEach((row) => {
+      list.push({
+        teamName: row.team,
+        category: "Fútbol 7",
+        divisionId: "futbol7",
+        divisionName: "Fútbol 7 Inst",
         groupName: "GRUPO U",
       });
     });
@@ -412,6 +424,34 @@ export default function PosicionesPage() {
                   </div>
                 </div>
 
+                {/* 1.1 Fútbol 7 Inst */}
+                <div className="rounded-xl border border-neutral-800/80 bg-neutral-950/70 p-3">
+                  <div className="flex items-center justify-between border-b border-neutral-800 pb-2 mb-2">
+                    <span className="font-black text-xs text-emerald-400 uppercase tracking-wider">
+                      Fútbol 7 Inst
+                    </span>
+                    <span className="text-[10px] font-bold text-neutral-400 bg-neutral-800 px-2 py-0.5 rounded-full">
+                      {STANDINGS_FUTBOL7_OFICIAL.length} Equipos
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {STANDINGS_FUTBOL7_OFICIAL.map((r) => (
+                      <button
+                        key={`dir-f7-${r.team}`}
+                        onClick={() => {
+                          setSelectedTournament("daeris");
+                          setSelectedDaerisSub("futbol7");
+                          setHighlightedTeam(r.team);
+                          setIsTeamDirectoryOpen(false);
+                        }}
+                        className="px-2 py-1 rounded-md text-[11px] font-bold bg-neutral-900 border border-neutral-800 text-neutral-200 hover:border-emerald-400 hover:text-white transition"
+                      >
+                        {r.team}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 {/* 2. Libre 1ra */}
                 <div className="rounded-xl border border-neutral-800/80 bg-neutral-950/70 p-3">
                   <div className="flex items-center justify-between border-b border-neutral-800 pb-2 mb-2">
@@ -592,6 +632,7 @@ export default function PosicionesPage() {
                   >
                     <span>{sub.shortName}</span>
                     {sub.id === "institucional" && <span className="text-[10px] opacity-75 font-bold">OFICIAL</span>}
+                    {sub.id === "futbol7" && <span className="text-[10px] opacity-75 font-bold">OFICIAL</span>}
                     {sub.id === "master50" && <span className="text-[10px] opacity-75 font-bold">OFICIAL</span>}
                     {sub.id === "libre-parquecarabobo" && <span className="text-[10px] opacity-75 font-bold">OFICIAL</span>}
                     {sub.id === "libre-2da" && <span className="text-[10px] opacity-75 font-bold">OFICIAL</span>}
