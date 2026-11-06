@@ -3712,6 +3712,28 @@ const SPECIAL_TEAM_ALIASES: Record<string, string> = {
   "jogo-bonito-fs": "jogo-bonito-fs",
   "jogo-bonito": "jogo-bonito-fs",
   "los-guaros": "los-guaros",
+
+  // Torneo Infantil 1ra División & Variantes
+  "cjru": "cjru",
+  "club-cjru": "cjru",
+  "club-palace": "club-palace",
+  "palace": "club-palace",
+  "hoyo-de-la-puerta-fsc": "hoyo-de-la-puerta",
+  "hoyo-de-la-puerta": "hoyo-de-la-puerta",
+  "nova-futsal": "nova-futsal",
+  "nova": "nova-futsal",
+  "sportu-futsal": "sportu-futsal",
+  "sportu": "sportu-futsal",
+  "dvo-mirador": "dvo-mirador",
+  "deportivo-mirador": "dvo-mirador",
+  "guerrero-del-valle": "guerreros-del-valle",
+  "guerreros-del-valle": "guerreros-del-valle",
+  "caricuao-fc": "gladiadores-caricuao",
+  "la-paz-futsal-blanco": "la-paz-futsal",
+  "la-ladera-(a)": "la-ladera",
+  "la-ladera-(b)": "la-ladera",
+  "fenix-sport": "fenix-fs",
+  "rh-sport": "rh-sport-club",
 };
 
 /**

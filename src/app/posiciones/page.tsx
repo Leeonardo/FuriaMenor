@@ -32,6 +32,7 @@ import {
   STANDINGS_LIBRE_1RA_OFICIAL,
   STANDINGS_MASTER_50_OFICIAL,
   STANDINGS_LIBRE_2DA_GROUPS,
+  OFFICIAL_MINOR_1RA_STANDINGS,
 } from "@/data/official-standings-tables";
 import {
   getStoredMatches,
@@ -217,6 +218,9 @@ export default function PosicionesPage() {
   // Contadores de equipos por categoría según división activa
   const getCategoryTeamCount = (cat: MinorCategory) => {
     if (selectedDaerisSub === "infantil-1ra") {
+      if (OFFICIAL_MINOR_1RA_STANDINGS[cat]) {
+        return OFFICIAL_MINOR_1RA_STANDINGS[cat].standings.length;
+      }
       return OFFICIAL_TEAMS_1RA_DIV[cat]?.length || OFFICIAL_TEAMS_BY_CATEGORY[cat]?.length || 0;
     }
     if (selectedDaerisSub === "infantil-2da") {
@@ -224,6 +228,16 @@ export default function PosicionesPage() {
     }
     return OFFICIAL_TEAMS_BY_CATEGORY[cat]?.length || 0;
   };
+
+  const activeCategoryPayload = currentSub.categoryData?.[selectedCategory];
+  const activeRule =
+    selectedTournament === "daeris"
+      ? activeCategoryPayload?.qualificationRule || currentSub.qualificationRule
+      : "CLASIFICAN LOS 8 PRIMEROS DE CADA GRUPO";
+  const activeCutoff =
+    selectedTournament === "daeris"
+      ? activeCategoryPayload?.qualificationCutoff ?? currentSub.qualificationCutoff
+      : 8;
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100">
@@ -452,6 +466,35 @@ export default function PosicionesPage() {
                     ))}
                   </div>
                 </div>
+
+                {/* 5. Infantil 1ra División (Oficiales) */}
+                <div className="rounded-xl border border-neutral-800/80 bg-neutral-950/70 p-3 col-span-full sm:col-span-2 lg:col-span-1">
+                  <div className="flex items-center justify-between border-b border-neutral-800 pb-2 mb-2">
+                    <span className="font-black text-xs text-rose-400 uppercase tracking-wider">
+                      Infantil 1ra Div
+                    </span>
+                    <span className="text-[10px] font-bold text-neutral-400 bg-neutral-800 px-2 py-0.5 rounded-full">
+                      5 Categorías
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {Object.entries(OFFICIAL_MINOR_1RA_STANDINGS).map(([cat, info]) => (
+                      <button
+                        key={`dir-inf1-${cat}`}
+                        onClick={() => {
+                          setSelectedTournament("daeris");
+                          setSelectedDaerisSub("infantil-1ra");
+                          setSelectedCategory(cat as MinorCategory);
+                          setIsTeamDirectoryOpen(false);
+                        }}
+                        className="px-2 py-1 rounded-md text-[11px] font-bold bg-rose-950/60 border border-rose-800 text-rose-300 hover:bg-rose-900 transition flex items-center gap-1"
+                      >
+                        <span>{cat}</span>
+                        <span className="text-[9px] text-rose-400 font-normal">({info.standings.length})</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -523,6 +566,7 @@ export default function PosicionesPage() {
                     {sub.id === "master50" && <span className="text-[10px] opacity-75 font-bold">OFICIAL</span>}
                     {sub.id === "libre-parquecarabobo" && <span className="text-[10px] opacity-75 font-bold">OFICIAL</span>}
                     {sub.id === "libre-2da" && <span className="text-[10px] opacity-75 font-bold">OFICIAL</span>}
+                    {sub.id === "infantil-1ra" && <span className="text-[10px] opacity-75 font-bold">OFICIAL</span>}
                   </button>
                 );
               })}
@@ -592,6 +636,7 @@ export default function PosicionesPage() {
                 {MINOR_CATEGORIES.map((cat) => {
                   const isSelected = selectedCategory === cat;
                   const count = getCategoryTeamCount(cat);
+                  const isOfficial = selectedDaerisSub === "infantil-1ra" && !!OFFICIAL_MINOR_1RA_STANDINGS[cat];
                   return (
                     <button
                       key={cat}
@@ -606,6 +651,11 @@ export default function PosicionesPage() {
                       }`}
                     >
                       <span>{cat}</span>
+                      {isOfficial && (
+                        <span className="text-[9px] px-1 py-0.2 rounded bg-amber-400/20 text-amber-300 border border-amber-400/30 font-black">
+                          OFICIAL
+                        </span>
+                      )}
                       <span
                         className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${
                           isSelected ? "bg-white/20 text-white" : "bg-neutral-700/80 text-neutral-300"
@@ -677,12 +727,8 @@ export default function PosicionesPage() {
                   : currentSub.groupName
                 : "GRUPO PRUEBA A"
             }
-            qualificationRule={
-              selectedTournament === "daeris"
-                ? currentSub.qualificationRule
-                : "CLASIFICAN LOS 8 PRIMEROS DE CADA GRUPO"
-            }
-            qualificationCutoff={selectedTournament === "daeris" ? currentSub.qualificationCutoff : 8}
+            qualificationRule={activeRule}
+            qualificationCutoff={activeCutoff}
             rows={standingsRows}
             currentCategory={selectedCategory}
             highlightedTeam={highlightedTeam}

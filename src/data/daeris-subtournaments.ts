@@ -26,6 +26,7 @@ import {
   STANDINGS_LIBRE_2DA_GROUPS,
   STANDINGS_LIBRE_2DA_GRUPO_A,
   LIBRE_2DA_RULE,
+  OFFICIAL_MINOR_1RA_STANDINGS,
 } from "@/data/official-standings-tables";
 
 export type DaerisSubId =
@@ -43,6 +44,8 @@ export interface CategoryPayload {
   leastConceded: Goalkeeper[];
   matches: TournamentMatchItem[];
   teams: TeamProfile[];
+  qualificationRule?: string;
+  qualificationCutoff?: number;
 }
 
 export interface DaerisSubTournament {
@@ -97,8 +100,15 @@ function buildCategoryPayload(
   const fallbackMatches = createGenericMatches(tournamentName, category, venue, prefix);
   const matchesToUse = officialNovMatches.length > 0 ? officialNovMatches : fallbackMatches;
 
+  const officialMinor =
+    tournamentSlug.includes("1ra") && OFFICIAL_MINOR_1RA_STANDINGS[category]
+      ? OFFICIAL_MINOR_1RA_STANDINGS[category]
+      : null;
+
   return {
-    standings: createCategoryStandings(category, prefix, tournamentSlug),
+    standings: officialMinor ? officialMinor.standings : createCategoryStandings(category, prefix, tournamentSlug),
+    qualificationRule: officialMinor ? officialMinor.rule : undefined,
+    qualificationCutoff: officialMinor ? officialMinor.cutoff : undefined,
     topScorers: createGenericScorers(prefix, category),
     leastConceded: createGenericKeepers(prefix, category),
     matches: matchesToUse,

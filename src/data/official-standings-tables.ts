@@ -107,3 +107,107 @@ export const STANDINGS_LIBRE_2DA_GROUPS: Record<string, OfficialTableRow[]> = {
   "GRUPO C": STANDINGS_LIBRE_2DA_GRUPO_C,
   "GRUPO D": STANDINGS_LIBRE_2DA_GRUPO_D,
 };
+
+// =============================================================================
+// 5. TABLA DE POSICIONES CATEGORÍA SUB 18 1RA DIVISIÓN · GRUPO A (Imagen 5)
+// Clasifican los 2 primeros a Semifinal y juego extra entre 3er lugar vs 6to y 4to vs 5to.
+// =============================================================================
+export const STANDINGS_SUB18_1RA_OFICIAL: OfficialTableRow[] = [
+  { pos: 1, team: "GUERRERO DEL VALLE", jj: 7, jg: 5, je: 0, jp: 2, ga: 25, ge: 14, dif: 11, pts: 15, status: "clasificado", clubId: "acad-11", clubSlug: "guerreros-del-valle" },
+  { pos: 2, team: "TEAM SOUBLETTE", jj: 6, jg: 5, je: 0, jp: 1, ga: 33, ge: 8, dif: 25, pts: 15, status: "clasificado", clubId: "acad-20", clubSlug: "team-soublette" },
+  { pos: 3, team: "FELINOS FS", jj: 6, jg: 4, je: 1, jp: 1, ga: 32, ge: 10, dif: 22, pts: 13, status: "normal", clubId: "acad-37", clubSlug: "felinos-fs" },
+  { pos: 4, team: "REAL ESPERANZA", jj: 6, jg: 4, je: 1, jp: 1, ga: 16, ge: 9, dif: 7, pts: 13, status: "normal", clubId: "acad-18", clubSlug: "real-esperanza" },
+  { pos: 5, team: "OVERCOMING FS", jj: 6, jg: 3, je: 1, jp: 2, ga: 23, ge: 10, dif: 13, pts: 10, status: "normal", clubId: "acad-36", clubSlug: "overcoming" },
+  { pos: 6, team: "CJRU", jj: 7, jg: 2, je: 1, jp: 4, ga: 24, ge: 23, dif: 1, pts: 7, status: "normal", clubId: "club-cjru", clubSlug: "cjru" },
+  { pos: 7, team: "CLUB PALACE", jj: 7, jg: 1, je: 0, jp: 6, ga: 10, ge: 30, dif: -20, pts: 3, status: "eliminado", clubId: "club-palace", clubSlug: "club-palace" },
+  { pos: 8, team: "HOYO DE LA PUERTA FSC", jj: 7, jg: 0, je: 0, jp: 7, ga: 0, ge: 7, dif: -7, pts: 0, status: "eliminado", clubId: "club-hoyo-de-la-puerta", clubSlug: "hoyo-de-la-puerta" },
+];
+
+export const SUB18_1RA_RULE = "CLASIFICAN LOS 2 PRIMEROS A SEMI FINAL Y JUEGO EXTRA ENTRE 3ER LUGAR VS 6TO Y 4TO LUGAR VS 5TO LUGAR";
+
+// =============================================================================
+// 6. TABLA DE POSICIONES CATEGORÍA SUB 16 1RA DIVISIÓN · GRUPO A (Imagen 6)
+// Clasifican los 8 primeros.
+// =============================================================================
+export const STANDINGS_SUB16_1RA_OFICIAL: OfficialTableRow[] = [
+  { pos: 1, team: "ELITE CARACAS", jj: 6, jg: 5, je: 1, jp: 0, ga: 34, ge: 2, dif: 32, pts: 16, status: "clasificado", clubId: "acad-30", clubSlug: "elite-caracas" },
+  { pos: 2, team: "FUSION ACADEMICA", jj: 7, jg: 5, je: 1, jp: 1, ga: 33, ge: 12, dif: 21, pts: 16, status: "clasificado", clubId: "acad-08", clubSlug: "fusion-academica" },
+  { pos: 3, team: "CARICUAO", jj: 6, jg: 5, je: 1, jp: 0, ga: 29, ge: 14, dif: 15, pts: 16, status: "clasificado", clubId: "acad-06", clubSlug: "gladiadores-caricuao" },
+  { pos: 4, team: "GUATIRE FUTSAL", jj: 5, jg: 5, je: 0, jp: 0, ga: 36, ge: 2, dif: 34, pts: 15, status: "clasificado", clubId: "acad-10", clubSlug: "guatire-futsal" },
+  { pos: 5, team: "ESPARTANOS FUTSAL", jj: 9, jg: 4, je: 2, jp: 3, ga: 36, ge: 22, dif: 14, pts: 14, status: "clasificado", clubId: "acad-07", clubSlug: "espartanos-futsal" },
+  { pos: 6, team: "REAL ESPERANZA B", jj: 8, jg: 4, je: 1, jp: 3, ga: 21, ge: 24, dif: -3, pts: 13, status: "clasificado", clubId: "acad-18", clubSlug: "real-esperanza" },
+  { pos: 7, team: "LA LADERA", jj: 7, jg: 2, je: 4, jp: 1, ga: 25, ge: 12, dif: 13, pts: 10, status: "clasificado", clubId: "acad-14", clubSlug: "la-ladera" },
+  { pos: 8, team: "REAL ESPERANZA A", jj: 8, jg: 2, je: 2, jp: 4, ga: 23, ge: 33, dif: -10, pts: 8, status: "clasificado", clubId: "acad-18", clubSlug: "real-esperanza" },
+  { pos: 9, team: "NC SPORT", jj: 6, jg: 2, je: 0, jp: 4, ga: 14, ge: 28, dif: -14, pts: 6, status: "normal", clubId: "acad-17", clubSlug: "nc-sport" },
+  { pos: 10, team: "CJRU", jj: 10, jg: 1, je: 0, jp: 9, ga: 15, ge: 52, dif: -37, pts: 3, status: "eliminado", clubId: "club-cjru", clubSlug: "cjru" },
+  { pos: 11, team: "RH SPORT", jj: 10, jg: 0, je: 0, jp: 10, ga: 2, ge: 70, dif: -68, pts: 0, status: "eliminado", clubId: "club-rh-sport-club", clubSlug: "rh-sport-club" },
+];
+
+export const SUB16_1RA_RULE = "CLASIFICAN LOS 8 PRIMEROS";
+
+// =============================================================================
+// 7. TABLA DE POSICIONES CATEGORÍA SUB 12 1RA DIVISIÓN · GRUPO A (Imagen 7)
+// Clasifican los 8 primeros de cada grupo.
+// =============================================================================
+export const STANDINGS_SUB12_1RA_OFICIAL: OfficialTableRow[] = [
+  { pos: 1, team: "FUSION ACADEMICA A", jj: 9, jg: 7, je: 0, jp: 2, ga: 44, ge: 13, dif: 31, pts: 21, status: "clasificado", clubId: "acad-08", clubSlug: "fusion-academica" },
+  { pos: 2, team: "ESPARTANOS FUTSAL", jj: 5, jg: 5, je: 0, jp: 0, ga: 34, ge: 5, dif: 29, pts: 15, status: "clasificado", clubId: "acad-07", clubSlug: "espartanos-futsal" },
+  { pos: 3, team: "LA PAZ FUTSAL", jj: 7, jg: 5, je: 0, jp: 2, ga: 26, ge: 6, dif: 20, pts: 15, status: "clasificado", clubId: "acad-15", clubSlug: "la-paz-futsal" },
+  { pos: 4, team: "LA LADERA", jj: 7, jg: 5, je: 0, jp: 2, ga: 27, ge: 11, dif: 16, pts: 15, status: "clasificado", clubId: "acad-14", clubSlug: "la-ladera" },
+  { pos: 5, team: "TETSU FUTSAL", jj: 9, jg: 5, je: 0, jp: 4, ga: 25, ge: 15, dif: 10, pts: 15, status: "clasificado", clubId: "acad-21", clubSlug: "tetsu-futsal" },
+  { pos: 6, team: "FUTCONEXION", jj: 7, jg: 4, je: 1, jp: 2, ga: 19, ge: 9, dif: 10, pts: 13, status: "clasificado", clubId: "acad-32", clubSlug: "futconexion" },
+  { pos: 7, team: "DEPORTIVO ODIN", jj: 9, jg: 4, je: 1, jp: 4, ga: 25, ge: 19, dif: 6, pts: 13, status: "clasificado", clubId: "acad-28", clubSlug: "deportivo-odin" },
+  { pos: 8, team: "FUSION ACADEMICA B", jj: 8, jg: 3, je: 2, jp: 3, ga: 22, ge: 22, dif: 0, pts: 11, status: "clasificado", clubId: "acad-08", clubSlug: "fusion-academica" },
+  { pos: 9, team: "CAMATAGUA", jj: 6, jg: 2, je: 0, jp: 4, ga: 16, ge: 22, dif: -6, pts: 6, status: "normal", clubId: "acad-05", clubSlug: "camatagua-fc" },
+  { pos: 10, team: "NOVA FUTSAL", jj: 10, jg: 1, je: 0, jp: 9, ga: 11, ge: 60, dif: -49, pts: 3, status: "eliminado", clubId: "club-nova-futsal", clubSlug: "nova-futsal" },
+  { pos: 11, team: "CARICUAO", jj: 10, jg: 0, je: 0, jp: 10, ga: 0, ge: 70, dif: -70, pts: 0, status: "eliminado", clubId: "acad-06", clubSlug: "gladiadores-caricuao" },
+];
+
+export const SUB12_1RA_RULE = "CLASIFICAN LOS 8 PRIMEROS DE CADA GRUPO";
+
+// =============================================================================
+// 8. TABLA DE POSICIONES CATEGORÍA SUB 14 1RA DIVISIÓN · GRUPO A (Imagen 8)
+// Clasifican los 8 primeros de cada grupo.
+// =============================================================================
+export const STANDINGS_SUB14_1RA_OFICIAL: OfficialTableRow[] = [
+  { pos: 1, team: "UNION LIBERTADOR", jj: 10, jg: 8, je: 1, jp: 1, ga: 49, ge: 19, dif: 30, pts: 25, status: "clasificado", clubId: "acad-23", clubSlug: "union-libertador" },
+  { pos: 2, team: "REAL ESPERANZA", jj: 9, jg: 8, je: 0, jp: 1, ga: 32, ge: 16, dif: 16, pts: 24, status: "clasificado", clubId: "acad-18", clubSlug: "real-esperanza" },
+  { pos: 3, team: "LA PAZ FUTSAL BLANCO", jj: 9, jg: 6, je: 0, jp: 3, ga: 37, ge: 14, dif: 23, pts: 18, status: "clasificado", clubId: "acad-15", clubSlug: "la-paz-futsal" },
+  { pos: 4, team: "GUATIRE FUTSAL", jj: 8, jg: 5, je: 0, jp: 3, ga: 35, ge: 14, dif: 21, pts: 15, status: "clasificado", clubId: "acad-10", clubSlug: "guatire-futsal" },
+  { pos: 5, team: "LA LADERA (B)", jj: 6, jg: 5, je: 0, jp: 1, ga: 22, ge: 9, dif: 13, pts: 15, status: "clasificado", clubId: "acad-14", clubSlug: "la-ladera" },
+  { pos: 6, team: "ESPARTANOS FUTSAL", jj: 8, jg: 3, je: 2, jp: 3, ga: 27, ge: 14, dif: 13, pts: 11, status: "clasificado", clubId: "acad-07", clubSlug: "espartanos-futsal" },
+  { pos: 7, team: "LA PAZ FUTSAL VERDE", jj: 9, jg: 3, je: 2, jp: 4, ga: 27, ge: 20, dif: 7, pts: 11, status: "clasificado", clubId: "acad-15", clubSlug: "la-paz-futsal" },
+  { pos: 8, team: "CARICUAO FC", jj: 8, jg: 3, je: 1, jp: 4, ga: 24, ge: 18, dif: 6, pts: 10, status: "clasificado", clubId: "acad-06", clubSlug: "gladiadores-caricuao" },
+  { pos: 9, team: "TETSU FUTSAL", jj: 10, jg: 3, je: 1, jp: 6, ga: 29, ge: 42, dif: -13, pts: 10, status: "normal", clubId: "acad-21", clubSlug: "tetsu-futsal" },
+  { pos: 10, team: "FUSION ACADEMICA", jj: 7, jg: 3, je: 0, jp: 4, ga: 18, ge: 25, dif: -7, pts: 9, status: "normal", clubId: "acad-08", clubSlug: "fusion-academica" },
+  { pos: 11, team: "CAMATAGUA", jj: 8, jg: 3, je: 0, jp: 5, ga: 17, ge: 27, dif: -10, pts: 9, status: "normal", clubId: "acad-05", clubSlug: "camatagua-fc" },
+  { pos: 12, team: "FENIX SPORT", jj: 6, jg: 2, je: 1, jp: 3, ga: 18, ge: 19, dif: -1, pts: 7, status: "normal", clubId: "acad-31", clubSlug: "fenix-fs" },
+  { pos: 13, team: "LA LADERA (A)", jj: 6, jg: 1, je: 2, jp: 3, ga: 15, ge: 17, dif: -2, pts: 5, status: "normal", clubId: "acad-14", clubSlug: "la-ladera" },
+  { pos: 14, team: "SPORTU FUTSAL", jj: 13, jg: 0, je: 0, jp: 13, ga: 0, ge: 91, dif: -91, pts: 0, status: "eliminado", clubId: "club-sportu-futsal", clubSlug: "sportu-futsal" },
+];
+
+export const SUB14_1RA_RULE = "CLASIFICAN LOS 8 PRIMEROS DE CADA GRUPO";
+
+// =============================================================================
+// 9. TABLA DE POSICIONES CATEGORÍA SUB 10 1RA DIVISIÓN · GRUPO A (Imagen 9)
+// Clasifican los 2 primeros a Semifinal y juego extra entre 3er lugar vs 6to y 4to vs 5to.
+// =============================================================================
+export const STANDINGS_SUB10_1RA_OFICIAL: OfficialTableRow[] = [
+  { pos: 1, team: "DVO MIRADOR", jj: 6, jg: 4, je: 1, jp: 1, ga: 27, ge: 5, dif: 22, pts: 13, status: "clasificado", clubId: "acad-22", clubSlug: "dvo-mirador" },
+  { pos: 2, team: "FUTCONEXION", jj: 5, jg: 3, je: 2, jp: 0, ga: 22, ge: 5, dif: 17, pts: 11, status: "clasificado", clubId: "acad-32", clubSlug: "futconexion" },
+  { pos: 3, team: "UNION LIBERTADOR", jj: 6, jg: 3, je: 1, jp: 2, ga: 21, ge: 12, dif: 9, pts: 10, status: "normal", clubId: "acad-23", clubSlug: "union-libertador" },
+  { pos: 4, team: "FUSION ACADEMICA", jj: 6, jg: 3, je: 1, jp: 2, ga: 20, ge: 11, dif: 9, pts: 10, status: "normal", clubId: "acad-08", clubSlug: "fusion-academica" },
+  { pos: 5, team: "INTER DE CARACAS", jj: 5, jg: 3, je: 1, jp: 1, ga: 23, ge: 15, dif: 8, pts: 10, status: "normal", clubId: "acad-02", clubSlug: "inter-caracas" },
+  { pos: 6, team: "CAMATAGUA", jj: 6, jg: 1, je: 0, jp: 5, ga: 9, ge: 35, dif: -26, pts: 3, status: "normal", clubId: "acad-05", clubSlug: "camatagua-fc" },
+  { pos: 7, team: "NOVA FUTSAL", jj: 6, jg: 0, je: 0, jp: 6, ga: 5, ge: 44, dif: -39, pts: 0, status: "eliminado", clubId: "club-nova-futsal", clubSlug: "nova-futsal" },
+];
+
+export const SUB10_1RA_RULE = "CLASIFICAN LOS 2 PRIMEROS A SEMI FINAL Y JUEGO EXTRA ENTRE 3ER LUGAR VS 6TO Y 4TO LUGAR VS 5TO LUGAR";
+
+export const OFFICIAL_MINOR_1RA_STANDINGS: Record<string, { standings: OfficialTableRow[]; rule: string; cutoff: number }> = {
+  "Sub-10": { standings: STANDINGS_SUB10_1RA_OFICIAL, rule: SUB10_1RA_RULE, cutoff: 2 },
+  "Sub-12": { standings: STANDINGS_SUB12_1RA_OFICIAL, rule: SUB12_1RA_RULE, cutoff: 8 },
+  "Sub-14": { standings: STANDINGS_SUB14_1RA_OFICIAL, rule: SUB14_1RA_RULE, cutoff: 8 },
+  "Sub-16": { standings: STANDINGS_SUB16_1RA_OFICIAL, rule: SUB16_1RA_RULE, cutoff: 8 },
+  "Sub-18": { standings: STANDINGS_SUB18_1RA_OFICIAL, rule: SUB18_1RA_RULE, cutoff: 2 },
+};
