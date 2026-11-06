@@ -3619,11 +3619,22 @@ function cleanTeamSearchKey(name: string): string {
 }
 
 const SPECIAL_TEAM_ALIASES: Record<string, string> = {
+  "inter-caracas": "inter-de-caracas",
+  "camatagua-fc": "camatagua",
   "fenix-futsal": "fenix-fs",
   "fenix": "fenix-fs",
   "futconexion": "futsaconexion",
+  "futconexión": "futsaconexion",
   "futconexion-a": "futsaconexion",
+  "futconexion-b": "futsaconexion",
+  "futconexión-a": "futsaconexion",
+  "futconexión-b": "futsaconexion",
+  "futconexion-(a)": "futsaconexion",
+  "futconexion-(b)": "futsaconexion",
+  "futconexión-(a)": "futsaconexion",
+  "futconexión-(b)": "futsaconexion",
   "espartanos-futsal": "espartanos-cutira",
+  "espartanos-fs": "espartanos-cutira",
   "espartanos": "espartanos-cutira",
   "la-paz-futsal-verde": "la-paz-futsal",
   "dvo-odin": "dvo-odin",
