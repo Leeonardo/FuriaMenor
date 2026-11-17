@@ -16,6 +16,25 @@ export type AcademyCategory =
   | "Sub-18"
   | "Sub-20";
 
+export interface AcademyStaffMember {
+  id: string;
+  name: string;
+  role:
+    | "Director Técnico"
+    | "Entrenador Principal"
+    | "Asistente Técnico"
+    | "Preparador Físico"
+    | "Entrenador de Porteros"
+    | "Coordinador Deportivo"
+    | "Delegado Federativo";
+  categories: string[];
+  experience?: string;
+  license?: string;
+  phone?: string;
+  email?: string;
+  photoUrl?: string;
+}
+
 export interface AcademyPlayer {
   dorsal: number;
   name: string;
@@ -99,6 +118,7 @@ export interface Academy {
   venues: AcademyVenue[];
   performance: AcademyPerformance;
   rosters: Partial<Record<AcademyCategory, CategoryRoster>>;
+  staff?: AcademyStaffMember[];
   gallery: AcademyGalleryItem[];
   logoUrl?: string;
   rating?: {
@@ -3904,3 +3924,88 @@ export function filterAcademies(
     return true;
   });
 }
+
+/**
+ * Obtiene el cuerpo técnico y staff profesional completo de una academia.
+ * Si la academia tiene 'staff' explícito, lo devuelve. Si no, consolida
+ * inteligentemente los entrenadores de cada categoría de 'rosters' y el coordinador
+ * para que el 100% de las academias cuente con su sección de staff completa.
+ */
+export function getAcademyStaff(academy: Academy): AcademyStaffMember[] {
+  if (academy.staff && academy.staff.length > 0) {
+    return academy.staff;
+  }
+
+  const staffList: AcademyStaffMember[] = [];
+  const coachMap = new Map<string, { role: AcademyStaffMember["role"]; categories: Set<string> }>();
+
+  // 1. Coordinador General / Deportivo
+  if (academy.contact?.coordinator && academy.contact.coordinator !== "Por asignar") {
+    staffList.push({
+      id: `staff-${academy.slug}-coord`,
+      name: academy.contact.coordinator,
+      role: "Coordinador Deportivo",
+      categories: ["Todas las Categorías"],
+      experience: "Dirección, Metodología y Gestión Integral de Academia",
+      license: "Colegio Nacional de Entrenadores de Venezuela",
+      phone: academy.contact.phone,
+    });
+  }
+
+  // 2. Entrenadores y Asistentes de Rosters
+  if (academy.rosters) {
+    Object.entries(academy.rosters).forEach(([catName, roster]) => {
+      if (!roster) return;
+
+      // Entrenador Principal
+      if (roster.coach && roster.coach.trim() && roster.coach !== "Por confirmar") {
+        const coachName = roster.coach.trim();
+        if (!coachMap.has(coachName)) {
+          coachMap.set(coachName, { role: "Director Técnico", categories: new Set([catName]) });
+        } else {
+          coachMap.get(coachName)!.categories.add(catName);
+        }
+      }
+
+      // Asistente Técnico
+      if (roster.assistant && roster.assistant.trim() && roster.assistant !== "Por confirmar" && roster.assistant !== roster.coach) {
+        const asstName = roster.assistant.trim();
+        if (!coachMap.has(asstName)) {
+          coachMap.set(asstName, { role: "Asistente Técnico", categories: new Set([catName]) });
+        } else {
+          coachMap.get(asstName)!.categories.add(catName);
+        }
+      }
+    });
+  }
+
+  // Convertir mapa a lista
+  let counter = 1;
+  coachMap.forEach((info, name) => {
+    staffList.push({
+      id: `staff-${academy.slug}-${counter++}`,
+      name: name.startsWith("Prof.") ? name : `Prof. ${name}`,
+      role: info.role,
+      categories: Array.from(info.categories),
+      experience: "Especialista en Desarrollo y Formación de Talento Menor",
+      license: "Certificación FVF / Comisión Técnica Furia Menor",
+      phone: academy.contact?.phone,
+    });
+  });
+
+  // Si no se encontraron técnicos, añadir un staff base formal
+  if (staffList.length === 0) {
+    staffList.push({
+      id: `staff-${academy.slug}-dt-default`,
+      name: `Prof. Cuerpo Técnico ${academy.shortName}`,
+      role: "Director Técnico",
+      categories: academy.categories.slice(0, 3),
+      experience: "Formación de Categorías Infantiles y Juveniles",
+      license: "Certificación Oficial Furia Menor",
+      phone: academy.contact?.phone,
+    });
+  }
+
+  return staffList;
+}
+

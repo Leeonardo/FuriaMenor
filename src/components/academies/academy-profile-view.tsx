@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import { isCategoryRosterFrozen } from "@/lib/db-store";
 import { PlayerCarnetButton } from "@/components/carnet/player-carnet-button";
+import { AcademyStaffSection } from "@/components/academies/academy-staff-section";
 
 // Inline brand SVGs for Instagram, Facebook and WhatsApp
 function InstagramIcon({ className = "h-4 w-4" }: { className?: string }) {
@@ -729,6 +730,9 @@ export function AcademyProfileView({ academy }: AcademyProfileViewProps) {
           </div>
         )}
       </section>
+
+      {/* 3.5. SECCIÓN OFICIAL DE CUERPO TÉCNICO Y STAFF PROFESIONAL */}
+      <AcademyStaffSection academy={academy} />
 
       {/* 4. GALERÍA MULTIMEDIA DEL CLUB */}
       <section className="rounded-3xl border border-neutral-800 bg-neutral-900/60 p-6 sm:p-8 shadow-2xl space-y-6">
