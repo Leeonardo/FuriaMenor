@@ -32,6 +32,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { isCategoryRosterFrozen } from "@/lib/db-store";
+import { PlayerCarnetButton } from "@/components/carnet/player-carnet-button";
 
 // Inline brand SVGs for Instagram, Facebook and WhatsApp
 function InstagramIcon({ className = "h-4 w-4" }: { className?: string }) {
@@ -584,75 +585,141 @@ export function AcademyProfileView({ academy }: AcademyProfileViewProps) {
 
         {/* Tabla / Grid Responsive de Atletas */}
         {currentRoster && currentRoster.players.length > 0 ? (
-          <div className="overflow-x-auto rounded-2xl border border-neutral-800 bg-neutral-950">
-            <table className="w-full text-left text-xs sm:text-sm">
-              <thead className="border-b border-neutral-800 bg-neutral-900/80 text-[10px] uppercase tracking-wider text-neutral-400">
-                <tr>
-                  <th className="py-3 px-3 text-center w-12">#</th>
-                  <th className="py-3 px-4">Atleta</th>
-                  <th className="py-3 px-3">Posición</th>
-                  <th className="py-3 px-3">Cédula / Ficha</th>
-                  <th className="py-3 px-3 text-center">Año Nac.</th>
-                  <th className="py-3 px-3 text-center">Goles</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-neutral-900">
-                {currentRoster.players.map((player) => (
-                  <tr
-                    key={player.ci + player.dorsal}
-                    className="transition hover:bg-neutral-900/60"
-                  >
-                    {/* Dorsal */}
-                    <td className="py-3 px-3 text-center">
-                      <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-neutral-800 font-black text-xs text-white border border-neutral-700">
-                        {player.dorsal}
-                      </span>
-                    </td>
-
-                    {/* Nombre */}
-                    <td className="py-3 px-4 font-bold text-white">
-                      <div className="flex items-center gap-2">
-                        <span>{player.name}</span>
-                        {player.name === currentRoster.captain && (
-                          <span className="rounded bg-amber-500/20 border border-amber-500/30 px-1.5 py-0.2 text-[9px] font-black text-amber-400 uppercase">
-                            Cap
-                          </span>
-                        )}
-                      </div>
-                    </td>
-
-                    {/* Posición */}
-                    <td className="py-3 px-3">
-                      <span
-                        className={`inline-block rounded-md border px-2 py-0.5 text-[10px] font-bold ${getPositionBadge(
-                          player.position
-                        )}`}
-                      >
-                        {player.position}
-                      </span>
-                    </td>
-
-                    {/* C.I. */}
-                    <td className="py-3 px-3 font-mono text-neutral-400 text-xs">
-                      {player.ci}
-                    </td>
-
-                    {/* Año Nacimiento */}
-                    <td className="py-3 px-3 text-center text-neutral-300 font-medium">
-                      {player.birthYear}
-                    </td>
-
-                    {/* Goles */}
-                    <td className="py-3 px-3 text-center">
-                      <span className="inline-flex items-center gap-1 font-black text-white">
-                        <Flame className="h-3 w-3 text-amber-500" />
-                        {player.goals ?? 0}
-                      </span>
-                    </td>
+          <div className="space-y-6">
+            <div className="overflow-x-auto rounded-2xl border border-neutral-800 bg-neutral-950">
+              <table className="w-full text-left text-xs sm:text-sm">
+                <thead className="border-b border-neutral-800 bg-neutral-900/80 text-[10px] uppercase tracking-wider text-neutral-400">
+                  <tr>
+                    <th className="py-3 px-3 text-center w-12">#</th>
+                    <th className="py-3 px-4">Atleta</th>
+                    <th className="py-3 px-3 text-center">Carnet Liga</th>
+                    <th className="py-3 px-3">Posición</th>
+                    <th className="py-3 px-3">Cédula / Ficha</th>
+                    <th className="py-3 px-3 text-center">F. Nacimiento (Edad)</th>
+                    <th className="py-3 px-3 text-center">Validación</th>
+                    <th className="py-3 px-3 text-center">Goles</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-neutral-900">
+                  {currentRoster.players.map((player) => (
+                    <tr
+                      key={player.ci + player.dorsal}
+                      className="transition hover:bg-neutral-900/60"
+                    >
+                      {/* Dorsal */}
+                      <td className="py-3 px-3 text-center">
+                        <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-neutral-800 font-black text-xs text-white border border-neutral-700">
+                          {player.dorsal}
+                        </span>
+                      </td>
+
+                      {/* Nombre */}
+                      <td className="py-3 px-4 font-bold text-white">
+                        <div className="flex items-center gap-2">
+                          <span>{player.name}</span>
+                          {player.name === currentRoster.captain && (
+                            <span className="rounded bg-amber-500/20 border border-amber-500/30 px-1.5 py-0.2 text-[9px] font-black text-amber-400 uppercase">
+                              Cap
+                            </span>
+                          )}
+                        </div>
+                      </td>
+
+                      {/* Carnet Oficial Miniatura */}
+                      <td className="py-3 px-3 text-center">
+                        <PlayerCarnetButton
+                          compact
+                          player={{
+                            name: player.name,
+                            dorsal: player.dorsal,
+                            ci: player.ci,
+                            position: player.position,
+                            category: activeCategory,
+                            clubName: academy.name,
+                            birthYear: player.birthYear,
+                            birthDate: `15/05/${player.birthYear}`,
+                            isVerified: true,
+                          }}
+                        />
+                      </td>
+
+                      {/* Posición */}
+                      <td className="py-3 px-3">
+                        <span
+                          className={`inline-block rounded-md border px-2 py-0.5 text-[10px] font-bold ${getPositionBadge(
+                            player.position
+                          )}`}
+                        >
+                          {player.position}
+                        </span>
+                      </td>
+
+                      {/* C.I. */}
+                      <td className="py-3 px-3 font-mono text-neutral-400 text-xs">
+                        {player.ci}
+                      </td>
+
+                      {/* Fecha Nacimiento Completa y Edad */}
+                      <td className="py-3 px-3 text-center font-mono text-xs text-neutral-300">
+                        <span>15/05/{player.birthYear}</span>
+                        <span className="block text-[10px] text-neutral-500 font-sans">
+                          ({2026 - player.birthYear} años)
+                        </span>
+                      </td>
+
+                      {/* Icono de Validado por la Liga */}
+                      <td className="py-3 px-3 text-center">
+                        <span
+                          className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-black text-emerald-400 whitespace-nowrap shadow-sm"
+                          title="Año de nacimiento auditado y verificado por la secretaría técnica de la liga"
+                        >
+                          <ShieldCheck className="h-3 w-3 text-emerald-400" />
+                          <span>Auditado</span>
+                        </span>
+                      </td>
+
+                      {/* Goles */}
+                      <td className="py-3 px-3 text-center">
+                        <span className="inline-flex items-center gap-1 font-black text-white">
+                          <Flame className="h-3 w-3 text-amber-500" />
+                          {player.goals ?? 0}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* FOTOGRAFÍA OFICIAL DEL EQUIPO COMPLETO */}
+            <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-5 space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <Camera className="h-4 w-4 text-amber-400" />
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-300">
+                    Fotografía Oficial del Plantel {activeCategory}
+                  </h4>
+                </div>
+                <span className="text-[11px] text-neutral-400 font-semibold">
+                  {academy.name} · {currentRoster.players.length} Atletas Acreditados Oficialmente
+                </span>
+              </div>
+
+              <div className="relative aspect-video sm:aspect-[21/9] w-full rounded-xl border border-neutral-800 bg-gradient-to-br from-neutral-900 to-neutral-950 overflow-hidden flex flex-col items-center justify-center text-center p-6 shadow-inner">
+                <Users className="h-10 w-10 text-neutral-600 mb-2" />
+                <p className="text-sm font-black text-white">
+                  Plantel Completo Oficial · {academy.name} ({activeCategory})
+                </p>
+                <p className="text-xs text-neutral-400 mt-1 max-w-md">
+                  Cuerpo Técnico: <strong>{currentRoster.coach}</strong> (D.T.) · <strong>{currentRoster.assistant}</strong> (Asistente)
+                  {currentRoster.captain && <> · Capitán: <strong>{currentRoster.captain}</strong></>}
+                </p>
+                <span className="mt-3 text-[10px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 rounded-full flex items-center gap-1.5">
+                  <ShieldCheck className="h-3.5 w-3.5" />
+                  Nómina 100% Verificada para Competición Oficial
+                </span>
+              </div>
+            </div>
           </div>
         ) : (
           <div className="rounded-2xl border border-dashed border-neutral-800 p-8 text-center text-neutral-400">

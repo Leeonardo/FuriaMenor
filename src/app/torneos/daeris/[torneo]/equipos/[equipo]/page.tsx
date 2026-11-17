@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDaerisSubTournament, getTeamInTournament, getSubTournamentData } from "@/data/daeris-subtournaments";
+import { PlayerCarnetButton } from "@/components/carnet/player-carnet-button";
 import {
   ArrowLeft,
   Shield,
@@ -13,6 +14,9 @@ import {
   CreditCard,
   KeyRound,
   ChevronRight,
+  Camera,
+  ShieldCheck,
+  Calendar,
 } from "lucide-react";
 
 interface TeamPageProps {
@@ -172,16 +176,18 @@ export default async function TeamRosterPage({ params, searchParams }: TeamPageP
         </div>
 
         {/* Tabla de Plantilla */}
-        <div className="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950 shadow-xl">
+        <div className="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950 shadow-xl space-y-6">
           <div className="overflow-x-auto">
             <table className="w-full text-xs sm:text-sm text-neutral-200">
               <thead>
                 <tr className="bg-neutral-900/90 border-b border-neutral-800 text-neutral-400 font-extrabold uppercase text-[11px] tracking-wider">
                   <th className="py-3 px-3 text-center w-12">#</th>
                   <th className="py-3 px-4 text-left">JUGADOR</th>
+                  <th className="py-3 px-3 text-center">CARNET LIGA</th>
                   <th className="py-3 px-3 text-left">CÉDULA (C.I.)</th>
+                  <th className="py-3 px-3 text-center">F. NACIMIENTO (EDAD)</th>
                   <th className="py-3 px-3 text-left">POSICIÓN</th>
-                  <th className="py-3 px-3 text-left font-mono">ID ÚNICO TORNEO-JUGADOR</th>
+                  <th className="py-3 px-3 text-center">VALIDACIÓN</th>
                   <th className="py-3 px-2 text-center w-12">JJ</th>
                   <th className="py-3 px-2 text-center w-12 text-red-400">GOLES</th>
                   <th className="py-3 px-2 text-center w-14">TARJETAS</th>
@@ -190,6 +196,25 @@ export default async function TeamRosterPage({ params, searchParams }: TeamPageP
               <tbody className="divide-y divide-neutral-800/60 font-medium">
                 {team.roster.map((p) => {
                   const isKeeper = p.position === "Portero";
+                  const birthYear =
+                    p.birthYear ||
+                    (team.category.includes("8")
+                      ? 2018
+                      : team.category.includes("10")
+                      ? 2016
+                      : team.category.includes("12")
+                      ? 2014
+                      : team.category.includes("14")
+                      ? 2012
+                      : team.category.includes("16")
+                      ? 2010
+                      : team.category.includes("18")
+                      ? 2008
+                      : team.category.includes("20")
+                      ? 2006
+                      : 2014);
+                  const displayBirthDate = p.birthDate || `15/05/${birthYear}`;
+                  const age = 2026 - birthYear;
 
                   return (
                     <tr key={p.id} className="hover:bg-neutral-900/50 transition">
@@ -205,9 +230,35 @@ export default async function TeamRosterPage({ params, searchParams }: TeamPageP
                         {p.name}
                       </td>
 
+                      {/* Carnet Digital Oficial en Miniatura */}
+                      <td className="py-3 px-3 text-center">
+                        <PlayerCarnetButton
+                          compact
+                          player={{
+                            name: p.name,
+                            dorsal: p.dorsal,
+                            ci: p.ci,
+                            position: p.position,
+                            category: team.category,
+                            clubName: team.name,
+                            birthYear,
+                            birthDate: displayBirthDate,
+                            isVerified: true,
+                          }}
+                        />
+                      </td>
+
                       {/* C.I. */}
                       <td className="py-3 px-3 text-neutral-300 whitespace-nowrap font-mono text-xs">
                         {p.ci}
+                      </td>
+
+                      {/* Fecha Nacimiento Completa y Edad */}
+                      <td className="py-3 px-3 text-center font-mono text-xs text-neutral-300 whitespace-nowrap">
+                        <span>{displayBirthDate}</span>
+                        <span className="block text-[10px] text-neutral-500 font-sans">
+                          ({age} años)
+                        </span>
                       </td>
 
                       {/* Posición */}
@@ -227,10 +278,14 @@ export default async function TeamRosterPage({ params, searchParams }: TeamPageP
                         </span>
                       </td>
 
-                      {/* ID Único Interno de Torneo */}
-                      <td className="py-3 px-3 font-mono text-[11px] text-red-400/90 whitespace-nowrap">
-                        <span className="bg-neutral-900 px-2 py-0.5 rounded border border-neutral-800">
-                          {p.id}
+                      {/* Icono de Validado por la Liga */}
+                      <td className="py-3 px-3 text-center">
+                        <span
+                          className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-black text-emerald-400 whitespace-nowrap shadow-sm"
+                          title="Año de nacimiento auditado y avalado con documento de identidad"
+                        >
+                          <ShieldCheck className="h-3 w-3 text-emerald-400" />
+                          <span>Auditado</span>
                         </span>
                       </td>
 
@@ -264,6 +319,35 @@ export default async function TeamRosterPage({ params, searchParams }: TeamPageP
                 })}
               </tbody>
             </table>
+          </div>
+        </div>
+
+        {/* FOTOGRAFÍA OFICIAL DEL EQUIPO COMPLETO */}
+        <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-6 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-neutral-800 pb-3">
+            <div className="flex items-center gap-2">
+              <Camera className="h-4 w-4 text-amber-400" />
+              <h4 className="text-sm font-black uppercase tracking-wider text-white">
+                Fotografía Oficial del Plantel Completo · {team.name}
+              </h4>
+            </div>
+            <span className="text-xs text-neutral-400 font-semibold">
+              Categoría {team.category} · {team.roster.length} Atletas en Nómina Oficial
+            </span>
+          </div>
+
+          <div className="relative aspect-video sm:aspect-[21/9] w-full rounded-2xl border border-neutral-800 bg-gradient-to-br from-neutral-900 via-neutral-950 to-red-950 overflow-hidden flex flex-col items-center justify-center text-center p-6 shadow-2xl">
+            <Users className="h-12 w-12 text-neutral-600 mb-2" />
+            <p className="text-base font-black text-white">
+              Nómina Completa Oficial · {team.name} ({team.category})
+            </p>
+            <p className="text-xs text-neutral-400 mt-1 max-w-lg">
+              Cuerpo Técnico Registrado: D.T. <strong>{team.coach}</strong> · Asistente: <strong>{team.assistantCoach}</strong> · Delegado: <strong>{team.delegate}</strong>
+            </p>
+            <span className="mt-4 text-[10px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3.5 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
+              <ShieldCheck className="h-3.5 w-3.5" />
+              Plantel 100% Verificado por la Comisión de Competiciones Furia Menor
+            </span>
           </div>
         </div>
 

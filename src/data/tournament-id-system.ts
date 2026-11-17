@@ -122,6 +122,8 @@ export interface TeamPlayerItem {
   // Específico para porteros
   cleanSheets?: number;
   goalsConceded?: number;
+  birthDate?: string;
+  birthYear?: number;
 }
 
 export interface TeamProfile {

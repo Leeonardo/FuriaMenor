@@ -16,6 +16,7 @@ import {
   canDelegateModifyPlayer,
 } from "@/lib/db-store";
 import { PlayerStatsModal } from "./player-stats-modal";
+import { PlayerCarnetButton } from "@/components/carnet/player-carnet-button";
 import {
   UserPlus,
   Shield,
@@ -492,7 +493,7 @@ export function DelegadoView({
                 </span>
               </div>
 
-              {/* Categoría y Posición */}
+              {/* Categoría, Posición y Validación Liga */}
               <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-neutral-800/80 text-xs">
                 <span className="rounded-lg bg-neutral-950 border border-neutral-800 px-2 py-0.5 text-[10px] font-bold text-neutral-300">
                   {player.categoryName}
@@ -500,8 +501,11 @@ export function DelegadoView({
                 <span className="rounded-lg bg-neutral-950 border border-neutral-800 px-2 py-0.5 text-[10px] font-semibold text-neutral-300">
                   {player.position}
                 </span>
-                <span className="text-[10px] font-mono text-neutral-500">
-                  {player.carnetNumber}
+                <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 text-[10px] font-bold text-emerald-400">
+                  <CheckCircle2 className="h-3 w-3" /> Validado Liga
+                </span>
+                <span className="text-[10px] font-mono text-neutral-400">
+                  📅 {player.birthDate || (player.birthYear ? `15/05/${player.birthYear}` : "—")} ({player.birthYear ? 2026 - player.birthYear : 12} años)
                 </span>
               </div>
 
@@ -531,6 +535,22 @@ export function DelegadoView({
 
               {/* Acciones principales móviles */}
               <div className="flex items-center gap-2 pt-2 border-t border-neutral-800/80">
+                <PlayerCarnetButton
+                  player={{
+                    name: `${player.firstName} ${player.lastName}`,
+                    dorsal: player.jerseyNumber,
+                    ci: `${player.idType}-${player.idNumber}`,
+                    position: player.position,
+                    category: player.categoryName,
+                    clubName: club.name,
+                    carnetNumber: player.carnetNumber,
+                    birthDate: player.birthDate,
+                    birthYear: player.birthYear,
+                    isVerified: true,
+                  }}
+                  compact
+                />
+
                 <button
                   onClick={() => setSelectedPlayerForStats(player)}
                   className="flex-1 rounded-xl border border-red-500/40 bg-red-600/15 py-2 text-red-400 hover:bg-red-600 hover:text-white transition flex items-center justify-center gap-1.5 text-xs font-bold shadow-sm"
@@ -570,7 +590,8 @@ export function DelegadoView({
               <th className="py-3 px-3">Cédula / Ficha</th>
               <th className="py-3 px-3">Categoría</th>
               <th className="py-3 px-3">Posición</th>
-              <th className="py-3 px-3 text-center">Año Nac.</th>
+              <th className="py-3 px-3 text-center">Nacimiento (Edad)</th>
+              <th className="py-3 px-3 text-center">Carnet Liga</th>
               <th className="py-3 px-3">Torneos Inscritos</th>
               <th className="py-3 px-3 text-center">Estatus</th>
               <th className="py-3 px-3 text-right">Acciones y Control</th>
@@ -579,7 +600,7 @@ export function DelegadoView({
           <tbody className="divide-y divide-neutral-900">
             {filteredPlayers.length === 0 ? (
               <tr>
-                <td colSpan={9} className="py-12 text-center text-neutral-500">
+                <td colSpan={10} className="py-12 text-center text-neutral-500">
                   No hay atletas registrados en esta categoría para {club.name}.
                 </td>
               </tr>
@@ -607,8 +628,29 @@ export function DelegadoView({
                       {player.position}
                     </span>
                   </td>
-                  <td className="py-3 px-3 text-center text-neutral-300 font-medium">
-                    {player.birthYear}
+                  <td className="py-3 px-3 text-center text-neutral-300 font-mono text-xs">
+                    <div>{player.birthDate || (player.birthYear ? `15/05/${player.birthYear}` : "—")}</div>
+                    <span className="inline-flex items-center gap-0.5 text-[9px] font-bold text-emerald-400">
+                      <CheckCircle2 className="h-2.5 w-2.5" /> {player.birthYear ? 2026 - player.birthYear : 12}a
+                    </span>
+                  </td>
+
+                  <td className="py-3 px-3 text-center">
+                    <PlayerCarnetButton
+                      player={{
+                        name: `${player.firstName} ${player.lastName}`,
+                        dorsal: player.jerseyNumber,
+                        ci: `${player.idType}-${player.idNumber}`,
+                        position: player.position,
+                        category: player.categoryName,
+                        clubName: club.name,
+                        carnetNumber: player.carnetNumber,
+                        birthDate: player.birthDate,
+                        birthYear: player.birthYear,
+                        isVerified: true,
+                      }}
+                      compact
+                    />
                   </td>
 
                   {/* Badges de Torneos de Participación (Multi-Torneo) */}

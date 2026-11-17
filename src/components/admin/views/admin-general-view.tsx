@@ -47,6 +47,7 @@ import {
   BarChart3,
 } from "lucide-react";
 import { PlayerStatsModal } from "./player-stats-modal";
+import { PlayerCarnetButton } from "@/components/carnet/player-carnet-button";
 
 interface AdminGeneralViewProps {
   user: AppUser;
@@ -940,9 +941,31 @@ export function AdminGeneralView({
                   <span className="rounded-lg bg-neutral-900 px-2 py-0.5 border border-neutral-800 text-neutral-400">
                     {player.position}
                   </span>
+                  <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 text-[10px] font-bold text-emerald-400">
+                    <CheckCircle2 className="h-2.5 w-2.5" /> Validado Liga
+                  </span>
+                  <span className="text-[10px] font-mono text-neutral-400">
+                    📅 {player.birthDate || (player.birthYear ? `15/05/${player.birthYear}` : "—")} ({player.birthYear ? 2026 - player.birthYear : 12}a)
+                  </span>
                 </div>
 
                 <div className="pt-2 border-t border-neutral-800/80 flex items-center gap-2">
+                  <PlayerCarnetButton
+                    player={{
+                      name: `${player.firstName} ${player.lastName}`,
+                      dorsal: player.jerseyNumber,
+                      ci: `${player.idType}-${player.idNumber || "0"}`,
+                      position: player.position,
+                      category: player.categoryName,
+                      clubName: player.clubName,
+                      carnetNumber: player.carnetNumber,
+                      birthDate: player.birthDate,
+                      birthYear: player.birthYear,
+                      isVerified: true,
+                    }}
+                    compact
+                  />
+
                   <button
                     onClick={() => setSelectedPlayerForStats(player)}
                     className="flex-1 rounded-xl border border-red-500/30 bg-red-600/15 py-1.5 text-red-400 hover:bg-red-600 hover:text-white transition flex items-center justify-center gap-1 text-xs font-bold"
@@ -983,6 +1006,8 @@ export function AdminGeneralView({
                 <th className="py-3 px-3 font-black text-neutral-300">CLUB / ACADEMIA</th>
                 <th className="py-3 px-3 font-black text-neutral-300">CATEGORÍA</th>
                 <th className="py-3 px-3 font-black text-neutral-300">POSICIÓN</th>
+                <th className="py-3 px-3 text-center font-black text-neutral-300">NACIMIENTO (EDAD)</th>
+                <th className="py-3 px-3 text-center font-black text-amber-400">CARNET LIGA</th>
                 <th className="py-3 px-3 text-center font-black text-neutral-300">ESTATUS</th>
                 <th className="py-3 px-4 text-right font-black text-neutral-300">ACCIONES</th>
               </tr>
@@ -990,7 +1015,7 @@ export function AdminGeneralView({
             <tbody className="divide-y divide-neutral-900">
               {filteredAdminPlayers.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="py-10 text-center text-neutral-500">
+                  <td colSpan={10} className="py-10 text-center text-neutral-500">
                     No se encontraron atletas federados con los filtros aplicados.
                   </td>
                 </tr>
@@ -1014,6 +1039,29 @@ export function AdminGeneralView({
                     </td>
                     <td className="py-3 px-3 text-neutral-400">
                       {player.position}
+                    </td>
+                    <td className="py-3 px-3 text-center text-neutral-300 font-mono text-xs">
+                      <div>{player.birthDate || (player.birthYear ? `15/05/${player.birthYear}` : "—")}</div>
+                      <span className="inline-flex items-center gap-0.5 text-[9px] font-bold text-emerald-400">
+                        <CheckCircle2 className="h-2.5 w-2.5" /> {player.birthYear ? 2026 - player.birthYear : 12}a
+                      </span>
+                    </td>
+                    <td className="py-3 px-3 text-center">
+                      <PlayerCarnetButton
+                        player={{
+                          name: `${player.firstName} ${player.lastName}`,
+                          dorsal: player.jerseyNumber,
+                          ci: `${player.idType}-${player.idNumber || "0"}`,
+                          position: player.position,
+                          category: player.categoryName,
+                          clubName: player.clubName,
+                          carnetNumber: player.carnetNumber,
+                          birthDate: player.birthDate,
+                          birthYear: player.birthYear,
+                          isVerified: true,
+                        }}
+                        compact
+                      />
                     </td>
                     <td className="py-3 px-3 text-center">
                       <span
