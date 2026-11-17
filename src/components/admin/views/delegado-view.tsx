@@ -17,6 +17,7 @@ import {
 } from "@/lib/db-store";
 import { PlayerStatsModal } from "./player-stats-modal";
 import { PlayerCarnetButton } from "@/components/carnet/player-carnet-button";
+import { AcademyFinancialTab } from "@/components/admin/financial/academy-financial-tab";
 import {
   UserPlus,
   Shield,
@@ -37,6 +38,8 @@ import {
   BarChart3,
   Lock,
   ShieldAlert,
+  DollarSign,
+  Users,
 } from "lucide-react";
 
 interface DelegadoViewProps {
@@ -57,6 +60,7 @@ export function DelegadoView({
   onDeletePlayer,
 }: DelegadoViewProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [delegadoSubTab, setDelegadoSubTab] = useState<"plantel" | "finanzas">("plantel");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPlayerId, setEditingPlayerId] = useState<string | null>(null);
@@ -327,28 +331,65 @@ export function DelegadoView({
         </div>
       </div>
 
-      {/* BANNER DE ALERTA DE CONGELAMIENTO SI OCURRE INTENTO DE EDICIÓN */}
-      {frozenAlert && (
-        <div className="rounded-2xl border border-amber-500/50 bg-amber-950/50 p-4 text-xs text-amber-200 flex items-start justify-between gap-3 shadow-xl animate-in fade-in">
-          <div className="flex items-start gap-2.5">
-            <ShieldAlert className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
-            <div>
-              <p className="font-black text-amber-100 uppercase tracking-wide text-[11px]">
-                Reglamento de Transparencia Total Activo
-              </p>
-              <p className="mt-0.5 text-xs text-amber-200/90 leading-relaxed font-medium">
-                {frozenAlert}
-              </p>
+      {/* SUB-TABS DEL DELEGADO: PLANTEL VS FINANZAS (PASO 3) */}
+      <div className="flex flex-wrap items-center gap-2 border-b border-neutral-800 pb-3">
+        <button
+          type="button"
+          onClick={() => setDelegadoSubTab("plantel")}
+          className={`flex items-center gap-2 rounded-2xl px-5 py-2.5 text-xs font-black transition cursor-pointer ${
+            delegadoSubTab === "plantel"
+              ? "bg-red-600 text-white shadow-lg shadow-red-600/30"
+              : "bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-white"
+          }`}
+        >
+          <Users className="h-4 w-4" />
+          <span>Nómina de Atletas y Fichajes</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setDelegadoSubTab("finanzas")}
+          className={`flex items-center gap-2 rounded-2xl px-5 py-2.5 text-xs font-black transition cursor-pointer ${
+            delegadoSubTab === "finanzas"
+              ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/30"
+              : "bg-neutral-900 border border-neutral-800 text-emerald-400 hover:bg-neutral-800"
+          }`}
+        >
+          <DollarSign className="h-4 w-4" />
+          <span>Gestión Financiera, Mensualidades & Cobro WhatsApp</span>
+        </button>
+      </div>
+
+      {delegadoSubTab === "finanzas" ? (
+        <AcademyFinancialTab
+          players={clubPlayers}
+          clubName={club.name}
+          onUpdatePlayer={onUpdatePlayer}
+        />
+      ) : (
+        <>
+          {/* BANNER DE ALERTA DE CONGELAMIENTO SI OCURRE INTENTO DE EDICIÓN */}
+          {frozenAlert && (
+            <div className="rounded-2xl border border-amber-500/50 bg-amber-950/50 p-4 text-xs text-amber-200 flex items-start justify-between gap-3 shadow-xl animate-in fade-in">
+              <div className="flex items-start gap-2.5">
+                <ShieldAlert className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-black text-amber-100 uppercase tracking-wide text-[11px]">
+                    Reglamento de Transparencia Total Activo
+                  </p>
+                  <p className="mt-0.5 text-xs text-amber-200/90 leading-relaxed font-medium">
+                    {frozenAlert}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setFrozenAlert(null)}
+                className="text-amber-400 hover:text-white font-bold text-sm px-2 py-0.5 rounded-lg bg-neutral-900 border border-neutral-800 shrink-0"
+              >
+                ✕
+              </button>
             </div>
-          </div>
-          <button
-            onClick={() => setFrozenAlert(null)}
-            className="text-amber-400 hover:text-white font-bold text-sm px-2 py-0.5 rounded-lg bg-neutral-900 border border-neutral-800 shrink-0"
-          >
-            ✕
-          </button>
-        </div>
-      )}
+          )}
 
       {/* 2. BARRA DE FILTROS & BÚSQUEDA */}
       <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-5 space-y-4">
@@ -724,6 +765,8 @@ export function DelegadoView({
           </tbody>
         </table>
       </div>
+      </>
+      )}
 
       {/* 4. MODAL DE FICHAJE CON SELECCIÓN MULTI-TORNEO & VALIDACIÓN DE EDAD */}
       {isModalOpen && (

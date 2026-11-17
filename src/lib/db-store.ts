@@ -202,6 +202,15 @@ export function getInitialPlayers(): DBPlayer[] {
           });
         }
 
+        const isDebtorMonthly = idx % 3 === 1;
+        const isDebtorTournament = idx % 4 === 2;
+        const actualAssignedTournaments = idx === 5 ? [] : assignedTournaments;
+
+        const repIndex = (idx + cat.id.length) % 6;
+        const repNames = ["Carlos Mendoza", "María Elena Rodríguez", "José Gregorio Pérez", "Carmen González", "Luis Alberto Silva", "Yulimar Blanco"];
+        const repRelationships: Array<"Padre" | "Madre" | "Tutor Legal" | "Abuelo(a)"> = ["Padre", "Madre", "Madre", "Padre", "Tutor Legal", "Abuelo(a)"];
+        const repPhones = ["0412-4567890", "0414-2345678", "0424-9876543", "0416-8765432", "0412-1112233", "0424-3334455"];
+
         players.push({
           id: `player-lp-${cat.id}-${idx + 1}`,
           clubId: 'la-paz-futsal',
@@ -218,9 +227,30 @@ export function getInitialPlayers(): DBPlayer[] {
           position: p.position as any,
           carnetNumber: `FM-26-LP-${cat.name.replace('-', '')}-${p.dorsal}`,
           status: 'activo',
-          enrolledTournaments: assignedTournaments,
+          enrolledTournaments: actualAssignedTournaments,
           tournamentRecords: tRecords,
           matchLogs: mLogs,
+          representative: {
+            name: repNames[repIndex],
+            relationship: repRelationships[repIndex],
+            idNumber: `V-1${(idx * 7321 + 2450000).toString().slice(0, 7)}`,
+            phone: repPhones[repIndex],
+            email: `rep.${p.name.toLowerCase().replace(/\s+/g, '.')}@gmail.com`,
+          },
+          financials: {
+            monthlyFeeStatus: isDebtorMonthly ? 'moroso' : 'al_dia',
+            monthlyFeeAmount: 20,
+            debtMonths: isDebtorMonthly ? (idx % 2 === 0 ? 2 : 1) : 0,
+            tournamentFeeStatus: isDebtorTournament ? 'moroso' : 'al_dia',
+            tournamentFeeAmount: 15,
+            lastPaymentDate: isDebtorMonthly ? '2026-09-05' : '2026-11-02',
+            notes: isDebtorMonthly ? 'Representante solicitó prorroga de pago móvil' : 'Solvente',
+          },
+          attendances: [
+            { id: `att-${idx}-1`, date: '2026-11-10', type: 'entrenamiento', status: 'presente' },
+            { id: `att-${idx}-2`, date: '2026-11-12', type: 'entrenamiento', status: idx === 2 ? 'ausente' : 'presente' },
+            { id: `att-${idx}-3`, date: '2026-11-14', type: 'partido', status: 'presente' },
+          ],
           createdAt: new Date().toISOString(),
         });
       });

@@ -79,6 +79,47 @@ export interface OfficialTournamentOption {
   season: string;
 }
 
+// Control Administrativo y Representantes (Paso 3)
+export interface RepresentativeData {
+  name: string;
+  relationship: "Padre" | "Madre" | "Tutor Legal" | "Abuelo(a)";
+  idNumber: string;
+  phone: string; // WhatsApp: ej. +584121234567 o 04121234567
+  email?: string;
+}
+
+export interface PlayerFinancialStatus {
+  monthlyFeeStatus: "al_dia" | "moroso" | "becado";
+  monthlyFeeAmount: number; // USD ej. 20
+  debtMonths: number;
+  tournamentFeeStatus: "al_dia" | "moroso" | "exonerado";
+  tournamentFeeAmount: number; // USD ej. 15
+  lastPaymentDate?: string;
+  notes?: string;
+}
+
+export interface PlayerAttendance {
+  id: string;
+  date: string;
+  type: "entrenamiento" | "partido" | "reunion";
+  status: "presente" | "ausente" | "justificado";
+  notes?: string;
+}
+
+export interface ClubLeagueDebt {
+  id: string;
+  clubId: string;
+  clubName: string;
+  delegateName: string;
+  delegatePhone: string;
+  categoryName: string;
+  tournamentName: string;
+  tournamentFeeDebt: number; // USD
+  finesDebt: number; // multas disciplinarias USD
+  status: "solvente" | "moroso" | "en_convenio";
+  lastNoticeSentDate?: string;
+}
+
 export interface DBPlayer {
   id: string;
   clubId: string;
@@ -102,6 +143,11 @@ export interface DBPlayer {
   enrolledTournaments: string[]; // IDs de torneos donde participa
   tournamentRecords?: PlayerTournamentRecord[]; // Rendimiento individual por torneo
   matchLogs?: PlayerMatchLog[]; // Bitácora por partido y fecha para filtros de tiempo
+
+  // Módulo Administrativo y Financiero (Paso 3)
+  representative?: RepresentativeData;
+  financials?: PlayerFinancialStatus;
+  attendances?: PlayerAttendance[];
 }
 
 export interface DBMatch {
@@ -125,6 +171,13 @@ export interface DBMatch {
   sheetPhotoUrl?: string; // Foto de la planilla física firmada
   scoresheetUrl?: string; // Alias directo para 'scoresheet_url'
   refereeNotes?: string;
+
+  // Liquidación Arbitral condicionada a carga de planilla (Paso 3)
+  refereeFee?: number; // Honorarios árbitro (ej. 15$)
+  tableFee?: number; // Honorarios mesa técnica (ej. 10$)
+  payoutStatus?: "bloqueado" | "aprobado" | "liquidado";
+  payoutBlockedReason?: string;
+
   updatedAt: string;
 }
 

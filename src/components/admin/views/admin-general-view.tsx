@@ -48,6 +48,8 @@ import {
 } from "lucide-react";
 import { PlayerStatsModal } from "./player-stats-modal";
 import { PlayerCarnetButton } from "@/components/carnet/player-carnet-button";
+import { LeagueTreasuryTab } from "@/components/admin/financial/league-treasury-tab";
+import { DollarSign } from "lucide-react";
 
 interface AdminGeneralViewProps {
   user: AppUser;
@@ -75,6 +77,7 @@ export function AdminGeneralView({
   onAddPlayer,
 }: AdminGeneralViewProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>("cat-sub-12");
+  const [adminActiveTab, setAdminActiveTab] = useState<"competiciones" | "tesoreria">("competiciones");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -504,6 +507,39 @@ export function AdminGeneralView({
         </div>
       </div>
 
+      {/* NAVEGACIÓN PRINCIPAL DEL ADMIN GENERAL: COMPETICIONES VS GESTOR LIGA / TESORERÍA (PASO 3) */}
+      <div className="flex flex-wrap items-center gap-2 border-b border-neutral-800 pb-3">
+        <button
+          type="button"
+          onClick={() => setAdminActiveTab("competiciones")}
+          className={`flex items-center gap-2 rounded-2xl px-5 py-2.5 text-xs font-black transition cursor-pointer ${
+            adminActiveTab === "competiciones"
+              ? "bg-red-600 text-white shadow-lg shadow-red-600/30"
+              : "bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-white"
+          }`}
+        >
+          <Trophy className="h-4 w-4" />
+          <span>Competiciones, Partidos & Fichajes</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setAdminActiveTab("tesoreria")}
+          className={`flex items-center gap-2 rounded-2xl px-5 py-2.5 text-xs font-black transition cursor-pointer ${
+            adminActiveTab === "tesoreria"
+              ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/30"
+              : "bg-neutral-900 border border-neutral-800 text-emerald-400 hover:bg-neutral-800"
+          }`}
+        >
+          <DollarSign className="h-4 w-4" />
+          <span>Gestor Liga: Cobranza WhatsApp a Clubes & Liquidación Arbitral</span>
+        </button>
+      </div>
+
+      {adminActiveTab === "tesoreria" ? (
+        <LeagueTreasuryTab matches={matches} />
+      ) : (
+        <>
       {/* 2. INSPECTOR EN VIVO: TABLA DE POSICIONES AUTOMATIZADA */}
       <section className="rounded-3xl border border-neutral-800 bg-neutral-900/60 p-6 sm:p-7 shadow-xl space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-800 pb-4">
@@ -1316,6 +1352,8 @@ export function AdminGeneralView({
           </div>
         </div>
       </section>
+      </>
+      )}
 
       {/* 6. MODAL DE EDICIÓN / PROGRAMACIÓN DE PARTIDO */}
       {isModalOpen && (
