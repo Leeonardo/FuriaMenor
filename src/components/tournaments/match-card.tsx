@@ -4,7 +4,8 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { TournamentMatchItem } from "@/data/tournaments-data";
 import { MatchSocialCardModal } from "@/components/tournaments/match-social-card-modal";
-import { Clock, MapPin, UserCheck, Share2, Sparkles, Camera } from "lucide-react";
+import { ScoresheetModal } from "@/components/transparency/scoresheet-modal";
+import { Clock, MapPin, UserCheck, Share2, Sparkles, Camera, FileText, CheckCircle2 } from "lucide-react";
 import { formatDateVE } from "@/lib/date-utils";
 
 interface MatchCardProps {
@@ -23,6 +24,7 @@ export function MatchCard({
   badgeKey,
 }: MatchCardProps) {
   const [modalOpen, setModalOpen] = useState(false);
+  const [scoresheetOpen, setScoresheetOpen] = useState(false);
 
   const catParam = currentCategory ? `?cat=${currentCategory}` : "";
   const homeSlug = match.homeTeam.toLowerCase().replace(/\s+/g, "-");
@@ -101,14 +103,27 @@ export function MatchCard({
           </div>
         </div>
 
-        {/* CUERPO ARBITRAL DESIGNADO PARA EL PARTIDO */}
-        {match.referees && (
-          <div className="mt-4 pt-3 border-t border-neutral-800/80 bg-neutral-950/60 -mx-5 -mb-5 p-4 rounded-b-2xl">
-            <div className="flex items-center justify-between gap-2 mb-2">
-              <div className="flex items-center gap-1.5 text-[11px] font-bold text-amber-400 uppercase tracking-wider">
-                <UserCheck className="h-3.5 w-3.5" />
-                <span>Cuerpo Arbitral Oficial</span>
-              </div>
+        {/* CUERPO ARBITRAL DESIGNADO PARA EL PARTIDO Y ACCIONES */}
+        <div className="mt-4 pt-3 border-t border-neutral-800/80 bg-neutral-950/60 -mx-5 -mb-5 p-4 rounded-b-2xl space-y-2.5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-1.5 text-[11px] font-bold text-amber-400 uppercase tracking-wider">
+              <UserCheck className="h-3.5 w-3.5" />
+              <span>{match.referees ? "Cuerpo Arbitral Oficial" : "Planilla & Acta"}</span>
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              {/* BOTÓN PARA VER PLANILLA OFICIAL FIRMADA */}
+              {(isFinished || match.homeScore !== null) && (
+                <button
+                  type="button"
+                  onClick={() => setScoresheetOpen(true)}
+                  className="inline-flex items-center gap-1 rounded-lg bg-emerald-600/20 border border-emerald-500/40 px-2.5 py-1 text-[10px] font-extrabold text-emerald-400 hover:bg-emerald-600 hover:text-white transition cursor-pointer shadow-sm"
+                  title="Ver acta y planilla física oficial firmada por los árbitros"
+                >
+                  <FileText className="h-3 w-3" />
+                  <span>Ver Planilla</span>
+                </button>
+              )}
 
               {/* BOTÓN PARA GENERAR Y DESCARGAR FLYER / POST PARA REDES */}
               <button
@@ -118,11 +133,13 @@ export function MatchCard({
                 title="Generar post o historia descargable para redes"
               >
                 <Camera className="h-3 w-3" />
-                <span>Post para Redes</span>
+                <span>Post Redes</span>
               </button>
             </div>
+          </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px] text-neutral-300">
+          {match.referees && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px] text-neutral-300 pt-1 border-t border-neutral-800/60">
               <div>
                 <span className="text-neutral-500 font-medium">Principal: </span>
                 <strong className="text-neutral-200">{match.referees.principal}</strong>
@@ -138,8 +155,8 @@ export function MatchCard({
                 </div>
               )}
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* MODAL GENERADOR DE POST DESCARGABLE */}
@@ -149,6 +166,25 @@ export function MatchCard({
         badgeKey={badgeKey}
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
+      />
+
+      {/* MODAL DE PLANILLA OFICIAL FIRMADA */}
+      <ScoresheetModal
+        isOpen={scoresheetOpen}
+        onClose={() => setScoresheetOpen(false)}
+        match={{
+          homeTeam: match.homeTeam,
+          awayTeam: match.awayTeam,
+          homeScore: match.homeScore,
+          awayScore: match.awayScore,
+          category: match.category,
+          venue: match.venue,
+          matchDate: match.matchDate,
+          referees: match.referees,
+          scoresheetUrl: match.scoresheetUrl || match.sheetPhotoUrl,
+          sheetPhotoUrl: match.sheetPhotoUrl || match.scoresheetUrl,
+          refereeNotes: match.refereeNotes,
+        }}
       />
     </>
   );

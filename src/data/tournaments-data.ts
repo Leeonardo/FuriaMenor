@@ -30,6 +30,9 @@ export interface TournamentMatchItem {
   status: "scheduled" | "live" | "finished";
   jornada?: string;
   referees?: MatchReferees; // Cuerpo arbitral de la jornada
+  scoresheetUrl?: string | null;
+  sheetPhotoUrl?: string | null;
+  refereeNotes?: string;
 }
 
 export interface TournamentData {

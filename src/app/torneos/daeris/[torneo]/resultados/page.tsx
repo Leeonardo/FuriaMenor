@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { getDaerisSubTournament, getSubTournamentData } from "@/data/daeris-subtournaments";
 import { TournamentCategorySelector } from "@/components/tournaments/tournament-category-selector";
 import { MatchCard } from "@/components/tournaments/match-card";
-import { CheckCircle2, UserCheck, Camera } from "lucide-react";
+import { CheckCircle2, UserCheck, Camera, FileText } from "lucide-react";
 
 interface PageProps {
   params: Promise<{ torneo: string }>;
@@ -39,14 +39,18 @@ export default async function SubTournamentResultadosPage({ params, searchParams
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-xl font-bold">
+            <FileText className="h-4 w-4" />
+            <span>Planillas Oficiales Firmadas</span>
+          </div>
           <div className="flex items-center gap-1.5 text-xs text-neutral-400 bg-neutral-900 border border-neutral-800 px-3 py-1.5 rounded-xl">
             <UserCheck className="h-4 w-4 text-emerald-400" />
             <span>Actas validadas</span>
           </div>
           <div className="flex items-center gap-1.5 text-xs text-red-400 bg-red-500/10 border border-red-500/20 px-3 py-1.5 rounded-xl font-bold">
             <Camera className="h-4 w-4" />
-            <span>Post de resultado descargable</span>
+            <span>Post descargable</span>
           </div>
         </div>
       </div>

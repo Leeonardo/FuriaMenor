@@ -286,7 +286,7 @@ export function PlayerStatsModal({
                       </div>
 
                       {/* Métricas del Torneo */}
-                      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs">
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
                         <div className="rounded-xl border border-neutral-800 bg-neutral-900 p-2">
                           <span className="text-[9px] uppercase font-bold text-neutral-400">Partidos (PJ)</span>
                           <p className="text-base font-black text-white mt-0.5">{record.matchesPlayed}</p>
@@ -299,17 +299,13 @@ export function PlayerStatsModal({
                           </p>
                         </div>
                         <div className="rounded-xl border border-neutral-800 bg-neutral-900 p-2">
-                          <span className="text-[9px] uppercase font-bold text-neutral-400">Minutos</span>
-                          <p className="text-base font-black text-neutral-200 mt-0.5">{record.minutesPlayed}'</p>
-                        </div>
-                        <div className="rounded-xl border border-neutral-800 bg-neutral-900 p-2">
                           <span className="text-[9px] uppercase font-bold text-neutral-400">Tarjetas (A/R)</span>
                           <p className="text-base font-black text-neutral-300 mt-0.5">
                             <span className="text-amber-400">{record.yellowCards}</span> /{" "}
                             <span className="text-rose-400">{record.redCards}</span>
                           </p>
                         </div>
-                        <div className="rounded-xl border border-neutral-800 bg-neutral-900 p-2 col-span-2 sm:col-span-1">
+                        <div className="rounded-xl border border-neutral-800 bg-neutral-900 p-2">
                           <span className="text-[9px] uppercase font-bold text-emerald-400">Prom. G/PJ</span>
                           <p className="text-base font-black text-emerald-400 mt-0.5">{gPerMatch}</p>
                         </div>
@@ -432,7 +428,7 @@ export function PlayerStatsModal({
               </div>
 
               {/* KPIs de Rendimiento en el Período */}
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 text-center text-xs">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center text-xs">
                 <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-3">
                   <span className="text-[10px] uppercase font-bold text-neutral-400">Partidos en Período</span>
                   <p className="text-2xl font-black text-white mt-1">{periodStats.matchesPlayed}</p>
@@ -445,17 +441,13 @@ export function PlayerStatsModal({
                   </p>
                 </div>
                 <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-3">
-                  <span className="text-[10px] uppercase font-bold text-neutral-400">Minutos Jugados</span>
-                  <p className="text-2xl font-black text-neutral-200 mt-1">{periodStats.minutesPlayed}'</p>
-                </div>
-                <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-3">
                   <span className="text-[10px] uppercase font-bold text-neutral-400">Tarjetas (A / R)</span>
                   <p className="text-2xl font-black text-neutral-300 mt-1">
                     <span className="text-amber-400">{periodStats.yellowCards}</span> /{" "}
                     <span className="text-rose-400">{periodStats.redCards}</span>
                   </p>
                 </div>
-                <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-3 col-span-2 sm:col-span-1">
+                <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-3">
                   <span className="text-[10px] uppercase font-bold text-emerald-400">Promedio Gol/PJ</span>
                   <p className="text-2xl font-black text-emerald-400 mt-1">{periodStats.goalsPerMatch}</p>
                 </div>
@@ -480,7 +472,6 @@ export function PlayerStatsModal({
                           <th className="py-2.5 px-3">Torneo</th>
                           <th className="py-2.5 px-3">Rival</th>
                           <th className="py-2.5 px-3">Resultado</th>
-                          <th className="py-2.5 px-3 text-center">Minutos</th>
                           <th className="py-2.5 px-3 text-center">Goles</th>
                           <th className="py-2.5 px-3 text-center">Tarjetas</th>
                         </tr>
@@ -492,7 +483,6 @@ export function PlayerStatsModal({
                             <td className="py-2.5 px-3 text-red-400 font-sans font-bold">{log.tournamentName}</td>
                             <td className="py-2.5 px-3 text-white font-sans">{log.rivalClubName}</td>
                             <td className="py-2.5 px-3 text-amber-400 font-bold">{log.result}</td>
-                            <td className="py-2.5 px-3 text-center text-neutral-200">{log.minutes}'</td>
                             <td className="py-2.5 px-3 text-center font-black text-amber-400">{log.goals}</td>
                             <td className="py-2.5 px-3 text-center text-neutral-400">
                               {log.yellowCards > 0 && <span className="text-amber-400 font-bold">🟨 {log.yellowCards} </span>}
@@ -517,7 +507,7 @@ export function PlayerStatsModal({
               <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-4 space-y-1">
                 <p className="font-bold text-white text-xs">Carga de Actuación Individual de Partido</p>
                 <p className="text-[11px] text-neutral-400 leading-relaxed">
-                  Permite al delegado registrar el desempeño del atleta (minutos, goles y tarjetas) en un partido oficial para actualizar tanto su acumulado del torneo como su bitácora cronológica.
+                  Permite al delegado registrar el desempeño del atleta (goles y tarjetas oficiales) en un partido para actualizar tanto su acumulado del torneo como su bitácora cronológica.
                 </p>
               </div>
 
@@ -575,22 +565,9 @@ export function PlayerStatsModal({
                 </div>
               </div>
 
-              <div className="grid grid-cols-4 gap-3 p-3 rounded-2xl bg-neutral-950 border border-neutral-800">
+              <div className="grid grid-cols-3 gap-3 p-3 rounded-2xl bg-neutral-950 border border-neutral-800">
                 <div>
-                  <label className="block text-[10px] font-bold text-neutral-400 mb-1">Minutos</label>
-                  <input
-                    type="number"
-                    min={1}
-                    max={120}
-                    required
-                    value={newLogMinutes}
-                    onChange={(e) => setNewLogMinutes(Number(e.target.value))}
-                    className="w-full rounded-xl border border-neutral-700 bg-neutral-900 px-3 py-2 text-white font-bold"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[10px] font-bold text-amber-400 mb-1">Goles</label>
+                  <label className="block text-[10px] font-bold text-amber-400 mb-1">Goles Anotados</label>
                   <input
                     type="number"
                     min={0}
@@ -603,7 +580,7 @@ export function PlayerStatsModal({
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-bold text-amber-300 mb-1">Amarillas</label>
+                  <label className="block text-[10px] font-bold text-amber-300 mb-1">Amarillas (TA)</label>
                   <input
                     type="number"
                     min={0}
@@ -616,7 +593,7 @@ export function PlayerStatsModal({
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-bold text-rose-400 mb-1">Rojas</label>
+                  <label className="block text-[10px] font-bold text-rose-400 mb-1">Rojas (TR)</label>
                   <input
                     type="number"
                     min={0}

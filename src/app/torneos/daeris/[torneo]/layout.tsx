@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDaerisSubTournament } from "@/data/daeris-subtournaments";
 import { DaerisBadgeRenderer } from "@/components/ui/daeris-sub-badge-renderer";
+import { TournamentNavTabs } from "@/components/tournaments/tournament-nav-tabs";
 import { ChevronRight, Home, Calendar, Trophy, Goal, CheckCircle2, MapPin, Users, ShieldCheck } from "lucide-react";
 
 interface SubTournamentLayoutProps {
@@ -108,22 +109,8 @@ export default async function SubTournamentLayout({ children, params }: SubTourn
             </div>
           </div>
 
-          {/* 3. Barra de Navegación del Torneo */}
-          <div className="mt-8 flex gap-2 overflow-x-auto border-t border-neutral-800/80 pt-4 scrollbar-none">
-            {navLinks.map((link) => {
-              const Icon = link.icon;
-              return (
-                <Link
-                  key={link.label}
-                  href={link.href}
-                  className="flex items-center gap-2 rounded-xl border border-neutral-800 bg-neutral-900/60 px-4 py-2 text-xs sm:text-sm font-semibold text-neutral-300 hover:border-neutral-700 hover:bg-neutral-800 hover:text-white transition whitespace-nowrap"
-                >
-                  <Icon className="h-4 w-4 text-red-400" />
-                  {link.label}
-                </Link>
-              );
-            })}
-          </div>
+          {/* 3. Barra de Navegación del Torneo (Mantiene la categoría seleccionada entre pestañas) */}
+          <TournamentNavTabs basePath={basePath} />
         </div>
       </header>
 
